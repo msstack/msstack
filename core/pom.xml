@@ -16,6 +16,7 @@
 
 	<properties>
 		<jaxrs.version>2.1</jaxrs.version>
+		<reflections.version>0.9.11</reflections.version>
 	</properties>
 
 	<dependencies>
@@ -23,6 +24,13 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>${jaxrs.version}</version>
+		</dependency>
+
+		<!-- class path scanner -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>${reflections.version}</version>
 		</dependency>
 	</dependencies>
 </project>
