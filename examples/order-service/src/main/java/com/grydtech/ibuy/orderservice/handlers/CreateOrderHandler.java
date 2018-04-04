@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 @Handler
 @Path("/create-order")
 public class CreateOrderHandler implements CommandHandler<OrderCreateRequest, GenericResponse> {
-
+    
     public GenericResponse handle(OrderCreateRequest orderCreateRequest) {
         new OrderCreatedEvent(orderCreateRequest.getCustomerId()).emit();
         return new GenericResponse(200, "success");
