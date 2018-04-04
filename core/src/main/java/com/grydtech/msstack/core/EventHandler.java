@@ -1,5 +1,5 @@
 package com.grydtech.msstack.core;
 
-public interface EventHandler<E extends Event> extends Handler<E, Void> {
+public interface EventHandler<E extends Event> extends GenericHandler<E, Void> {
 
 }
