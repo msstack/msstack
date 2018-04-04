@@ -2,24 +2,26 @@ package com.grydtech.msstack.core;
 
 import java.util.Set;
 
-public class MicroserviceRunner {
+public final class MicroserviceRunner {
 
-	public static void run(Class<? extends MicroserviceApplication> applicationClass) throws Exception {
-		MicroserviceApplication microserviceApplication = applicationClass.newInstance();
+    private MicroserviceRunner() {
+    }
 
-		Set<Class<?>> handlers = microserviceApplication.getHandlers();
+    public static void run(Class<? extends MicroserviceApplication> applicationClass) throws Exception {
+        MicroserviceApplication microserviceApplication = applicationClass.newInstance();
 
-		handlers.forEach(handler -> {
-			try {
-				if (handler.isAssignableFrom(EventHandler.class)) {
-					MessageBroker.class.newInstance().registerHandler(handler.asSubclass(EventHandler.class));
-				}
-			}
-			catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		});
+        Set<Class<?>> handlers = microserviceApplication.getHandlers();
 
-		microserviceApplication.start();
-	}
+        handlers.forEach(handler -> {
+            try {
+                if (handler.isAssignableFrom(EventHandler.class)) {
+                    MessageBroker.class.newInstance().registerHandler(handler.asSubclass(EventHandler.class));
+                }
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+
+        microserviceApplication.start();
+    }
 }
