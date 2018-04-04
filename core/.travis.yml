@@ -1,0 +1,16 @@
+language: java
+jdk:
+  - oraclejdk8
+
+branches:
+  only:
+    - master
+
+before_install:
+  - sudo apt-get install jq
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/2.0.2/codacy-coverage-reporter-2.0.2-assembly.jar
+
+after_success:
+  - mvn clean test jacoco:report
+  - cp target/site/jacoco/jacoco.xml jacoco.xml
+  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r jacoco.xml

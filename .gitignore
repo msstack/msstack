@@ -1,0 +1,17 @@
+# Log file
+*.log
+
+# Build files
+target
+reports
+
+# Idea
+*.iml
+.idea
+
+# Netbeans
+nbproject
+build.xml
+
+#MacOS
+.DS_Store

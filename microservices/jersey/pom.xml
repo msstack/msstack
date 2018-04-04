@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.grydtech.msstack.microservices</groupId>
+	<artifactId>jersey</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>com.grydtech.msstack</groupId>
+		<artifactId>microservices</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<properties>
+		<jersey.version>2.26</jersey.version>
+		<jetty.version>9.4.9.v20180320</jetty.version>
+		<msstack-jaxrs.version>1.0</msstack-jaxrs.version>
+	</properties>
+
+	<dependencies>
+		<!-- start jersey dependencies -->
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-jetty-http</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet-core</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<!-- end jersey dependencies -->
+
+		<!-- start jetty dependencies -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-util</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<!-- end jetty dependencies -->
+
+		<dependency>
+			<groupId>com.grydtech.msstack.microservices</groupId>
+			<artifactId>jaxrs</artifactId>
+			<version>${msstack-jaxrs.version}</version>
+		</dependency>
+	</dependencies>
+</project>
