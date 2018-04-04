@@ -6,7 +6,7 @@ public abstract class Event {
 
 	public void emit() {
 		try {
-			EventBusAdapter eventBus = this.getClass().getAnnotation(EventBus.class).value().newInstance();
+			MessageBrokerAdapter eventBus = this.getClass().getAnnotation(EventBus.class).value().newInstance();
 			eventBus.publish(this);
 		}
 		catch (IllegalAccessException | InstantiationException e) {

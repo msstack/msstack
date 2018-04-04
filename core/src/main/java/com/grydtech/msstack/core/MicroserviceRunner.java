@@ -37,7 +37,7 @@ public class MicroserviceRunner {
 		handlers.forEach(handler -> {
 			try {
 				if (handler.isAssignableFrom(EventHandler.class)) {
-					EventBusAdapter.class.newInstance().registerHandler(handler.asSubclass(EventHandler.class));
+					MessageBrokerAdapter.class.newInstance().registerHandler(handler.asSubclass(EventHandler.class));
 				}
 			}
 			catch (InstantiationException | IllegalAccessException e) {

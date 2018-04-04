@@ -3,10 +3,10 @@ package com.grydtech.msstack.core.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import com.grydtech.msstack.core.EventBusAdapter;
+import com.grydtech.msstack.core.MessageBrokerAdapter;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EventBus {
 
-	Class<? extends EventBusAdapter> value();
+	Class<? extends MessageBrokerAdapter> value();
 }
