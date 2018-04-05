@@ -3,16 +3,16 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.grydtech.msstack</groupId>
-	<artifactId>microservices</artifactId>
-	<version>1.0</version>
-	<packaging>pom</packaging>
-
 	<parent>
-		<groupId>com.grydtech</groupId>
+		<groupId>com.grydtech.msstack</groupId>
 		<artifactId>msstack</artifactId>
 		<version>1.0</version>
 	</parent>
+
+	<groupId>com.grydtech.msstack.microservices</groupId>
+	<artifactId>microservices</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
 
 	<modules>
 		<module>vertx</module>

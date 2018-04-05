@@ -1,9 +1,0 @@
-# jetbrains
-.idea
-*.iml
-
-# build
-target
-
-# tomcat embed
-tomcat*

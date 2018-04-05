@@ -3,7 +3,6 @@
 
 # Build files
 target
-reports
 
 # Idea
 *.iml

@@ -3,7 +3,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.grydtech</groupId>
+	<groupId>com.grydtech.msstack</groupId>
 	<artifactId>msstack</artifactId>
 	<version>1.0</version>
 	<packaging>pom</packaging>
@@ -13,7 +13,7 @@
 		<module>microservices</module>
 		<module>service-discovery</module>
 		<module>transport</module>
-		<module>examples</module>
+		<module>reports</module>
 	</modules>
 
 	<properties>
@@ -71,15 +71,9 @@
 				<version>0.8.0</version>
 				<executions>
 					<execution>
+						<id>prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
