@@ -1,18 +1,16 @@
 package com.grydtech.msstack.microservices.vertx;
 
+import com.grydtech.msstack.core.MicroserviceApplication;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 
-public class CommunicationServer<Request, Response> {
+public class VertxApplication extends MicroserviceApplication {
 
-	private static final String LOCALHOST = "localhost";
-
-	private static final int SERVERPORT = 8080;
-
-	public CommunicationServer() {
+	@Override
+	public void start() throws Exception {
 		Vertx vertx = Vertx.vertx();
 
 		Handler<HttpServerRequest> httpRequestHandler = request -> {
@@ -22,6 +20,6 @@ public class CommunicationServer<Request, Response> {
 			response.end();
 		};
 
-		HttpServer httpServer = vertx.createHttpServer().requestHandler(httpRequestHandler).listen(SERVERPORT, LOCALHOST);
+		HttpServer httpServer = vertx.createHttpServer().requestHandler(httpRequestHandler).listen(getPort(), getHost());
 	}
 }

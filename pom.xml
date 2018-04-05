@@ -13,6 +13,7 @@
 		<module>microservices</module>
 		<module>service-discovery</module>
 		<module>transport</module>
+		<module>examples</module>
 	</modules>
 
 	<properties>

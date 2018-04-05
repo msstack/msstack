@@ -5,9 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Consistency {
-
-	ConsistencyPolicy value();
+public @interface Microservice {
+    String port() default "8080";
+    String host() default "http://localhost";
 }

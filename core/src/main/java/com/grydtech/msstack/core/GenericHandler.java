@@ -1,6 +1,6 @@
 package com.grydtech.msstack.core;
 
-public interface Handler<R, S> {
+public interface GenericHandler<R, S> {
 
 	S handle(R request);
 }

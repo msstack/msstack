@@ -1,12 +1,11 @@
 package com.grydtech.msstack.core.annotations;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.grydtech.msstack.core.EventBusAdapter;
-
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EventBus {
-
-	Class<? extends EventBusAdapter> value();
+public @interface Handler {
 }

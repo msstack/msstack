@@ -1,6 +1,6 @@
 package com.grydtech.msstack.core;
 
-public interface EventBusAdapter {
+public interface MessageBroker {
 
 	void publish(Event event);
 
