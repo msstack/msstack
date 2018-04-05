@@ -8,7 +8,6 @@
         <groupId>com.grydtech.msstack.examples</groupId>
         <artifactId>examples</artifactId>
         <version>1.0</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>order-service</artifactId>

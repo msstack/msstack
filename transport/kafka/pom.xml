@@ -7,7 +7,6 @@
 		<groupId>com.grydtech.msstack.transport</groupId>
 		<artifactId>transport</artifactId>
 		<version>1.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>kafka</artifactId>

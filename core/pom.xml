@@ -7,7 +7,6 @@
 		<groupId>com.grydtech.msstack</groupId>
 		<artifactId>msstack</artifactId>
 		<version>1.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>core</artifactId>

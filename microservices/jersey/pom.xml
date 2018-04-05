@@ -8,7 +8,6 @@
 		<groupId>com.grydtech.msstack.microservices</groupId>
 		<artifactId>microservices</artifactId>
 		<version>1.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>jersey</artifactId>
