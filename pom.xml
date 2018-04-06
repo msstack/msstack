@@ -51,12 +51,6 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 		<!-- end slf4j dependencies -->
-
-		<dependency>
-			<groupId>com.grydtech.msstack</groupId>
-			<artifactId>common</artifactId>
-			<version>1.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
