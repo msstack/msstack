@@ -1,11 +1,10 @@
 package com.grydtech.msstack.microservices.jaxrs;
 
-import javax.ws.rs.Path;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.grydtech.msstack.core.MicroserviceApplication;
 import com.grydtech.msstack.microservices.jaxrs.features.JacksonFeature;
+
+import javax.ws.rs.Path;
+import java.util.Set;
 
 public abstract class JaxRSApplication extends MicroserviceApplication {
 

@@ -1,10 +1,10 @@
 package com.grydtech.msstack.transport.kafka;
 
-import java.util.Properties;
-
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+
+import java.util.Properties;
 
 public class KafkaSender {
 
@@ -25,7 +25,7 @@ public class KafkaSender {
 	}
 
 	public void send(String topic, String message) {
-		this.producer.send(new ProducerRecord<String, String>(topic, message));
+		this.producer.send(new ProducerRecord<>(topic, message));
 		this.producer.flush();
 	}
 }

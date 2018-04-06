@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.CaseFormat;
 import com.grydtech.msstack.core.Event;
-import com.grydtech.msstack.core.MessageBroker;
 import com.grydtech.msstack.core.EventHandler;
+import com.grydtech.msstack.core.MessageBroker;
 
 public class KafkaBroker implements MessageBroker {
 
