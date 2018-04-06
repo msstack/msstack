@@ -10,7 +10,7 @@ public final class MicroserviceRunner {
     public static void run(Class<? extends MicroserviceApplication> applicationClass) throws Exception {
         MicroserviceApplication microserviceApplication = applicationClass.newInstance();
 
-        Set<Class<?>> handlers = microserviceApplication.getHandlers();
+        Set<Class<? extends GenericHandler>> handlers = microserviceApplication.getHandlers();
 
         handlers.forEach(handler -> {
             try {
