@@ -5,13 +5,19 @@ import com.grydtech.msstack.core.annotations.Handler;
 import com.grydtech.msstack.core.annotations.Microservice;
 
 import javax.ws.rs.core.Application;
+import java.util.HashSet;
 import java.util.Set;
 
 public abstract class MicroserviceApplication extends Application {
 
-	public Set<Class<?>> getHandlers() {
+	public Set<Class<? extends GenericHandler>> getHandlers() {
 		ClassPathScanner classPathScanner = new ClassPathScanner(getClass().getPackage().getName());
-		return classPathScanner.getTypesAnnotatedWith(Handler.class);
+		Set<Class<? extends GenericHandler>> handlers = new HashSet<>();
+		classPathScanner.getTypesAnnotatedWith(Handler.class).forEach(className -> {
+			if (className.isAssignableFrom(GenericHandler.class)) handlers.add(className.asSubclass(GenericHandler.class));
+		});
+
+		return handlers;
 	}
 
 	protected int getPort() {
