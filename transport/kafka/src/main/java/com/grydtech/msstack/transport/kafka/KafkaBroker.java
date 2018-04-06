@@ -9,9 +9,8 @@ import com.grydtech.msstack.core.MessageBroker;
 
 public class KafkaBroker implements MessageBroker {
 
-	private static KafkaSender kafkaSender;
-
-	private static ObjectMapper objectMapper;
+	private static final KafkaSender kafkaSender;
+	private static final ObjectMapper objectMapper;
 
 	static {
 		kafkaSender = new KafkaSender();

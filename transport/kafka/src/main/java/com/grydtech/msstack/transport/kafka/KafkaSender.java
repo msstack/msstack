@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class KafkaSender {
 
-	private Producer<String, String> producer;
+	private final Producer<String, String> producer;
 
 	public KafkaSender() {
 		Properties props = new Properties();
