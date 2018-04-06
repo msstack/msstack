@@ -1,13 +1,13 @@
 package com.grydtech.msstack.core;
 
-import org.reflections.Reflections;
+import com.grydtech.msstack.common.util.ClassPathScanner;
 
 public final class EventBus {
     private static MessageBroker messageBroker;
 
     static {
-        Reflections reflections = new Reflections("com.grydtech.msstack.transport");
-        Class<? extends MessageBroker> messageBrokerClass = reflections.getSubTypesOf(MessageBroker.class).iterator().next();
+        ClassPathScanner classPathScanner = new ClassPathScanner("com.grydtech.msstack.transport");
+        Class<? extends MessageBroker> messageBrokerClass = classPathScanner.getSubTypesOf(MessageBroker.class).iterator().next();
         try {
             messageBroker = messageBrokerClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
