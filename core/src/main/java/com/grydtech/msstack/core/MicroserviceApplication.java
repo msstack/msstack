@@ -13,8 +13,8 @@ public abstract class MicroserviceApplication extends Application {
 	public Set<Class<? extends GenericHandler>> getHandlers() {
 		ClassPathScanner classPathScanner = new ClassPathScanner(getClass().getPackage().getName());
 		Set<Class<? extends GenericHandler>> handlers = new HashSet<>();
-		classPathScanner.getTypesAnnotatedWith(Handler.class).forEach(className -> {
-			if (className.isAssignableFrom(GenericHandler.class)) handlers.add(className.asSubclass(GenericHandler.class));
+		classPathScanner.getTypesAnnotatedWith(Handler.class).forEach(c -> {
+			if (GenericHandler.class.isAssignableFrom(c)) handlers.add(c.asSubclass(GenericHandler.class));
 		});
 
 		return handlers;
