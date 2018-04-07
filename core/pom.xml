@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.grydtech.msstack</groupId>
-		<artifactId>msstack</artifactId>
-		<version>1.0</version>
-	</parent>
+    <parent>
+        <groupId>com.grydtech.msstack</groupId>
+        <artifactId>msstack</artifactId>
+        <version>1.0</version>
+    </parent>
 
-	<artifactId>core</artifactId>
-	<version>1.0</version>
-	<packaging>jar</packaging>
+    <artifactId>core</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
 
-	<properties>
-		<jaxrs.version>2.1</jaxrs.version>
-	</properties>
+    <properties>
+        <jaxrs.version>2.1</jaxrs.version>
+        <!--ToDo: core depend on guava need to remote that-->
+        <guava.version>24.1-jre</guava.version>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>${jaxrs.version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>${jaxrs.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.grydtech.msstack</groupId>
-			<artifactId>common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.grydtech.msstack</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+    </dependencies>
 </project>

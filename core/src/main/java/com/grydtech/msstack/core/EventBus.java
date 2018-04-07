@@ -1,9 +1,18 @@
 package com.grydtech.msstack.core;
 
+import com.google.common.base.CaseFormat;
 import com.grydtech.msstack.common.util.ClassPathScanner;
+import com.grydtech.msstack.common.util.JsonConverter;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 
 public final class EventBus {
     private static MessageBroker messageBroker;
+    private static ExecutorService executorService;
 
     static {
         ClassPathScanner classPathScanner = new ClassPathScanner("com.grydtech.msstack.transport");
@@ -13,19 +22,29 @@ public final class EventBus {
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+
+        // ToDo: Temporary implementation (corePoolSize, maximumPoolSize, keepAliveTime hardcoded)
+        executorService = new ThreadPoolExecutor(5, 10, 5000,
+                TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
     }
 
     private EventBus() {
     }
 
     public static void publish(Event event) {
-        messageBroker.publish(event);
+        executorService.submit(() -> {
+            String topic = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, event.getClass().getSimpleName());
+            String message = JsonConverter.toJsonString(event);
+            EventBus.messageBroker.publish(topic, message);
+        });
     }
 
+    // ToDo: Need to change implementation (maybe use rxjave)
     public static void registerHandler(Class<? extends EventHandler> handlerClass) {
         messageBroker.registerHandler(handlerClass);
     }
 
+    // ToDo: Need to change implementation (maybe use rxjave)
     public static void unregisterHandler(Class<? extends EventHandler> handlerClass) {
         messageBroker.unregisterHandler(handlerClass);
     }
