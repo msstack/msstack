@@ -12,9 +12,9 @@ public abstract class JaxRSApplication extends MicroserviceApplication {
 	@Override
 	public Set<Class<?>> getClasses() {
 		Set<Class<?>> classes = new HashSet<>();
-		getHandlers().forEach(handler-> {
-			if(handler.isAnnotationPresent(Path.class)){
-				classes.add(handler.getClass());
+		getHandlers().forEach(handlerClass-> {
+			if(handlerClass.isAnnotationPresent(Path.class)){
+				classes.add(handlerClass);
 			}
 		});
 		classes.add(JacksonFeature.class);
