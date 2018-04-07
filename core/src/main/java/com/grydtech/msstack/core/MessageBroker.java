@@ -2,7 +2,7 @@ package com.grydtech.msstack.core;
 
 public interface MessageBroker {
 
-	void publish(Event event);
+	void publish(String topic, String message);
 
 	void registerHandler(Class<? extends EventHandler> handlerClass);
 
