@@ -17,6 +17,7 @@
 	<modules>
 		<module>jaxrs</module>
 		<module>jersey</module>
+		<module>netty</module>
 		<module>vertx</module>
 	</modules>
 
