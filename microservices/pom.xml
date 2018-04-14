@@ -15,9 +15,9 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>vertx</module>
 		<module>jaxrs</module>
 		<module>jersey</module>
+		<module>vertx</module>
 	</modules>
 
 	<properties>
@@ -31,6 +31,7 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>${jaxrs.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- class path scanner -->
@@ -38,12 +39,14 @@
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>${reflections.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.grydtech.msstack</groupId>
 			<artifactId>core</artifactId>
 			<version>${msstack.core.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

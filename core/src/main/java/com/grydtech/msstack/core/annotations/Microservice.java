@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Microservice {
-    String port() default "8080";
-    String host() default "http://localhost";
+
+	String port() default "8080";
+
+	String host() default "http://localhost";
 }

@@ -24,6 +24,7 @@
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>${jackson.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>

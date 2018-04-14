@@ -1,10 +1,10 @@
 package com.grydtech.msstack.microservices.jaxrs.features;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 public class JacksonFeature implements Feature {
 

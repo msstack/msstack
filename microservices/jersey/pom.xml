@@ -26,24 +26,28 @@
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-jetty-http</artifactId>
 			<version>${jersey.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>${jersey.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>
 			<version>${jersey.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.glassfish.jersey.inject</groupId>
 			<artifactId>jersey-hk2</artifactId>
 			<version>${jersey.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<!-- end jersey dependencies -->
 
@@ -52,18 +56,21 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>${jetty.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
 			<version>${jetty.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-util</artifactId>
 			<version>${jetty.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<!-- end jetty dependencies -->
 
@@ -71,6 +78,7 @@
 			<groupId>com.grydtech.msstack.microservices</groupId>
 			<artifactId>jaxrs</artifactId>
 			<version>${msstack-jaxrs.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
