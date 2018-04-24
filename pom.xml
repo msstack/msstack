@@ -5,7 +5,7 @@
 
 	<groupId>com.grydtech.msstack</groupId>
 	<artifactId>msstack</artifactId>
-	<version>1.0</version>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -80,5 +80,25 @@
 				</executions>
 			</plugin>
 		</plugins>
+
+        <!-- deploy to package cloud -->
+        <extensions>
+            <extension>
+                <groupId>io.packagecloud.maven.wagon</groupId>
+                <artifactId>maven-packagecloud-wagon</artifactId>
+                <version>0.0.6</version>
+            </extension>
+        </extensions>
 	</build>
+
+    <distributionManagement>
+        <repository>
+            <id>packagecloud-msstack</id>
+            <url>packagecloud+https://packagecloud.io/msstack/msstack-artifacts</url>
+        </repository>
+        <snapshotRepository>
+            <id>packagecloud-msstack</id>
+            <url>packagecloud+https://packagecloud.io/msstack/msstack-artifacts</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
