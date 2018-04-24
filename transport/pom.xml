@@ -21,14 +21,13 @@
 	<properties>
 		<jackson.version>2.9.4</jackson.version>
 		<guava.version>24.1-jre</guava.version>
-		<msstack.core.version>1.0</msstack.core.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.grydtech.msstack</groupId>
 			<artifactId>core</artifactId>
-			<version>${msstack.core.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
