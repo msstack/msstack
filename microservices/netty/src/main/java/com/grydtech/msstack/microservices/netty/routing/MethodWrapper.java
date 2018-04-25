@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class RouteDestination {
+public class MethodWrapper {
 
     /**
      * The {@link Method} that is invoked with route params
@@ -31,11 +31,11 @@ public class RouteDestination {
     private final Map<String, Type> paramMap;
 
     /**
-     * Constructor for {@link RouteDestination}
+     * Constructor for {@link MethodWrapper}
      *
-     * @param destinationMethod The method to execute when invoking the RouteDestination
+     * @param destinationMethod The method to execute when invoking the MethodWrapper
      */
-    public RouteDestination(Method destinationMethod) {
+    MethodWrapper(Method destinationMethod) {
         this.destinationMethod = destinationMethod;
         // Initialize the Maps and Lists
         methodSignature = new LinkedList<>();
@@ -84,28 +84,32 @@ public class RouteDestination {
                 });
     }
 
-    public void invoke(Map<String, String> params) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+    public void invoke(Map<String, List<String>> params) {
+        // Prepare object
+        final Object instance;
+        try {
+            instance = destinationMethod.getDeclaringClass().newInstance();
+            // For each field in object instance, inject either the value from params or null
+            fieldMap.forEach((s, field) -> {
+                try {
+                    field.set(instance, params.getOrDefault(s, null));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            });
+            // TODO after instantiation and injecting fields, cache it to increase the performance of subsequent requests
 
-        // Prepare an object
-        final Object instance = destinationMethod.getDeclaringClass().newInstance();
-        // For each field in object instance, inject either the value from params or null
-        fieldMap.forEach((s, field) -> {
-            try {
-                field.set(instance, params.getOrDefault(s, null));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        });
-        // TODO after instantiation and injecting fields, cache it to increase the performance of subsequent requests
+            // Prepare the method arguments
+            final List<Object> args = new ArrayList<>();
+            // For each argument in method, inject either the value from params or null
+            methodSignature.forEach(s ->
+                    args.add(params.containsKey(s) ? paramMap.get(s).getClass().cast(params.get(s).get(0)) : null)
+            );
 
-        // Prepare the method arguments
-        final List<Object> args = new ArrayList<>();
-        // For each argument in method, inject either the value from params or null
-        methodSignature.forEach(s -> {
-            args.add(params.containsKey(s) ? paramMap.get(s).getClass().cast(params.get(s)) : null);
-        });
-
-        // Invoke the method on instance, with args
-        destinationMethod.invoke(instance, args);
+            // Invoke the method on instance, with args
+            destinationMethod.invoke(instance, args);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }

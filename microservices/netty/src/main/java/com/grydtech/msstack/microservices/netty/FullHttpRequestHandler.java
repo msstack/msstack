@@ -1,13 +1,23 @@
 package com.grydtech.msstack.microservices.netty;
 
+import com.grydtech.msstack.microservices.netty.routing.Router;
+import com.grydtech.msstack.microservices.netty.routing.RoutingResult;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 final class FullHttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+    private final Router httpRouter;
+
+    FullHttpRequestHandler(Router router) {
+        this.httpRouter = router;
+    }
+
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
@@ -21,6 +31,15 @@ final class FullHttpRequestHandler extends SimpleChannelInboundHandler<FullHttpR
         queryStringDecoder = new QueryStringDecoder(request.uri());
         path = queryStringDecoder.path();
         queryParameters = queryStringDecoder.parameters();
+
+        // Route and execute
+        RoutingResult routeResult = httpRouter.route(httpMethod, path);
+        Map<String, List<String>> args = new HashMap<>();
+        if (routeResult != null) {
+            args.putAll(routeResult.getPathMatch().getParamMatches());
+            args.putAll(queryParameters);
+            routeResult.getMethod().invoke(args);
+        }
 
         // Set response parameters
         HttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);

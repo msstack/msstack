@@ -23,8 +23,7 @@ public final class PathPattern {
     }
 
     private PathPattern setAnnotatedPath(String path) {
-        // Canonicalize the Path Value.
-        // Resulting path will look like "/path/to/foo"
+        // Canonicalize Path Value. Resulting path will look like "/path/to/foo"
         path = String.format("/%s/", path);
         path = path.replaceAll("/+", F_SLASH_STR);
         path = path.substring(1, path.length() - 1);
@@ -68,17 +67,13 @@ public final class PathPattern {
     public PathMatch getPathMatch(String path) {
         final Matcher pathMatcher = pattern.matcher(path);
         if (pathMatcher.matches()) {
-            final Map<String, String> paramMatches = new HashMap<>();
+            final Map<String, List<String>> matchedParams = new HashMap<>();
             for (String paramName : paramNames) {
                 final String regexSafeParamName = paramName.replaceAll(UNSAFE_REGEX, "");
-                paramMatches.put(paramName, pathMatcher.group(regexSafeParamName));
+                matchedParams.put(paramName, Collections.singletonList(pathMatcher.group(regexSafeParamName)));
             }
-            return new PathMatch().setPath(path).setParamMatches(paramMatches);
+            return new PathMatch().setMatchedParams(matchedParams);
         }
         return null;
-    }
-
-    public List<String> getParamNames() {
-        return paramNames;
     }
 }

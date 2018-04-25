@@ -16,13 +16,16 @@ public final class Reflector {
 
     public static Map<String, Method> getRoutes(Class<? extends GenericHandler> handlerClass) {
         // Return a map from each Path string to the executable
+        final Map<String, Method> routes = new HashMap<>();
         // The PathParams and other stuff are found out separately
         final Path basePath = handlerClass.getAnnotation(Path.class);
         if (basePath != null) {
-            Arrays.stream(handlerClass.getDeclaredFields()).forEach(field -> {
-                
+            Arrays.stream(handlerClass.getDeclaredMethods()).forEach(method -> {
+                if (method.isAnnotationPresent(Path.class)) {
+                    routes.put(String.format("%s/%s", basePath, method.getAnnotation(Path.class).value()), method);
+                }
             });
         }
-        return new HashMap<>();
+        return routes;
     }
 }

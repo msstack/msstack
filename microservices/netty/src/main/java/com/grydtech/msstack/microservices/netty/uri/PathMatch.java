@@ -3,27 +3,18 @@ package com.grydtech.msstack.microservices.netty.uri;
 import com.sun.istack.internal.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PathMatch {
-    private String path;
-    private Map<String, String> paramMatches = new HashMap<>();
-
-    public String getPath() {
-        return path;
-    }
-
-    public PathMatch setPath(String path) {
-        this.path = path;
-        return this;
-    }
+    private Map<String, List<String>> paramMatches = new HashMap<>();
 
     @NotNull
-    public Map<String, String> getParamMatches() {
+    public Map<String, List<String>> getParamMatches() {
         return paramMatches;
     }
 
-    public PathMatch setParamMatches(@NotNull Map<String, String> paramMatches) {
+    PathMatch setMatchedParams(@NotNull Map<String, List<String>> paramMatches) {
         this.paramMatches = paramMatches;
         return this;
     }

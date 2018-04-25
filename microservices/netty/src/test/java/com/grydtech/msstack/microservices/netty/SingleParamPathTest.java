@@ -4,6 +4,7 @@ import com.grydtech.msstack.microservices.netty.uri.PathMatch;
 import com.grydtech.msstack.microservices.netty.uri.PathPattern;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 public class SingleParamPathTest {
@@ -27,10 +28,10 @@ public class SingleParamPathTest {
     @Test
     public void testPathMatchDataCorrect() {
         assert pathMatch != null;
-        Map<String, String> paramMatches = pathMatch.getParamMatches();
+        Map<String, List<String>> paramMatches = pathMatch.getParamMatches();
         assert paramMatches != null
                 && paramMatches.size() == 1
                 && paramMatches.containsKey(orderId)
-                && paramMatches.get(orderId).equals(orderIdVal);
+                && paramMatches.get(orderId).get(0).equals(orderIdVal);
     }
 }

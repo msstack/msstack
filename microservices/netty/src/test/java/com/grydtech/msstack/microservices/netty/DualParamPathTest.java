@@ -4,6 +4,7 @@ import com.grydtech.msstack.microservices.netty.uri.PathMatch;
 import com.grydtech.msstack.microservices.netty.uri.PathPattern;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 public class DualParamPathTest {
@@ -31,12 +32,12 @@ public class DualParamPathTest {
     @Test
     public void testPathMatchContainsValue() {
         assert pathMatch != null;
-        Map<String, String> paramMatches = pathMatch.getParamMatches();
+        Map<String, List<String>> paramMatches = pathMatch.getParamMatches();
         assert paramMatches != null
                 && paramMatches.size() == 2
                 && paramMatches.containsKey(orderId)
-                && paramMatches.get(orderId).equals(orderIdVal)
+                && paramMatches.get(orderId).get(0).equals(orderIdVal)
                 && paramMatches.containsKey(itemId)
-                && paramMatches.get(itemId).equals(itemIdVal);
+                && paramMatches.get(itemId).get(0).equals(itemIdVal);
     }
 }
