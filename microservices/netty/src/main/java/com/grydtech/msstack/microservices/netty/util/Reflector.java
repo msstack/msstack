@@ -4,6 +4,7 @@ import com.grydtech.msstack.core.GenericHandler;
 
 import javax.ws.rs.Path;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,9 @@ public final class Reflector {
         // The PathParams and other stuff are found out separately
         final Path basePath = handlerClass.getAnnotation(Path.class);
         if (basePath != null) {
+            Arrays.stream(handlerClass.getDeclaredFields()).forEach(field -> {
+                
+            });
         }
         return new HashMap<>();
     }

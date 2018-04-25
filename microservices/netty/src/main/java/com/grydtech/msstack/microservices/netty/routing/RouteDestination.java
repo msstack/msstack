@@ -1,75 +1,111 @@
 package com.grydtech.msstack.microservices.netty.routing;
 
 import javax.ws.rs.PathParam;
-import java.lang.reflect.*;
+import javax.ws.rs.QueryParam;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class RouteDestination {
 
+    /**
+     * The {@link Method} that is invoked with route params
+     */
     private final Method destinationMethod;
-    private final List<String> paramNames;
 
-    private final Class declaringClass;
-    private final AnnotatedType[] annotatedParameterTypes;
+    /**
+     * List of Param names in the order of presence in {@code destinationMethod}
+     */
+    private final List<String> methodSignature;
 
-    private final Map<String, Field> paramNameToFieldMap;
-    private final Map<String, AnnotatedType> paramNameToAnnotatedTypeMap;
+    /**
+     * Mapping from Param ({@link PathParam} or {@link QueryParam}) name to the {@link Field} annotated with it
+     */
+    private final Map<String, Field> fieldMap;
 
-    public RouteDestination(Method destinationMethod, List<String> paramNames) {
+    /**
+     * Mapping from Param ({@link PathParam} or {@link QueryParam}) name to the {@link Type} of Parameter
+     */
+    private final Map<String, Type> paramMap;
+
+    /**
+     * Constructor for {@link RouteDestination}
+     *
+     * @param destinationMethod The method to execute when invoking the RouteDestination
+     */
+    public RouteDestination(Method destinationMethod) {
         this.destinationMethod = destinationMethod;
-        this.declaringClass = destinationMethod.getDeclaringClass();
-        this.paramNames = paramNames;
-        this.annotatedParameterTypes = destinationMethod.getAnnotatedParameterTypes();
-        // Initialize hash maps
-        paramNameToFieldMap = new HashMap<>();
-        paramNameToAnnotatedTypeMap = new HashMap<>();
-        // Create mappping
-        this.mapParams();
+        // Initialize the Maps and Lists
+        methodSignature = new LinkedList<>();
+        fieldMap = new HashMap<>();
+        paramMap = new HashMap<>();
+        // Build the Maps
+        this.buildFieldMap();
+        this.buildAnnotatedTypeMap();
     }
 
-    private void mapParams() {
-        // Find the Fields and AnnotatedTypes
-        final Stream<Field> classFields = Arrays.stream(declaringClass.getDeclaredFields())
+    /**
+     * Add Fields annotated with either {@link PathParam} or {@link QueryParam} to {@code fieldMap}
+     */
+    private void buildFieldMap() {
+        Arrays.stream(destinationMethod.getDeclaringClass().getDeclaredFields())
                 .parallel()
-                .filter(field -> field.getAnnotation(PathParam.class) != null);
-        final Stream<AnnotatedType> methodAnnotatedTypes = Arrays.stream(annotatedParameterTypes)
-                .parallel()
-                .filter(annotatedType -> annotatedType.getAnnotation(PathParam.class) != null);
-        paramNames.forEach(paramName -> {
-            // Update paramNameToFieldMap
-            classFields.filter(f -> f.getAnnotation(PathParam.class).value().equals(paramName))
-                    .findFirst()
-                    .ifPresent(field -> paramNameToFieldMap.put(paramName, field));
-            // Update paramNameToAnnotatedTypeMap
-            methodAnnotatedTypes.filter(m -> m.getAnnotation(PathParam.class).value().equals(paramName))
-                    .findFirst()
-                    .ifPresent(annotatedType -> paramNameToAnnotatedTypeMap.put(paramName, annotatedType));
-        });
+                .forEach(field -> {
+                    final String param;
+                    if (field.isAnnotationPresent(PathParam.class)) {
+                        param = field.getDeclaredAnnotation(PathParam.class).value();
+                        fieldMap.put(param, field);
+                    } else if (field.isAnnotationPresent(QueryParam.class)) {
+                        param = field.getDeclaredAnnotation(QueryParam.class).value();
+                        fieldMap.put(param, field);
+                    }
+                });
     }
 
-    public void invoke(Map<String, String> paramValues)
-            throws InvocationTargetException, IllegalAccessException, InstantiationException {
-        // TODO For now, always instantiate class before invoked. Should cache the instances for optimization.
-        final Object instance = declaringClass.newInstance();
-        final List<Object> args = new ArrayList<>();
-        paramValues.forEach((param, value) -> {
-            if (paramNameToFieldMap.containsKey(param)) {
-                // Inject fields in object with paramValues
-                try {
-                    paramNameToFieldMap.get(param).set(instance, value);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            } else if (paramNameToAnnotatedTypeMap.containsKey(param)) {
-                // Inject method parameters
-                AnnotatedType type = paramNameToAnnotatedTypeMap.get(param);
-                Type typeCastedValue = type.getType().getClass().cast(value);
-                // TODO check if both directly adding and typecasting works, and if the order of parameters should be found bforehand
-                args.add(typeCastedValue);
+    /**
+     * Add Method Parameters annotated with either {@link PathParam} or {@link QueryParam} to {@code fieldMap}
+     */
+    private void buildAnnotatedTypeMap() {
+        Arrays.stream(destinationMethod.getParameters())
+                .sequential()
+                .forEach(parameter -> {
+                    final String param;
+                    if (parameter.isAnnotationPresent(PathParam.class)) {
+                        param = parameter.getDeclaredAnnotation(PathParam.class).value();
+                    } else if (parameter.isAnnotationPresent(QueryParam.class)) {
+                        param = parameter.getDeclaredAnnotation(QueryParam.class).value();
+                    } else {
+                        return;
+                    }
+                    methodSignature.add(param);
+                    paramMap.put(param, parameter.getType());
+                });
+    }
+
+    public void invoke(Map<String, String> params) throws InvocationTargetException, IllegalAccessException, InstantiationException {
+
+        // Prepare an object
+        final Object instance = destinationMethod.getDeclaringClass().newInstance();
+        // For each field in object instance, inject either the value from params or null
+        fieldMap.forEach((s, field) -> {
+            try {
+                field.set(instance, params.getOrDefault(s, null));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         });
-        // Instantiate classes, do all stuff, and invoke method
+        // TODO after instantiation and injecting fields, cache it to increase the performance of subsequent requests
+
+        // Prepare the method arguments
+        final List<Object> args = new ArrayList<>();
+        // For each argument in method, inject either the value from params or null
+        methodSignature.forEach(s -> {
+            args.add(params.containsKey(s) ? paramMap.get(s).getClass().cast(params.get(s)) : null);
+        });
+
+        // Invoke the method on instance, with args
         destinationMethod.invoke(instance, args);
     }
 }

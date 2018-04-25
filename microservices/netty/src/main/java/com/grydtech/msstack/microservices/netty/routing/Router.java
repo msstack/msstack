@@ -12,7 +12,7 @@ public final class Router {
 
     private final Map<PathPattern, RouteDestination> routeMap;
 
-    public Router() {
+    private Router() {
         this.routeMap = new HashMap<>();
     }
 
@@ -23,7 +23,7 @@ public final class Router {
     }
 
     private void registerRoutes(Map<String, Method> routes) {
-        // Register the path patterns in routeMap
+        // Register the path patterns in RouteMap
         routes.forEach((annotatedPath, method) -> {
             PathPattern pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
             RouteDestination routeDestination = new RouteDestination(method, pathPattern.getParamNames());

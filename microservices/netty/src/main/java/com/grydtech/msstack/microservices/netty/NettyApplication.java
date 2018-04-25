@@ -6,7 +6,7 @@ import com.grydtech.msstack.microservices.netty.routing.Router;
 public class NettyApplication extends MicroserviceApplication {
 
     private NettyApplication() {
-        Router.build(this);
+        Router router = Router.build(this);
     }
 
     public static void main(String[] args) throws Exception {
