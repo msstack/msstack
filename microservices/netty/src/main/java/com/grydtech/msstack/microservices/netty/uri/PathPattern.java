@@ -77,4 +77,8 @@ public final class PathPattern {
         }
         return null;
     }
+
+    public List<String> getParamNames() {
+        return paramNames;
+    }
 }

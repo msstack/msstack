@@ -1,57 +1,44 @@
 package com.grydtech.msstack.microservices.netty.routing;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
 import com.grydtech.msstack.core.MicroserviceApplication;
 import com.grydtech.msstack.microservices.netty.uri.PathPattern;
 import com.grydtech.msstack.microservices.netty.util.Reflector;
 
-import javax.ws.rs.Path;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class Router {
 
-    private final ImmutableListMultimap.Builder<PathPattern, RouteDestination> routeMapBuilder;
-
-    private ImmutableListMultimap<PathPattern, RouteDestination> routeMap;
+    private final Map<PathPattern, RouteDestination> routeMap;
 
     public Router() {
-        this.routeMapBuilder = ImmutableListMultimap.builder();
+        this.routeMap = new HashMap<>();
     }
 
     public static Router build(MicroserviceApplication application) {
-        application.getHandlers().forEach(handlerClass -> {
-            final Path path = handlerClass.getAnnotation(Path.class);
-            if (path != null) {
-                final String pathValue = path.value();
-                try {
-//					mapPathToClass(pathValue, handlerClass);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         Router router = new Router();
-        Map<String, Method> pathToMethodMap = Reflector.getPathToMethodMap();
-        router.routeMap = router.routeMapBuilder.build();
+        application.getHandlers().forEach(handlerClass -> router.registerRoutes(Reflector.getRoutes(handlerClass)));
         return router;
     }
 
-    public Router addRoute(PathPattern pathPattern, RouteDestination routeDestination) {
-        this.routeMapBuilder.put(pathPattern, routeDestination);
-        return this;
+    private void registerRoutes(Map<String, Method> routes) {
+        // Register the path patterns in routeMap
+        routes.forEach((annotatedPath, method) -> {
+            PathPattern pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
+            RouteDestination routeDestination = new RouteDestination(method, pathPattern.getParamNames());
+            routeMap.put(pathPattern, routeDestination);
+        });
     }
 
-    /**
-     * Return an Immutable List of RouteDestinations that getPathMatch the given PathPattern
-     *
-     * @param pathPattern PathPattern to find the PathPattern Destinations
-     * @return PathPattern destinations that getPathMatch the pathPattern
-     */
-    public ImmutableList<RouteDestination> getMatchingDestinations(PathPattern pathPattern) {
-        ImmutableList.Builder<RouteDestination> destinationBuilder = new ImmutableList.Builder<>();
-        // Find amd return matching RouteDestinations and add them to immutable list
-        return routeMap.get(pathPattern).asList();
+    public RouteDestination findDestinationFor(String path) {
+        PathPattern matchedPattern = routeMap.keySet().parallelStream()
+                .filter(pathPattern -> pathPattern.getPathMatch(path) != null)
+                .findFirst().orElse(null);
+        if (matchedPattern == null) {
+            return null;
+        } else {
+            return routeMap.get(matchedPattern);
+        }
     }
 }
