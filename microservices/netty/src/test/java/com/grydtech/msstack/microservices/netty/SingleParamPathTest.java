@@ -2,6 +2,7 @@ package com.grydtech.msstack.microservices.netty;
 
 import com.grydtech.msstack.microservices.netty.uri.PathMatch;
 import com.grydtech.msstack.microservices.netty.uri.PathPattern;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,21 +18,21 @@ public class SingleParamPathTest {
 
     @Test
     public void testPathMatches() {
-        assert pathMatch != null;
+        Assert.assertNotNull(pathMatch);
     }
 
     @Test
     public void testPathMatchHasData() {
-        assert pathMatch != null;
+        Assert.assertNotNull(pathMatch);
     }
 
     @Test
     public void testPathMatchDataCorrect() {
-        assert pathMatch != null;
+        Assert.assertNotNull(pathMatch);
         Map<String, List<String>> paramMatches = pathMatch.getParamMatches();
-        assert paramMatches != null
-                && paramMatches.size() == 1
+        Assert.assertTrue(paramMatches.size() == 1
                 && paramMatches.containsKey(orderId)
-                && paramMatches.get(orderId).get(0).equals(orderIdVal);
+                && paramMatches.get(orderId).get(0).equals(orderIdVal)
+        );
     }
 }

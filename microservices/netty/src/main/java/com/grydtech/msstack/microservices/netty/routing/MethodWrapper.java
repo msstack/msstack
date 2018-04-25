@@ -8,7 +8,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class MethodWrapper {
+/**
+ * This class is a wrapper for {@link Method} Class, and is used to automatically instantiate objects and inject
+ * PathParams and QueryParams before invoking the method.
+ */
+public final class MethodWrapper {
 
     /**
      * The {@link Method} that is invoked with route params
@@ -35,7 +39,7 @@ public class MethodWrapper {
      *
      * @param destinationMethod The method to execute when invoking the MethodWrapper
      */
-    MethodWrapper(Method destinationMethod) {
+    protected MethodWrapper(Method destinationMethod) {
         this.destinationMethod = destinationMethod;
         // Initialize the Maps and Lists
         methodSignature = new LinkedList<>();
@@ -84,6 +88,12 @@ public class MethodWrapper {
                 });
     }
 
+
+    /**
+     * Execute the wrapped {@link Method} with the given parameters
+     *
+     * @param params The parameters extracted from URIs
+     */
     public void invoke(Map<String, List<String>> params) {
         // Prepare object
         final Object instance;

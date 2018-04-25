@@ -22,11 +22,11 @@ final class NettyServer {
 
     private Router router;
 
-    NettyServer(int port) {
+    protected NettyServer(int port) {
         this.port = port;
     }
 
-    NettyServer build() {
+    protected NettyServer build() {
         incomingEventLoopGroup = new NioEventLoopGroup(1);
         workerEventLoopGroup = new NioEventLoopGroup(100);
 
@@ -50,7 +50,7 @@ final class NettyServer {
         return this;
     }
 
-    void run() throws InterruptedException {
+    protected void run() throws InterruptedException {
         try {
             // Bind and start to accept incoming connections
             ChannelFuture f = serverBootstrap.bind(port).sync();

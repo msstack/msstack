@@ -1,21 +1,21 @@
 package com.grydtech.msstack.microservices.netty.uri;
 
-import com.sun.istack.internal.NotNull;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class wraps the {@link javax.ws.rs.PathParam} and {@link javax.ws.rs.QueryParam} matches
+ * with their respective {@link List} of value(s)
+ */
 public class PathMatch {
-    private Map<String, List<String>> paramMatches = new HashMap<>();
 
-    @NotNull
-    public Map<String, List<String>> getParamMatches() {
-        return paramMatches;
+    private final Map<String, List<String>> paramMatches;
+
+    public PathMatch(Map<String, List<String>> paramMatches) {
+        this.paramMatches = paramMatches;
     }
 
-    PathMatch setMatchedParams(@NotNull Map<String, List<String>> paramMatches) {
-        this.paramMatches = paramMatches;
-        return this;
+    public Map<String, List<String>> getParamMatches() {
+        return paramMatches;
     }
 }

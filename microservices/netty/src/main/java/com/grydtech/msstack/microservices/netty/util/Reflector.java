@@ -8,12 +8,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for obtaining JAX-RS annotated Classes and Methods using Reflection.
+ */
 public final class Reflector {
 
+    /**
+     * Private Constructor
+     */
     private Reflector() {
-        // private constructor
     }
 
+    /**
+     * Finds {@link Path} annotations in a given {@link GenericHandler} class and its methods,
+     * and create a map from each complete path to the corresponding {@link Method}.
+     *
+     * @param handlerClass A {@link Class} that extends {@link GenericHandler}
+     * @return A mapping from Path String to {@link Method}
+     */
     public static Map<String, Method> getRoutes(Class<? extends GenericHandler> handlerClass) {
         // Return a map from each Path string to the executable
         final Map<String, Method> routes = new HashMap<>();

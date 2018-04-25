@@ -4,7 +4,14 @@ import com.grydtech.msstack.microservices.netty.routing.Router;
 import com.grydtech.msstack.microservices.netty.routing.RoutingResult;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +21,7 @@ final class FullHttpRequestHandler extends SimpleChannelInboundHandler<FullHttpR
 
     private final Router httpRouter;
 
-    FullHttpRequestHandler(Router router) {
+    protected FullHttpRequestHandler(Router router) {
         this.httpRouter = router;
     }
 
