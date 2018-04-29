@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 public class PathPatternWithoutQueryParamTest {
 
-    private final String orderIdKey = "order-id";
-    private final String orderIdVal = "5C";
+    private static final String orderIdKey = "order-id";
+    private static final String orderIdVal = "5C";
 
     private String annotatedPath;
     private String pathQuery;

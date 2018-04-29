@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class SingleParamPathTest {
 
-    private final String orderId = "order-id";
-    private final String orderIdVal = "453B-289";
+    private static final String orderId = "order-id";
+    private static final String orderIdVal = "453B-289";
 
     private final PathPattern pathPattern = PathPattern.fromAnnotatedPath(String.format("/orders/{%s}/create", orderId));
     private final PathMatch pathMatch = pathPattern.getPathMatch(String.format("/orders/%s/create", orderIdVal));

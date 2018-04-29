@@ -5,8 +5,8 @@ import org.junit.Test;
 
 public class SampleTest {
 
-	@Test
-	public void testCase() {
-		Assert.assertEquals("Hello", "Hello");
-	}
+    @Test
+    public void testCase() {
+        Assert.assertEquals("Hello", "Hello");
+    }
 }

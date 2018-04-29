@@ -10,25 +10,24 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 public class JerseyApplication extends JaxRSApplication {
 
-	@Override
-	public void start() throws Exception {
-		ServletContainer jerseyServlet = new ServletContainer(ResourceConfig.forApplicationClass(getClass()));
-		ServletHolder holder = new ServletHolder(jerseyServlet);
-		holder.setInitParameter(CommonProperties.METAINF_SERVICES_LOOKUP_DISABLE, "true");
+    @Override
+    public void start() throws Exception {
+        ServletContainer jerseyServlet = new ServletContainer(ResourceConfig.forApplicationClass(getClass()));
+        ServletHolder holder = new ServletHolder(jerseyServlet);
+        holder.setInitParameter(CommonProperties.METAINF_SERVICES_LOOKUP_DISABLE, "true");
 
-		Server server = new Server(getPort());
-		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		context.setContextPath("/");
-		context.addServlet(holder, "/*");
-		server.setHandler(context);
+        Server server = new Server(getPort());
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        context.addServlet(holder, "/*");
+        server.setHandler(context);
 
-		try {
-			server.start();
-			server.join();
-		}
-		finally {
-			server.destroy();
-		}
-	}
+        try {
+            server.start();
+            server.join();
+        } finally {
+            server.destroy();
+        }
+    }
 
 }

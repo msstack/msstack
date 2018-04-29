@@ -6,13 +6,22 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is a wrapper for {@link Method} Class, and is used to automatically instantiate objects and inject
  * PathParams and QueryParams before invoking the method.
  */
 public final class MethodWrapper {
+
+    private static final Logger LOGGER = Logger.getLogger(MethodWrapper.class.toGenericString());
 
     /**
      * The {@link Method} that is invoked with route params
@@ -104,7 +113,8 @@ public final class MethodWrapper {
                 try {
                     field.set(instance, params.getOrDefault(s, null));
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
                 }
             });
             // TODO after instantiation and injecting fields, cache it to increase the performance of subsequent requests
@@ -119,7 +129,7 @@ public final class MethodWrapper {
             // Invoke the method on instance, with args
             destinationMethod.invoke(instance, args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

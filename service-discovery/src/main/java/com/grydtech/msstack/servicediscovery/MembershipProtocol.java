@@ -4,14 +4,14 @@ import java.util.Map;
 
 public interface MembershipProtocol {
 
-	Member registerMember(String memberName, Map<String, Object> attributes);
+    Member registerMember(String memberName, Map<String, Object> attributes);
 
-	Member updateMember(Member member);
+    Member updateMember(Member member);
 
-	void removeMember(String memberName);
+    void removeMember(String memberName);
 
-	void listen(String name, MemberListener memberListener);
+    void listen(String name, MemberListener memberListener);
 
-	void closeConnection();
+    void closeConnection();
 
 }

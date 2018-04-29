@@ -1,7 +1,12 @@
 package com.grydtech.msstack.microservices.netty.uri;
 
 import javax.ws.rs.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -71,12 +76,18 @@ public final class PathPattern {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         PathPattern that = (PathPattern) o;
 
-        if (!paramNames.equals(that.paramNames)) return false;
+        if (!paramNames.equals(that.paramNames)) {
+            return false;
+        }
         return pattern.equals(that.pattern);
     }
 
