@@ -9,17 +9,18 @@ import io.vertx.core.http.HttpServerResponse;
 
 public class VertxApplication extends MicroserviceApplication {
 
-	@Override
-	public void start() throws Exception {
-		Vertx vertx = Vertx.vertx();
+    @Override
+    public void start() {
+        Vertx vertx = Vertx.vertx();
 
-		Handler<HttpServerRequest> httpRequestHandler = request -> {
-			HttpServerResponse response = request.response();
-			response.putHeader("Content-Type", "text/plain");
-			response.write("some text");
-			response.end();
-		};
+        Handler<HttpServerRequest> httpRequestHandler = request -> {
+            HttpServerResponse response = request.response();
+            response.putHeader("Content-Type", "text/plain");
+            response.write("some text");
+            response.end();
+        };
 
-		HttpServer httpServer = vertx.createHttpServer().requestHandler(httpRequestHandler).listen(getPort(), getHost());
-	}
+        HttpServer httpServer = vertx.createHttpServer().requestHandler(httpRequestHandler);
+        httpServer.listen(getPort(), getHost());
+    }
 }

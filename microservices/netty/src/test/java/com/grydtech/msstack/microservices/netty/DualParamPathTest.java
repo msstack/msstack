@@ -10,17 +10,13 @@ import java.util.Map;
 
 public class DualParamPathTest {
 
-    private final String orderId = "order-id";
-    private final String orderIdVal = "453B-289";
+    private static final String orderId = "order-id", itemId = "item-id";
+    private static final String orderIdVal = "453B-289", itemIdVal = "PQ-TUV";
 
-
-    private final String itemId = "item-id";
-    private final String itemIdVal = "PQ-TUV";
-
-    private final PathPattern pathPattern = PathPattern.fromAnnotatedPath(
+    private static final PathPattern pathPattern = PathPattern.fromAnnotatedPath(
             String.format("/orders/{%s}/add/{%s}", orderId, itemId)
     );
-    private final PathMatch pathMatch = pathPattern.getPathMatch(
+    private static final PathMatch pathMatch = pathPattern.getPathMatch(
             String.format("/orders/%s/add/%s", orderIdVal, itemIdVal)
     );
 
@@ -38,13 +34,15 @@ public class DualParamPathTest {
     @Test
     public void testPathMatchContainsValue() {
         Assert.assertNotNull(pathMatch);
-        Map<String, List<String>> paramMatches = pathMatch.getParamMatches();
+        final Map<String, List<String>> paramMatches = pathMatch.getParamMatches();
+
         Assert.assertNotNull(paramMatches);
-        Assert.assertTrue(paramMatches.size() == 2
-                && paramMatches.containsKey(orderId)
-                && paramMatches.get(orderId).get(0).equals(orderIdVal)
-                && paramMatches.containsKey(itemId)
-                && paramMatches.get(itemId).get(0).equals(itemIdVal)
-        );
+        Assert.assertEquals(2, paramMatches.size());
+
+        Assert.assertTrue(paramMatches.containsKey(orderId));
+        Assert.assertEquals(orderIdVal, paramMatches.get(orderId).get(0));
+
+        Assert.assertTrue(paramMatches.containsKey(itemId));
+        Assert.assertEquals(itemIdVal, paramMatches.get(itemId).get(0));
     }
 }

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Microservice {
 
-	String port() default "8080";
+    String port() default "8080";
 
-	String host() default "http://localhost";
+    String host() default "http://localhost";
 }

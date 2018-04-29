@@ -2,21 +2,21 @@ package com.grydtech.msstack.servicediscovery;
 
 public class MembershipEvent {
 
-	private final MembershipEventType eventType;
+    private final MembershipEventType eventType;
 
-	private final Member member;
+    private final Member member;
 
-	public MembershipEvent(MembershipEventType eventType, Member member) {
-		this.eventType = eventType;
-		this.member = member;
-	}
+    public MembershipEvent(MembershipEventType eventType, Member member) {
+        this.eventType = eventType;
+        this.member = member;
+    }
 
-	public MembershipEventType getEventType() {
-		return eventType;
-	}
+    public MembershipEventType getEventType() {
+        return eventType;
+    }
 
-	public Member getMember() {
-		return member;
-	}
+    public Member getMember() {
+        return member;
+    }
 
 }
