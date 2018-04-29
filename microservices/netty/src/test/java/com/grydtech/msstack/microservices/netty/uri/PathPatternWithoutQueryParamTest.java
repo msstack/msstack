@@ -12,26 +12,28 @@ import java.util.regex.Pattern;
 
 public class PathPatternWithoutQueryParamTest {
 
+    private final String orderIdKey = "order-id";
+    private final String orderIdVal = "5C";
+
     private String annotatedPath;
     private String pathQuery;
     private Pattern pattern;
     private List<String> paramNames;
-    private String orderId = "5C";
-
     private PathPattern pathPattern;
 
     @Before
     public void setUp() {
         System.out.println("Setting Up");
-        annotatedPath = "/orders/{order-id}/add";
-        pathQuery = String.format("/orders/%s/add", orderId);
-        pattern = Pattern.compile("orders/(?<orderid>\\w+)/add");
-        paramNames = Collections.singletonList("order-id");
+        annotatedPath = String.format("/orders/{%s}", orderIdKey);
+        pathQuery = String.format("/orders/%s", orderIdVal);
+        pattern = Pattern.compile("/orders/(?<orderid>[^/]+)");
+        paramNames = Collections.singletonList(orderIdKey);
     }
 
     @After
     public void tearDown() {
         pathPattern = null;
+        System.out.println("Done");
     }
 
     @Test
@@ -48,6 +50,6 @@ public class PathPatternWithoutQueryParamTest {
         Assert.assertNotNull(match);
         Map<String, List<String>> paramMatches = match.getParamMatches();
         Assert.assertEquals(1, paramMatches.size());
-        Assert.assertEquals(orderId, paramMatches.get("order-id").get(0));
+        Assert.assertEquals(orderIdVal, paramMatches.get(orderIdKey).get(0));
     }
 }

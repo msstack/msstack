@@ -12,21 +12,27 @@ import java.util.regex.Pattern;
 
 public class PathPatternWithQueryParamTest {
 
+    private final String orderIdKey = "order-id", itemIdKey = "itemId", qtyKey = "qty", unitPriceKey = "unitPrice";
+    private final String orderIdVal = "5C", itemIdVal = "2", qtyVal = "3", unitPriceVal = "500";
+
     private String annotatedPath;
     private String pathQuery;
     private Pattern pattern;
     private List<String> paramNames;
-    private String orderId = "5C", itemId = "2", quantity = "3", unitPrice = "500";
-
     private PathPattern pathPattern;
 
     @Before
     public void setUp() {
         System.out.println("Setting Up");
-        annotatedPath = "/orders/{order-id}/add";
-        pathQuery = String.format("/orders/%s/add?itemId=%s&qty=%s&unitPrice=%s", orderId, itemId, quantity, unitPrice);
-        pattern = Pattern.compile("orders/(?<orderid>\\w+)/add");
-        paramNames = Arrays.asList("order-id", "item-id", "quantity", "unit-price");
+        annotatedPath = String.format("/orders/{%s}/items", orderIdKey);
+        pathQuery = String.format("/orders/%s/items?%s=%s&%s=%s&%s=%s",
+                orderIdVal,
+                itemIdKey, itemIdVal,
+                qtyKey, qtyVal,
+                unitPriceKey, unitPriceVal
+        );
+        pattern = Pattern.compile("/orders/(?<orderid>[^/]+)/items");
+        paramNames = Arrays.asList(orderIdKey, itemIdKey, qtyKey, unitPriceKey);
     }
 
     @After
@@ -37,7 +43,7 @@ public class PathPatternWithQueryParamTest {
     @Test
     public void fromAnnotatedPath() {
         pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
-        Assert.assertEquals(paramNames, pathPattern.getParamNames());
+        Assert.assertEquals(paramNames.subList(0, 1), pathPattern.getParamNames());
         Assert.assertEquals(pattern.pattern(), pathPattern.getPattern().pattern());
     }
 
@@ -48,9 +54,9 @@ public class PathPatternWithQueryParamTest {
         Assert.assertNotNull(match);
         Map<String, List<String>> paramMatches = match.getParamMatches();
         Assert.assertEquals(4, paramMatches.size());
-        Assert.assertEquals(orderId, paramMatches.get("order-id").get(0));
-        Assert.assertEquals(orderId, paramMatches.get("item-id").get(0));
-        Assert.assertEquals(orderId, paramMatches.get("quantity").get(0));
-        Assert.assertEquals(orderId, paramMatches.get("unit-price").get(0));
+        Assert.assertEquals(orderIdVal, paramMatches.get(orderIdKey).get(0));
+        Assert.assertEquals(itemIdVal, paramMatches.get(itemIdKey).get(0));
+        Assert.assertEquals(qtyVal, paramMatches.get(qtyKey).get(0));
+        Assert.assertEquals(unitPriceVal, paramMatches.get(unitPriceKey).get(0));
     }
 }

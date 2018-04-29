@@ -4,17 +4,20 @@ import javax.ws.rs.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This class parses the {@link Path} annotations, extract their path values, and generates regular expressions
  * that matches all URIs targeting this {@link Path}. Using this class, a URI can be determined be either matching
  * or not matching the given path.
+ * <p>
+ * TODO This class should ideally support URIs such as http://dev.brandstore.com/inventory/grocery;type=fruits/price;range=300/?offset=5&limit=10
  */
 public final class PathPattern {
 
-    private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w[\\-.\\w]*\\s*)(:(.+?))?}");
+    private static final Pattern PATHPARAM_PATTERN = Pattern.compile("\\{(\\w[\\-.\\w]*\\s*)(:(.+?))?}");
     private static final String F_SLASH_STR = "/";
-    private static final String PATH_PART_STR = "[^\\/]+";
+    private static final String PATH_PART_STR = "[^/]+";
     private static final String UNSAFE_REGEX = "[^\\w]";
 
     private List<String> paramNames = new ArrayList<>();
@@ -42,7 +45,7 @@ public final class PathPattern {
         StringBuilder pathRegexBuilder = new StringBuilder();
         Arrays.stream(canonicalPath.split(F_SLASH_STR)).forEach(part -> {
             pathRegexBuilder.append(F_SLASH_STR);
-            final Matcher paramMatcher = PARAM_PATTERN.matcher(part);
+            final Matcher paramMatcher = PATHPARAM_PATTERN.matcher(part);
             if (paramMatcher.matches()) {
                 // Param name
                 final String paramName = paramMatcher.group(1);
@@ -92,12 +95,26 @@ public final class PathPattern {
      * @return A {@link PathMatch} object or null, depending on whether the URI matched or not.
      */
     public PathMatch getPathMatch(String path) {
-        final Matcher pathMatcher = pattern.matcher(path);
-        if (pathMatcher.matches()) {
+        final String[] sections = path.split("\\?", 2);
+        // Process the Path section of URI
+        final String pathSection = sections[0];
+        final Matcher pathSectionMatcher = pattern.matcher(pathSection);
+        if (pathSectionMatcher.matches()) {
             final Map<String, List<String>> matchedParams = new HashMap<>();
             for (String paramName : paramNames) {
                 final String regexSafeParamName = paramName.replaceAll(UNSAFE_REGEX, "");
-                matchedParams.put(paramName, Collections.singletonList(pathMatcher.group(regexSafeParamName)));
+                // TODO Check if the section contains matrix parameters
+                matchedParams.put(paramName, Collections.singletonList(pathSectionMatcher.group(regexSafeParamName)));
+            }
+            if (sections.length == 2) {
+                // Get the QueryParams and add them to matchedParams
+                final String queryParamSection = sections[1];
+                Map<String, List<String>> queryParamMap = Arrays.stream(queryParamSection.split("&")).collect(
+                        Collectors.toMap(
+                                o -> o.split("=")[0],
+                                o -> Collections.singletonList(o.split("=")[1]))
+                );
+                matchedParams.putAll(queryParamMap);
             }
             return new PathMatch(matchedParams);
         }
