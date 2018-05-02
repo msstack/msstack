@@ -1,5 +1,7 @@
 package com.grydtech.msstack.microservices.netty.routing;
 
+import com.grydtech.msstack.core.Response;
+
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import java.lang.reflect.Field;
@@ -103,9 +105,10 @@ public final class MethodWrapper {
      *
      * @param params The parameters extracted from URIs
      */
-    public void invoke(Map<String, List<String>> params) {
+    public Response invoke(Map<String, List<String>> params) {
         // Prepare object
         final Object instance;
+        Response response = null;
         try {
             instance = destinationMethod.getDeclaringClass().newInstance();
             // For each field in object instance, inject either the value from params or null
@@ -114,7 +117,6 @@ public final class MethodWrapper {
                     field.set(instance, params.getOrDefault(s, null));
                 } catch (IllegalAccessException e) {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
-
                 }
             });
             // TODO after instantiation and injecting fields, cache it to increase the performance of subsequent requests
@@ -127,9 +129,10 @@ public final class MethodWrapper {
             );
 
             // Invoke the method on instance, with args
-            destinationMethod.invoke(instance, args);
+            response = (Response) destinationMethod.invoke(instance, args);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
+        return response;
     }
 }

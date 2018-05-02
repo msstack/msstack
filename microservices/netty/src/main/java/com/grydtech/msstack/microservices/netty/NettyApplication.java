@@ -3,7 +3,7 @@ package com.grydtech.msstack.microservices.netty;
 import com.grydtech.msstack.core.MicroserviceApplication;
 import com.grydtech.msstack.microservices.netty.routing.Router;
 
-public final class NettyApplication extends MicroserviceApplication {
+public class NettyApplication extends MicroserviceApplication {
 
     @Override
     public void start() throws Exception {
