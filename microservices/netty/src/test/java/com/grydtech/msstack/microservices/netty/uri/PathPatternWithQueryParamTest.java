@@ -33,6 +33,7 @@ public class PathPatternWithQueryParamTest {
         );
         pattern = Pattern.compile("/orders/(?<orderid>[^/]+)/items");
         paramNames = Arrays.asList(orderIdKey, itemIdKey, qtyKey, unitPriceKey);
+        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
     }
 
     @After
@@ -42,14 +43,12 @@ public class PathPatternWithQueryParamTest {
 
     @Test
     public void fromAnnotatedPath() {
-        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
         Assert.assertEquals(paramNames.subList(0, 1), pathPattern.getParamNames());
         Assert.assertEquals(pattern.pattern(), pathPattern.getPattern().pattern());
     }
 
     @Test
     public void getPathMatch() {
-        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
         PathMatch match = pathPattern.getPathMatch(pathQuery);
         Assert.assertNotNull(match);
         Map<String, List<String>> paramMatches = match.getParamMatches();

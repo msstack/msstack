@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 /**
  * This class is a wrapper for {@link Method} Class, and is used to automatically instantiate objects and inject
  * PathParams and QueryParams before invoking the method.
+ * TODO add support for HeaderParam and MatrixParam as well
  */
 public final class MethodWrapper {
 

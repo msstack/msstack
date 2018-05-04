@@ -32,7 +32,7 @@ public class PathMatchTest {
     }
 
     @Test
-    public void getParamMatches() {
+    public void testParamMatches() {
         Assert.assertEquals(paramMatches, pathMatch.getParamMatches());
     }
 }
