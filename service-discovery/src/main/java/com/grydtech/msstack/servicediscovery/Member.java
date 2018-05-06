@@ -9,7 +9,7 @@ public class Member {
     
     private final JsonObject data;
     
-    public Member(String group, String name, JsonObject data) {
+    public Member(String name, JsonObject data) {
         
         this.name = name;
         this.data = data;

@@ -40,16 +40,16 @@ public class MembershipProtocolCuratorImpl implements MembershipProtocol {
         client.start();
     }
     
-    public Member createMember(String memberName, String basePath, Map<String, Object> attributes) {
+    public Member createMember(String memberName, Map<String, Object> attributes) {
         JsonElement jsonElement = gson.toJsonTree(attributes);
         JsonObject jsonObject = (JsonObject) jsonElement;
-        return new Member(basePath, memberName, jsonObject);
+        return new Member(memberName, jsonObject);
     }
     
     @Override
     public Member registerMember(String memberName, String basePath, Map<String, Object> attributes) {
         try {
-            Member member = createMember(memberName, basePath, attributes);
+            Member member = createMember(memberName, attributes);
             JsonInstanceSerializer<Member> serializer = new JsonInstanceSerializer<>(Member.class);
             
             uriSpec = new UriSpec(member.getIp() + ":{" + member.getPort() + "}");
