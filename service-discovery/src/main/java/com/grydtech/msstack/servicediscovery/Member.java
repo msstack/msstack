@@ -7,15 +7,12 @@ public class Member {
     
     private final String name;
     
-    private final String group;
-    
     private final JsonObject data;
     
     public Member(String group, String name, JsonObject data) {
         
         this.name = name;
         this.data = data;
-        this.group = group;
     }
     
     public String getName() {
@@ -38,7 +35,7 @@ public class Member {
     }
     
     public String getGroup() {
-        JsonElement val = data.get("address.ip");
+        JsonElement val = data.get("group");
         return String.valueOf(val);
     }
     

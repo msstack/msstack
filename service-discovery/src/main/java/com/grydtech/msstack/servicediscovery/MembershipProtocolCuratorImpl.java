@@ -28,10 +28,6 @@ public class MembershipProtocolCuratorImpl implements MembershipProtocol {
     
     protected ServiceDiscovery<Member> serviceDiscovery;
     
-    private JsonElement jsonElement;
-    
-    private JsonObject jsonObject;
-    
     private Gson gson;
     
     private UriSpec uriSpec;
@@ -45,8 +41,8 @@ public class MembershipProtocolCuratorImpl implements MembershipProtocol {
     }
     
     public Member createMember(String memberName, String basePath, Map<String, Object> attributes) {
-        jsonElement = gson.toJsonTree(attributes);
-        jsonObject = (JsonObject) jsonElement;
+        JsonElement jsonElement = gson.toJsonTree(attributes);
+        JsonObject jsonObject = (JsonObject) jsonElement;
         return new Member(basePath, memberName, jsonObject);
     }
     
