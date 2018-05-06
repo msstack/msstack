@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class LoadBalancer extends MembershipProtocolCuratorImpl {
     
-    ServiceProvider<Member> serviceProvider;
+    private ServiceProvider<Member> serviceProvider;
     
     public LoadBalancer(String connectionString) {
         super(connectionString);

@@ -26,15 +26,15 @@ public class MembershipProtocolCuratorImpl implements MembershipProtocol {
     
     protected final CuratorFramework client;
     
-    JsonElement jsonElement;
+    protected ServiceDiscovery<Member> serviceDiscovery;
     
-    JsonObject jsonObject;
+    private JsonElement jsonElement;
+    
+    private JsonObject jsonObject;
     
     private Gson gson;
     
     private UriSpec uriSpec;
-    
-    protected ServiceDiscovery<Member> serviceDiscovery;
     
     private ServiceInstance<Member> serviceInstance;
     
