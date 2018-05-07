@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface MembershipProtocol {
 
-    Member registerMember(String memberName, Map<String, Object> attributes);
+    Member registerMember(String memberName, String basePath, Map<String, Object> attributes);
 
     Member updateMember(Member member);
 
