@@ -5,7 +5,6 @@ A brief description of feature implemented, or bug fixed
 - [ ] Bugfix (a non-breaking change that fixes an issue)
 - [ ] Feature (a non-breaking change that adds functionality)
 - [ ] Breaking Change (a feature/fix that could break existing functionality)
-- [ ] This change requires a documentation update
 
 ### Dependencies Added
 e.g:
@@ -18,7 +17,7 @@ e.g:
 ```
 
 ## Testing Procedure
-How has this been tested?
+How has this feature/fix been tested?
 
 ### Test coverage
 Mention the coverage of methods in code. e.g:
