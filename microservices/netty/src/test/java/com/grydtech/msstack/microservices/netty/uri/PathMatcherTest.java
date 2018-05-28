@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class PathPatternWithoutQueryParamTest {
+public class PathMatcherTest {
 
     private static final String orderIdKey = "order-id";
     private static final String orderIdVal = "5C";
@@ -19,7 +19,7 @@ public class PathPatternWithoutQueryParamTest {
     private String pathQuery;
     private Pattern pattern;
     private List<String> paramNames;
-    private PathPattern pathPattern;
+    private PathMatcher pathMatcher;
 
     @Before
     public void setUp() {
@@ -28,27 +28,27 @@ public class PathPatternWithoutQueryParamTest {
         pathQuery = String.format("/orders/%s", orderIdVal);
         pattern = Pattern.compile("/orders/(?<orderid>[^/]+)");
         paramNames = Collections.singletonList(orderIdKey);
-        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
+        pathMatcher = PathMatcher.fromAnnotatedPath(annotatedPath);
     }
 
     @After
     public void tearDown() {
-        pathPattern = null;
+        pathMatcher = null;
         System.out.println("Done");
     }
 
     @Test
     public void fromAnnotatedPath() {
-        Assert.assertEquals(paramNames, pathPattern.getParamNames());
-        Assert.assertEquals(pattern.pattern(), pathPattern.getPattern().pattern());
+        Assert.assertEquals(paramNames, pathMatcher.getPathParamNames());
+        Assert.assertEquals(pattern.pattern(), pathMatcher.getPathPattern().pattern());
     }
 
     @Test
     public void getPathMatch() {
-        PathMatch match = pathPattern.getPathMatch(pathQuery);
+        PathParameterMatch match = pathMatcher.getPathParameterMatch(pathQuery);
         Assert.assertNotNull(match);
-        Map<String, List<String>> paramMatches = match.getParamMatches();
+        Map<String, String> paramMatches = match.getParameterMatches();
         Assert.assertEquals(1, paramMatches.size());
-        Assert.assertEquals(orderIdVal, paramMatches.get(orderIdKey).get(0));
+        Assert.assertEquals(orderIdVal, paramMatches.get(orderIdKey));
     }
 }

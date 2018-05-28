@@ -1,26 +1,32 @@
 package com.grydtech.msstack.microservices.netty.routing;
 
-import com.grydtech.msstack.microservices.netty.uri.PathMatch;
+import com.grydtech.msstack.microservices.netty.uri.PathParameterMatch;
+
+import java.util.Map;
 
 /**
- * This class wraps the {@link PathMatch} and {@link MethodWrapper} that corresponds to a URI
+ * This class wraps the {@link PathParameterMatch} and {@link MethodWrapper} that corresponds to a URI
  */
 public final class RoutingResult {
 
-    private final PathMatch pathMatch;
-    private final MethodWrapper methodWrapper;
+    private final PathParameterMatch pathParameterMatch;
+    private final MethodWrapper method;
 
-    protected RoutingResult(PathMatch pathMatch, MethodWrapper methodWrapper) {
-        this.pathMatch = pathMatch;
-        this.methodWrapper = methodWrapper;
-    }
-
-    public PathMatch getPathMatch() {
-        return pathMatch;
+    protected RoutingResult(PathParameterMatch pathParameterMatch, MethodWrapper method) {
+        this.pathParameterMatch = pathParameterMatch;
+        this.method = method;
     }
 
     public MethodWrapper getMethod() {
-        return methodWrapper;
+        return method;
+    }
+
+    public Class<?> getArgumentClass() {
+        return method.getArgumentClass();
+    }
+
+    public Map<String, String> getPathParameters() {
+        return pathParameterMatch.getParameterMatches();
     }
 
 }

@@ -3,13 +3,11 @@ package com.grydtech.msstack.microservices.netty.uri;
 import javax.ws.rs.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This class parses the {@link Path} annotations, extract their path values, and generates regular expressions
@@ -18,31 +16,27 @@ import java.util.stream.Collectors;
  * <p>
  * TODO This class should ideally support URIs such as http://dev.brandstore.com/inventory/grocery;type=fruits/price;range=300/?offset=5&limit=10
  */
-public final class PathPattern {
+public final class PathMatcher {
 
     private static final Pattern PATHPARAM_PATTERN = Pattern.compile("\\{(\\w[\\-.\\w]*\\s*)(:(.+?))?}");
     private static final String F_SLASH_STR = "/";
     private static final String PATH_PART_STR = "[^/]+";
     private static final String UNSAFE_REGEX = "[^\\w]";
 
-    private List<String> paramNames = new ArrayList<>();
-    private Pattern pattern;
+    private List<String> pathParamNames = new ArrayList<>();
+    private Pattern pathPattern;
 
-    private PathPattern() {
+    private PathMatcher() {
 
     }
 
-    private PathPattern(Pattern pattern, List<String> paramNames) {
-        this.pattern = pattern;
-        this.paramNames = paramNames;
+    public static PathMatcher fromAnnotatedPath(String annotatedPath) {
+        return new PathMatcher().setAnnotatedPath(annotatedPath);
     }
 
-    public static PathPattern fromAnnotatedPath(String annotatedPath) {
-        return new PathPattern().setAnnotatedPath(annotatedPath);
-    }
-
-    private PathPattern setAnnotatedPath(String annotatedPath) {
+    private PathMatcher setAnnotatedPath(String annotatedPath) {
         // Canonicalize Path Value. Resulting path will look like "/path/to/foo"
+        // No need to consider query parameters, since this method is used only for endpoints defined in code
         String canonicalPath = String.format("/%s/", annotatedPath).replaceAll("/+", F_SLASH_STR);
         canonicalPath = canonicalPath.substring(1, canonicalPath.length() - 1);
 
@@ -62,7 +56,7 @@ public final class PathPattern {
                         paramMatcher.group(3) != null ? paramMatcher.group(3) : PATH_PART_STR
                 );
                 // Add Parameter Name to List
-                paramNames.add(paramName);
+                pathParamNames.add(paramName);
                 pathRegexBuilder.append(paramPattern);
             } else {
                 pathRegexBuilder.append(part);
@@ -70,7 +64,7 @@ public final class PathPattern {
         });
 
         // Update the Pattern
-        this.pattern = Pattern.compile(pathRegexBuilder.toString());
+        this.pathPattern = Pattern.compile(pathRegexBuilder.toString());
         return this;
     }
 
@@ -83,60 +77,51 @@ public final class PathPattern {
             return false;
         }
 
-        PathPattern that = (PathPattern) o;
+        PathMatcher that = (PathMatcher) o;
 
-        if (!paramNames.equals(that.paramNames)) {
+        if (!pathParamNames.equals(that.pathParamNames)) {
             return false;
         }
-        return pattern.equals(that.pattern);
+        return pathPattern.equals(that.pathPattern);
     }
 
     @Override
     public int hashCode() {
-        int result = paramNames.hashCode();
-        result = 31 * result + pattern.hashCode();
+        int result = pathParamNames.hashCode();
+        result = 31 * result + pathPattern.hashCode();
         return result;
     }
 
     /**
-     * Checks whether a given URI matches this {@link PathPattern}.
-     * If it matches, a {@link PathMatch} object is returned. Else null is returned.
+     * Checks whether a given URI matches this {@link PathMatcher}.
+     * If it matches, a {@link PathParameterMatch} object is returned. Else null is returned.
      *
-     * @param path The URI to match this {@link PathPattern} against
-     * @return A {@link PathMatch} object or null, depending on whether the URI matched or not.
+     * @param path The URI to match this {@link PathMatcher} against
+     * @return A {@link PathParameterMatch} object or null, depending on whether the URI matched or not.
      */
-    public PathMatch getPathMatch(String path) {
+    public PathParameterMatch getPathParameterMatch(String path) {
         final String[] sections = path.split("\\?", 2);
         // Process the Path section of URI
         final String pathSection = sections[0];
-        final Matcher pathSectionMatcher = pattern.matcher(pathSection);
+        final Matcher pathSectionMatcher = pathPattern.matcher(pathSection);
         if (pathSectionMatcher.matches()) {
-            final Map<String, List<String>> matchedParams = new HashMap<>();
-            for (String paramName : paramNames) {
+            final Map<String, String> matchedParams = new HashMap<>();
+            // For all Params defined in the PathMatcher, assign values from Path
+            for (String paramName : pathParamNames) {
                 final String regexSafeParamName = paramName.replaceAll(UNSAFE_REGEX, "");
-                // TODO Check if the section contains matrix parameters
-                matchedParams.put(paramName, Collections.singletonList(pathSectionMatcher.group(regexSafeParamName)));
+                // TODO Check if the section contains matrix parameters (later)
+                matchedParams.put(paramName, pathSectionMatcher.group(regexSafeParamName));
             }
-            if (sections.length == 2) {
-                // Get the QueryParams and add them to matchedParams
-                final String queryParamSection = sections[1];
-                Map<String, List<String>> queryParamMap = Arrays.stream(queryParamSection.split("&")).collect(
-                        Collectors.toMap(
-                                o -> o.split("=")[0],
-                                o -> Collections.singletonList(o.split("=")[1]))
-                );
-                matchedParams.putAll(queryParamMap);
-            }
-            return new PathMatch(matchedParams);
+            return new PathParameterMatch(matchedParams);
         }
         return null;
     }
 
-    public List<String> getParamNames() {
-        return paramNames;
+    public List<String> getPathParamNames() {
+        return pathParamNames;
     }
 
-    public Pattern getPattern() {
-        return pattern;
+    public Pattern getPathPattern() {
+        return pathPattern;
     }
 }

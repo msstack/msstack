@@ -5,41 +5,40 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
-public class PathMatchWithSingleParamTest {
+public class PathParameterMatchWithSingleParamTest {
 
     private static final String orderId = "order-id";
     private static final String orderIdVal = "453B-289";
 
-    private static PathPattern pathPattern;
-    private static PathMatch pathMatch;
+    private static PathMatcher pathPattern;
+    private static PathParameterMatch pathParameterMatch;
 
     @Before
     public void setUp() {
         System.out.println("Setting Up");
-        pathPattern = PathPattern.fromAnnotatedPath(String.format("/orders/{%s}/create", orderId));
-        pathMatch = pathPattern.getPathMatch(String.format("/orders/%s/create", orderIdVal));
+        pathPattern = PathMatcher.fromAnnotatedPath(String.format("/orders/{%s}/create", orderId));
+        pathParameterMatch = pathPattern.getPathParameterMatch(String.format("/orders/%s/create", orderIdVal));
     }
 
     @After
     public void tearDown() {
         pathPattern = null;
-        pathMatch = null;
+        pathParameterMatch = null;
         System.out.println("Done");
     }
 
     @Test
     public void testPathMatches() {
-        Assert.assertNotNull(pathMatch);
+        Assert.assertNotNull(pathParameterMatch);
     }
 
     @Test
     public void testParamMatches() {
         try {
-            Assert.assertNotNull(pathMatch);
-            Map<String, List<String>> paramMatches = pathMatch.getParamMatches();
+            Assert.assertNotNull(pathParameterMatch);
+            Map<String, String> paramMatches = pathParameterMatch.getParameterMatches();
             Assert.assertTrue(paramMatches.size() == 1
                     && paramMatches.containsKey(orderId)
                     && paramMatches.get(orderId).contains(orderIdVal)

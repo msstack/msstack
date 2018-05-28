@@ -36,7 +36,6 @@ public final class JsonConverter {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
-
         return null;
     }
 }

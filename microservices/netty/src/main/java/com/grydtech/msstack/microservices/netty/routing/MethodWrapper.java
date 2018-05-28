@@ -5,18 +5,14 @@ import javax.ws.rs.QueryParam;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class is a wrapper for {@link Method} Class, and is used to automatically instantiate objects and inject
+ * This class is a wrapper for {@link Method} Class, and is used to automatically instantiate objects and injectParameters
  * PathParams and QueryParams before invoking the method.
  * TODO add support for HeaderParam and MatrixParam as well
  */
@@ -30,19 +26,15 @@ public final class MethodWrapper {
     private final Method destinationMethod;
 
     /**
-     * List of Param names in the order of presence in {@code destinationMethod}
-     */
-    private final List<String> methodSignature;
-
-    /**
      * Mapping from Param ({@link PathParam} or {@link QueryParam}) name to the {@link Field} annotated with it
      */
-    private final Map<String, Field> fieldMap;
+    private final Map<String, Field> classFieldMap;
+
 
     /**
-     * Mapping from Param ({@link PathParam} or {@link QueryParam}) name to the {@link Type} of Parameter
+     * Type of Class that the Method expects
      */
-    private final Map<String, Class> paramMap;
+    private final Class<?> argumentClass;
 
     /**
      * Constructor for {@link MethodWrapper}
@@ -51,17 +43,20 @@ public final class MethodWrapper {
      */
     protected MethodWrapper(Method destinationMethod) {
         this.destinationMethod = destinationMethod;
-        // Initialize the Maps and Lists
-        methodSignature = new LinkedList<>();
-        fieldMap = new HashMap<>();
-        paramMap = new HashMap<>();
-        // Build the Maps
+        this.argumentClass = destinationMethod.getParameterTypes()[0];
+        classFieldMap = new HashMap<>();
         this.buildFieldMap();
-        this.buildAnnotatedTypeMap();
     }
 
     /**
-     * Add Fields annotated with either {@link PathParam} or {@link QueryParam} to {@code fieldMap}
+     * @return Argument class that the method expects
+     */
+    protected Class<?> getArgumentClass() {
+        return argumentClass;
+    }
+
+    /**
+     * Add Fields annotated with {@link PathParam} to {@code classFieldMap}
      */
     private void buildFieldMap() {
         Arrays.stream(destinationMethod.getDeclaringClass().getDeclaredFields())
@@ -70,31 +65,8 @@ public final class MethodWrapper {
                     final String param;
                     if (field.isAnnotationPresent(PathParam.class)) {
                         param = field.getDeclaredAnnotation(PathParam.class).value();
-                        fieldMap.put(param, field);
-                    } else if (field.isAnnotationPresent(QueryParam.class)) {
-                        param = field.getDeclaredAnnotation(QueryParam.class).value();
-                        fieldMap.put(param, field);
+                        classFieldMap.put(param, field);
                     }
-                });
-    }
-
-    /**
-     * Add Method Parameters annotated with either {@link PathParam} or {@link QueryParam} to {@code fieldMap}
-     */
-    private void buildAnnotatedTypeMap() {
-        Arrays.stream(destinationMethod.getParameters())
-                .sequential()
-                .forEach(parameter -> {
-                    final String param;
-                    if (parameter.isAnnotationPresent(PathParam.class)) {
-                        param = parameter.getDeclaredAnnotation(PathParam.class).value();
-                    } else if (parameter.isAnnotationPresent(QueryParam.class)) {
-                        param = parameter.getDeclaredAnnotation(QueryParam.class).value();
-                    } else {
-                        return;
-                    }
-                    methodSignature.add(param);
-                    paramMap.put(param, parameter.getType());
                 });
     }
 
@@ -102,42 +74,59 @@ public final class MethodWrapper {
     /**
      * Execute the wrapped {@link Method} with the given parameters
      *
-     * @param params The parameters extracted from URIs
+     * @param dataObject The content extracted from URIs
      */
-    public Object invoke(Map<String, List<String>> params) {
-        // Prepare object
-        final Object instance;
+    public Object invoke(Object dataObject) {
+
+        final Class<?> methodDeclaringClass = destinationMethod.getDeclaringClass();
+        final Class<?> dataObjectClass = dataObject.getClass();
+
+        // Declare response object
         Object response = null;
+
         try {
-            Class destinationClass = destinationMethod.getDeclaringClass();
-            instance = destinationClass.newInstance();
-            // For each field in object instance, inject either the value from params or null
-            fieldMap.forEach((s, field) -> {
+            // Instantiate the class instance
+            final Object classInstance = methodDeclaringClass.newInstance();
+
+            // For each CLASS FIELD, injectParameters available value from params
+            classFieldMap.forEach((fieldName, field) -> {
                 try {
-                    field.set(instance, params.getOrDefault(s, null));
+                    field.setAccessible(true);
+                    // Find field with name 's' from the content object, and assign to destination object
+                    Field declaredField = dataObjectClass.getDeclaredField(fieldName);
+                    declaredField.setAccessible(true);
+                    Object dataValue = declaredField.get(dataObject);
+                    field.set(classInstance, dataValue);
                 } catch (IllegalAccessException e) {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                } catch (NoSuchFieldException e) {
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                 }
             });
-            // TODO after instantiation and injecting fields, cache it to increase the performance of subsequent requests
+            // TODO after instantiation and injecting fields, cache it to increase the performance of future requests
 
-            // Prepare the method arguments
-            final List<Object> args = new ArrayList<>();
-            // For each argument in method, inject either the value from params or null
-            methodSignature.forEach(s -> {
-                if (params.containsKey(s)) {
-                    Class targetClass = paramMap.get(s);
-                    Object sourceParam = params.get(s).get(0);
-                    // TODO cannot cast to most types directly. Write methods to handle casts for specific types
-                    Object targetParam = targetClass.cast(sourceParam);
-                    args.add(targetParam);
-                } else {
-                    args.add(null);
+            // For each argument in method, injectParameters either the value from params or null
+            // Method has only one parameter, and that parameter contains all variables.
+            // Create an instance of that object, and injectParameters all available fields with values from map
+            Object argInstance = argumentClass.newInstance();
+
+            // Assign field values from dataObject to argInstance
+            // IMPORTANT ASSUMPTION - Data Object contains the field names of Arg Object. Others are ignored
+            Arrays.stream(dataObjectClass.getDeclaredFields()).parallel().forEach(field -> {
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                try {
+                    Field declaredField = argumentClass.getDeclaredField(fieldName);
+                    declaredField.setAccessible(true);
+                    declaredField.set(argInstance, field.get(dataObject));
+                } catch (IllegalAccessException | NoSuchFieldException e) {
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                 }
             });
 
             // Invoke the method on instance, with args
-            response = destinationMethod.invoke(instance, args.toArray());
+            response = destinationMethod.invoke(classInstance, argInstance);
+
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
