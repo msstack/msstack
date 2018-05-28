@@ -1,11 +1,15 @@
 ## Description
-Brief description about feature/issue implemented or bug fixed.
+A brief description of feature implemented, or bug fixed
 
-### Dependencies added
+### Type of Change
+- [ ] Bugfix (a non-breaking change that fixes an issue)
+- [ ] Feature (a non-breaking change that adds functionality)
+- [ ] Breaking Change (a feature/fix that could break existing functionality)
+- [ ] This change requires a documentation update
+
+### Dependencies Added
+e.g:
 ```
-Please add dependencies here
-example dependency
-=================================
 <dependency>
     <groupId>junit</groupId>
     <artifactId>junit</artifactId>
@@ -13,31 +17,24 @@ example dependency
 </dependency>
 ```
 
-## Type of change
-Add 'X' in relevant boxes to mark them
+## Testing Procedure
+How has this been tested?
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] This change requires a documentation update
-
-## How Has This Been Tested?
-Description about the testing.
 ### Test coverage
-Indicate about the test coverage. Add 'X' in relevant boxes to mark them. 
-- [ ] MethodA // not covered
-- [X] MethodB // covered
+Mention the coverage of methods in code. e.g:
+- [ ] MethodA
+- [X] MethodB
 
 ### Test Configuration
-* OS version: your os version here
-* SDK: JDK version (eg: JDK-8)
+* OS: (e.g: Ubuntu 18.04)
+* SDK: (e.g: OpenJDK 8)
 
-## Checklist:
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published in downstream modules
+## Checklist
+- [ ] My code follows the style guidelines for this project.
+- [ ] I have performed a self-review of my code.
+- [ ] I have commented my code, particularly in hard-to-understand areas.
+- [ ] I have updated the documentation to reflect my changes.
+- [ ] My changes do not generate new warnings.
+- [ ] I have added tests to confirm that my fix is effective / my feature works.
+- [ ] New and existing unit tests pass with my changes.
+- [ ] Dependent changes have been merged and published in downstream modules.
