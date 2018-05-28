@@ -22,4 +22,5 @@ public final class RoutingResult {
     public MethodWrapper getMethod() {
         return methodWrapper;
     }
+
 }

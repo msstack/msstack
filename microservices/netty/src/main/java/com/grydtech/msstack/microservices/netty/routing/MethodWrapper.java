@@ -1,7 +1,5 @@
 package com.grydtech.msstack.microservices.netty.routing;
 
-import com.grydtech.msstack.core.Response;
-
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import java.lang.reflect.Field;
@@ -20,6 +18,7 @@ import java.util.logging.Logger;
 /**
  * This class is a wrapper for {@link Method} Class, and is used to automatically instantiate objects and inject
  * PathParams and QueryParams before invoking the method.
+ * TODO add support for HeaderParam and MatrixParam as well
  */
 public final class MethodWrapper {
 
@@ -43,7 +42,7 @@ public final class MethodWrapper {
     /**
      * Mapping from Param ({@link PathParam} or {@link QueryParam}) name to the {@link Type} of Parameter
      */
-    private final Map<String, Type> paramMap;
+    private final Map<String, Class> paramMap;
 
     /**
      * Constructor for {@link MethodWrapper}
@@ -105,12 +104,13 @@ public final class MethodWrapper {
      *
      * @param params The parameters extracted from URIs
      */
-    public Response invoke(Map<String, List<String>> params) {
+    public Object invoke(Map<String, List<String>> params) {
         // Prepare object
         final Object instance;
-        Response response = null;
+        Object response = null;
         try {
-            instance = destinationMethod.getDeclaringClass().newInstance();
+            Class destinationClass = destinationMethod.getDeclaringClass();
+            instance = destinationClass.newInstance();
             // For each field in object instance, inject either the value from params or null
             fieldMap.forEach((s, field) -> {
                 try {
@@ -124,12 +124,20 @@ public final class MethodWrapper {
             // Prepare the method arguments
             final List<Object> args = new ArrayList<>();
             // For each argument in method, inject either the value from params or null
-            methodSignature.forEach(s ->
-                    args.add(params.containsKey(s) ? paramMap.get(s).getClass().cast(params.get(s).get(0)) : null)
-            );
+            methodSignature.forEach(s -> {
+                if (params.containsKey(s)) {
+                    Class targetClass = paramMap.get(s);
+                    Object sourceParam = params.get(s).get(0);
+                    // TODO cannot cast to most types directly. Write methods to handle casts for specific types
+                    Object targetParam = targetClass.cast(sourceParam);
+                    args.add(targetParam);
+                } else {
+                    args.add(null);
+                }
+            });
 
             // Invoke the method on instance, with args
-            response = (Response) destinationMethod.invoke(instance, args);
+            response = destinationMethod.invoke(instance, args.toArray());
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }

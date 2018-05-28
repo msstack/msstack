@@ -28,6 +28,7 @@ public class PathPatternWithoutQueryParamTest {
         pathQuery = String.format("/orders/%s", orderIdVal);
         pattern = Pattern.compile("/orders/(?<orderid>[^/]+)");
         paramNames = Collections.singletonList(orderIdKey);
+        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
     }
 
     @After
@@ -38,14 +39,12 @@ public class PathPatternWithoutQueryParamTest {
 
     @Test
     public void fromAnnotatedPath() {
-        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
         Assert.assertEquals(paramNames, pathPattern.getParamNames());
         Assert.assertEquals(pattern.pattern(), pathPattern.getPattern().pattern());
     }
 
     @Test
     public void getPathMatch() {
-        pathPattern = PathPattern.fromAnnotatedPath(annotatedPath);
         PathMatch match = pathPattern.getPathMatch(pathQuery);
         Assert.assertNotNull(match);
         Map<String, List<String>> paramMatches = match.getParamMatches();

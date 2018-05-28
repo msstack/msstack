@@ -47,7 +47,7 @@ final class FullHttpRequestHandler extends SimpleChannelInboundHandler<FullHttpR
         if (routeResult != null) {
             args.putAll(routeResult.getPathMatch().getParamMatches());
             args.putAll(queryParameters);
-            response = routeResult.getMethod().invoke(args);
+            response = (Response) routeResult.getMethod().invoke(args);
         }
 
         // Set response parameters
