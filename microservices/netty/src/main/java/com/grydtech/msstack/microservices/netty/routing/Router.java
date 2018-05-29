@@ -1,8 +1,8 @@
 package com.grydtech.msstack.microservices.netty.routing;
 
 import com.grydtech.msstack.core.GenericHandler;
-import com.grydtech.msstack.microservices.netty.uri.PathParameterMatch;
 import com.grydtech.msstack.microservices.netty.uri.PathMatcher;
+import com.grydtech.msstack.microservices.netty.uri.PathParameterMatch;
 import com.grydtech.msstack.microservices.netty.util.Reflector;
 import io.netty.handler.codec.http.HttpMethod;
 
