@@ -22,7 +22,7 @@ public class KafkaEventBroker extends EventBroker {
 
     public KafkaEventBroker() {
         Properties props = new Properties();
-        props.put("run.servers", "localhost:9092");
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("acks", "all");
         props.put("retries", 0);
         props.put("batch.size", 16384);
