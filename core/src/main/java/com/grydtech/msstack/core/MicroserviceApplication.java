@@ -1,34 +1,81 @@
 package com.grydtech.msstack.core;
 
-import com.grydtech.msstack.common.util.ClassPathScanner;
-import com.grydtech.msstack.core.annotations.Handler;
-import com.grydtech.msstack.core.annotations.Microservice;
+import com.grydtech.msstack.core.component.EventBroker;
+import com.grydtech.msstack.core.component.RequestBroker;
+import com.grydtech.msstack.core.handler.EventHandler;
+import com.grydtech.msstack.core.handler.RequestHandler;
+import com.grydtech.msstack.util.ClassPathScanner;
 
-import javax.ws.rs.core.Application;
-import java.util.HashSet;
 import java.util.Set;
 
-public abstract class MicroserviceApplication extends Application {
+/**
+ * Base class for a Microservice Application created using MSStack.
+ * All applications should have one class that inherits this in the module root
+ */
+public abstract class MicroserviceApplication {
 
-    public Set<Class<? extends GenericHandler>> getHandlers() {
+    private final Set<Class<? extends RequestHandler>> requestHandlers;
+    private final Set<Class<? extends EventHandler>> eventHandlers;
+
+    public MicroserviceApplication() {
         ClassPathScanner classPathScanner = new ClassPathScanner(getClass().getPackage().getName());
-        Set<Class<? extends GenericHandler>> handlers = new HashSet<>();
-        classPathScanner.getTypesAnnotatedWith(Handler.class).forEach(c -> {
-            if (GenericHandler.class.isAssignableFrom(c)) {
-                handlers.add(c.asSubclass(GenericHandler.class));
-            }
-        });
-
-        return handlers;
+        eventHandlers = classPathScanner.getSubTypesOf(EventHandler.class);
+        requestHandlers = classPathScanner.getSubTypesOf(RequestHandler.class);
     }
 
-    protected int getPort() {
-        return Integer.parseInt(getClass().getAnnotation(Microservice.class).port());
+    /**
+     * Returns the set of request handler classes in the classpath
+     *
+     * @return Set of Request Handler Classes
+     */
+    public final Set<Class<? extends RequestHandler>> getRequestHandlers() {
+        return requestHandlers;
     }
 
-    protected String getHost() {
-        return getClass().getAnnotation(Microservice.class).host();
+    /**
+     * Returns the set of event handler classes in the classpath
+     *
+     * @return Set of Event Handler Classes
+     */
+    public final Set<Class<? extends EventHandler>> getEventHandlers() {
+        return eventHandlers;
     }
 
-    public abstract void start() throws Exception;
+    /**
+     * Runs the Microservice
+     *
+     * @throws Exception If an exception occurs that is not handled within the framework
+     */
+    public final void run() throws Exception {
+
+        // Brokers
+        final EventBroker eventBroker = EventBroker.getInstance();
+        final RequestBroker requestBroker = RequestBroker.getInstance();
+
+        // Register Event Handlers
+        this.getEventHandlers().forEach(
+                handler -> {
+                    eventBroker.subscribe(handler);
+                    System.out.printf("Subscribed Event Handler > %s", handler.getSimpleName());
+                }
+        );
+
+        // Register Request Handlers
+        this.getRequestHandlers().forEach(
+                handler -> {
+                    requestBroker.subscribe(handler);
+                    System.out.printf("Subscribed Request Handler > %s", handler.getSimpleName());
+                }
+        );
+
+        // Start Event Broker
+        EventBroker.getInstance().start();
+
+        // Start Request Broker
+        RequestBroker.getInstance().start();
+
+        // Register Service
+
+        // Optional
+    }
 }

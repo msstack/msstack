@@ -19,20 +19,20 @@
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.microservices</groupId>
+            <groupId>com.grydtech.msstack.request</groupId>
             <artifactId>jaxrs</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.microservices</groupId>
+            <groupId>com.grydtech.msstack.request</groupId>
             <artifactId>jersey</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.microservices</groupId>
-            <artifactId>vertx</artifactId>
+            <groupId>com.grydtech.msstack.request</groupId>
+            <artifactId>netty</artifactId>
             <version>${project.version}</version>
         </dependency>
 

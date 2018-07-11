@@ -69,7 +69,7 @@ public class MembershipProtocolCuratorImplTest extends TestCase {
         attributes.put("address.ip", "localhost");
         attributes.put("address.port", 7182);
         String expResult = "sampleName";
-        Member result = instance.registerMember(memberName,"/services", attributes);
+        Member result = instance.registerMember(memberName, "/services", attributes);
         System.out.println(result.getName());
         assertEquals(expResult, result.getName());
     }
