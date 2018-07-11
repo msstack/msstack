@@ -5,9 +5,11 @@ import com.grydtech.msstack.core.annotation.FrameworkComponent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.logging.Logger;
 
 public final class DependencyInjectorUtils {
 
+    private static final Logger LOGGER = Logger.getLogger(DependencyInjectorUtils.class.toGenericString());
     private static final ClassPathScanner scanner = new ClassPathScanner("com.grydtech.msstack");
 
     private DependencyInjectorUtils() {
@@ -34,7 +36,7 @@ public final class DependencyInjectorUtils {
             field.set(null, implementedClassInstance);
         }
         field.setAccessible(isFieldAccessible);
-        System.out.printf("Injected - %s", field.getType().toGenericString());
+        LOGGER.info(String.format("Injected - %s", field.getType().toGenericString()));
     }
 
     /**

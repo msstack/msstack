@@ -13,16 +13,18 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @FrameworkComponent
 @Server
 public class KafkaEventBroker extends EventBroker {
 
+    private static final Logger LOGGER = Logger.getLogger(KafkaEventBroker.class.toGenericString());
     private final Producer<String, String> producer;
 
     public KafkaEventBroker() {
         Properties props = new Properties();
-        props.put("run.servers", "localhost:9092");
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("acks", "all");
         props.put("retries", 0);
         props.put("batch.size", 16384);
@@ -44,21 +46,21 @@ public class KafkaEventBroker extends EventBroker {
 
     @Override
     public void subscribe(Class<? extends EventHandler> handlerClass) {
-        throw new UnsupportedOperationException();
+        LOGGER.info(String.format("Subscribed to KafkaEventBroker -%s", handlerClass.getName()));
     }
 
     @Override
     public void subscribeAll(Set<Class<? extends EventHandler>> subscriberSet) {
-        throw new UnsupportedOperationException();
+        LOGGER.info(String.format("Subscribed to KafkaEventBroker -%s", subscriberSet.toString()));
     }
 
     @Override
     public void unsubscribe(Class<? extends EventHandler> handlerClass) {
-        throw new UnsupportedOperationException();
+        LOGGER.info(String.format("Unsubscribed from KafkaEventBroker -%s", handlerClass.getName()));
     }
 
     @Override
     public void start() {
-        throw new UnsupportedOperationException();
+        LOGGER.info("KafkaEventBroker Started");
     }
 }

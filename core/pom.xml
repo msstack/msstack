@@ -15,8 +15,6 @@
 
     <properties>
         <jaxrs.version>2.1</jaxrs.version>
-        <!--ToDo: core depend on guava need to remote that-->
-        <guava.version>24.1-jre</guava.version>
     </properties>
 
     <dependencies>
@@ -31,13 +29,6 @@
             <groupId>com.grydtech.msstack</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
