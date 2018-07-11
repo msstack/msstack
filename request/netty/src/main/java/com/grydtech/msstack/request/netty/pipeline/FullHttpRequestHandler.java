@@ -3,11 +3,18 @@ package com.grydtech.msstack.request.netty.pipeline;
 import com.grydtech.msstack.exception.RouteNotFoundException;
 import com.grydtech.msstack.request.netty.routing.Router;
 import com.grydtech.msstack.request.netty.routing.RoutingResult;
-import com.grydtech.msstack.request.netty.util.Injector;
+import com.grydtech.msstack.request.netty.util.InjectionUtils;
 import com.grydtech.msstack.util.JsonConverter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.nio.charset.Charset;
 
@@ -38,8 +45,8 @@ public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<Fu
 
         if (argObject != null) {
             // AutoInjected query parameters and path parameters to targetObject
-            Injector.injectParameters(argObject, queryStringDecoder.parameters());
-            Injector.injectParameters(argObject, routeResult.getPathParameters());
+            InjectionUtils.injectParameters(argObject, queryStringDecoder.parameters());
+            InjectionUtils.injectParameters(argObject, routeResult.getPathParameters());
             // Invoke method with argObject, and get the result
             methodResult = routeResult.getMethod().invoke(argObject);
         }

@@ -4,7 +4,12 @@ import com.grydtech.msstack.request.netty.routing.MethodWrapper;
 import com.grydtech.msstack.request.netty.util.UriUtils;
 
 import javax.ws.rs.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,11 +36,11 @@ public final class Endpoint {
     }
 
     private void compilePath(String path) {
-        path = UriUtils.canonicalize(path);
+        String canonicalPath = UriUtils.canonicalize(path);
 
         // Build a Regex from pattern
         StringBuilder pathRegexBuilder = new StringBuilder();
-        Arrays.stream(path.split("/")).forEach(part -> {
+        Arrays.stream(canonicalPath.split("/")).forEach(part -> {
             pathRegexBuilder.append("/");
             final Matcher paramMatcher = PATHPARAM_PATTERN.matcher(part);
             if (paramMatcher.matches()) {

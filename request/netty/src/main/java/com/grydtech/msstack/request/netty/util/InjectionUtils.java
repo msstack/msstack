@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-public final class Injector {
+public final class InjectionUtils {
 
-    private Injector() {
+    private InjectionUtils() {
 
     }
 

@@ -6,11 +6,11 @@ import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public final class DependencyInjector {
+public final class DependencyInjectorUtils {
 
     private static final ClassPathScanner scanner = new ClassPathScanner("com.grydtech.msstack");
 
-    private DependencyInjector() {
+    private DependencyInjectorUtils() {
 
     }
 

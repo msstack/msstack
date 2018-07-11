@@ -1,9 +1,9 @@
 package com.grydtech.msstack.transport.kafka;
 
 import com.google.common.base.CaseFormat;
+import com.grydtech.msstack.core.Event;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.annotation.Server;
-import com.grydtech.msstack.core.Event;
 import com.grydtech.msstack.core.component.EventBroker;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.util.JsonConverter;
@@ -44,21 +44,21 @@ public class KafkaEventBroker extends EventBroker {
 
     @Override
     public void subscribe(Class<? extends EventHandler> handlerClass) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void subscribeAll(Set<Class<? extends EventHandler>> subscriberSet) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void unsubscribe(Class<? extends EventHandler> handlerClass) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void start() {
-
+        throw new UnsupportedOperationException();
     }
 }

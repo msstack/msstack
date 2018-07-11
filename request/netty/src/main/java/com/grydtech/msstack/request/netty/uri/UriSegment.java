@@ -91,8 +91,7 @@ public class UriSegment {
         if (paramId != null ? !paramId.equals(that.paramId) : that.paramId != null) return false;
         if (paramClass != null ? !paramClass.equals(that.paramClass) : that.paramClass != null) return false;
         if (paramField != null ? !paramField.equals(that.paramField) : that.paramField != null) return false;
-        if (paramMethod != null ? !paramMethod.equals(that.paramMethod) : that.paramMethod != null) return false;
-        return segments != null ? segments.equals(that.segments) : that.segments == null;
+        return paramMethod != null ? paramMethod.equals(that.paramMethod) : that.paramMethod == null;
     }
 
     @Override
@@ -102,7 +101,6 @@ public class UriSegment {
         result = 31 * result + (paramClass != null ? paramClass.hashCode() : 0);
         result = 31 * result + (paramField != null ? paramField.hashCode() : 0);
         result = 31 * result + (paramMethod != null ? paramMethod.hashCode() : 0);
-        result = 31 * result + (segments != null ? segments.hashCode() : 0);
         return result;
     }
 
@@ -110,9 +108,10 @@ public class UriSegment {
     public String toString() {
         return "UriSegment{" +
                 "pattern=" + pattern +
-                ", paramField=" + paramField +
                 ", paramId='" + paramId + '\'' +
-                ", segments=" + segments +
+                ", paramClass=" + paramClass +
+                ", paramField=" + paramField +
+                ", paramMethod=" + paramMethod +
                 '}';
     }
 }
