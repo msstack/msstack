@@ -3,6 +3,7 @@ package com.grydtech.msstack.util;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.Set;
 
 public class ClassPathScanner {
@@ -24,6 +25,7 @@ public class ClassPathScanner {
     public <T> T getInstance(Class<T> tClass) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         return getSubTypesOf(tClass)
                 .stream()
+                .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers()))
                 .findFirst()
                 .orElseThrow(ClassNotFoundException::new)
                 .newInstance();
