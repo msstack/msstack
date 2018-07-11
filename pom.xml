@@ -11,7 +11,7 @@
     <modules>
         <module>common</module>
         <module>core</module>
-        <module>microservices</module>
+        <module>request</module>
         <module>service-discovery</module>
         <module>transport</module>
         <module>reports</module>
