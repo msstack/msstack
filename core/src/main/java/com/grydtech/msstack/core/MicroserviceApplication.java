@@ -53,20 +53,10 @@ public abstract class MicroserviceApplication {
         final RequestBroker requestBroker = RequestBroker.getInstance();
 
         // Register Event Handlers
-        this.getEventHandlers().forEach(
-                handler -> {
-                    eventBroker.subscribe(handler);
-                    System.out.printf("Subscribed Event Handler > %s", handler.getSimpleName());
-                }
-        );
+        this.getEventHandlers().forEach(eventBroker::subscribe);
 
         // Register Request Handlers
-        this.getRequestHandlers().forEach(
-                handler -> {
-                    requestBroker.subscribe(handler);
-                    System.out.printf("Subscribed Request Handler > %s", handler.getSimpleName());
-                }
-        );
+        this.getRequestHandlers().forEach(requestBroker::subscribe);
 
         // Start Event Broker
         EventBroker.getInstance().start();
