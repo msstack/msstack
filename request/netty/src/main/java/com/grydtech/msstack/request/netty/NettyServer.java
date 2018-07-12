@@ -35,8 +35,8 @@ final class NettyServer {
 
         serverBootstrap.group(workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .handler(getChannelHandler());
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(getChannelHandler());
         return this;
     }
 

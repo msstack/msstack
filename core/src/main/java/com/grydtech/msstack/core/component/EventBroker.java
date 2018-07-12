@@ -3,7 +3,7 @@ package com.grydtech.msstack.core.component;
 import com.grydtech.msstack.core.Event;
 import com.grydtech.msstack.core.annotation.AutoInjected;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
-import com.grydtech.msstack.core.annotation.Server;
+import com.grydtech.msstack.core.annotation.ServerComponent;
 import com.grydtech.msstack.core.handler.EventHandler;
 
 /**
@@ -29,11 +29,11 @@ public abstract class EventBroker implements AbstractBroker<EventHandler> {
 
     @Override
     public final int getPort() {
-        return getClass().getAnnotation(Server.class).port();
+        return getClass().getAnnotation(ServerComponent.class).port();
     }
 
     @Override
     public final String getHost() {
-        return getClass().getAnnotation(Server.class).host();
+        return getClass().getAnnotation(ServerComponent.class).host();
     }
 }

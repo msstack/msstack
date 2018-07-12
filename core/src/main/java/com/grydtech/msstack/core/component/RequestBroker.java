@@ -2,13 +2,12 @@ package com.grydtech.msstack.core.component;
 
 import com.grydtech.msstack.core.annotation.AutoInjected;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
-import com.grydtech.msstack.core.annotation.Server;
+import com.grydtech.msstack.core.annotation.ServerComponent;
 import com.grydtech.msstack.core.handler.RequestHandler;
 
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Base class for plugging in a Request Broker.
@@ -20,47 +19,43 @@ public abstract class RequestBroker extends Application implements AbstractBroke
     @AutoInjected
     private static RequestBroker instance;
 
-    private Set<Class<? extends RequestHandler>> subscribers;
+    private Set<Class<?>> handlers;
 
     protected RequestBroker() {
-        subscribers = new HashSet<>();
+        handlers = new HashSet<>();
     }
 
     public static RequestBroker getInstance() {
         return instance;
     }
 
-    protected Set<Class<? extends RequestHandler>> getHandlerClasses() {
-        return subscribers;
-    }
-
     @Override
     public final Set<Class<?>> getClasses() {
-        return subscribers.stream().map(aClass -> (Class<?>) aClass).collect(Collectors.toSet());
+        return handlers;
     }
 
     @Override
     public final void subscribe(Class<? extends RequestHandler> subscriberClass) {
-        this.subscribers.add(subscriberClass);
+        this.handlers.add(subscriberClass);
     }
 
     @Override
     public final void subscribeAll(Set<Class<? extends RequestHandler>> subscriberSet) {
-        this.subscribers.addAll(subscriberSet);
+        this.handlers.addAll(subscriberSet);
     }
 
     @Override
     public final void unsubscribe(Class<? extends RequestHandler> subscriberClass) {
-        this.subscribers.remove(subscriberClass);
+        this.handlers.remove(subscriberClass);
     }
 
     @Override
     public final int getPort() {
-        return getClass().getAnnotation(Server.class).port();
+        return getClass().getAnnotation(ServerComponent.class).port();
     }
 
     @Override
     public final String getHost() {
-        return getClass().getAnnotation(Server.class).host();
+        return getClass().getAnnotation(ServerComponent.class).host();
     }
 }
