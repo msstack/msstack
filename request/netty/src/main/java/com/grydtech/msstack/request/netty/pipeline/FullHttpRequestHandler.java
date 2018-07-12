@@ -77,6 +77,7 @@ public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<Fu
         if (payloadStr.isPresent()) {
             byte[] responsePayloadBytes = payloadStr.get().getBytes(Charset.defaultCharset());
             response.content().clear().writeBytes(responsePayloadBytes);
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         } else {
             // Send a no content response
@@ -98,6 +99,11 @@ public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<Fu
         return payloadStr.isEmpty()
                 ? ofType.newInstance()
                 : JsonConverter.getObject(payloadStr, ofType).orElseThrow(ClassCastException::new);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
     }
 
     @Override

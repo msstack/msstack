@@ -34,5 +34,12 @@
             <version>${netty.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!--Netty Handler -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
     </dependencies>
 </project>
