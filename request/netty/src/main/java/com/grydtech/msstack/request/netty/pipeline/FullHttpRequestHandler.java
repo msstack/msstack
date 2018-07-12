@@ -1,15 +1,16 @@
 package com.grydtech.msstack.request.netty.pipeline;
 
+import com.grydtech.msstack.core.annotation.ResponseStatus;
 import com.grydtech.msstack.exception.RouteNotFoundException;
 import com.grydtech.msstack.request.netty.routing.Router;
 import com.grydtech.msstack.request.netty.routing.RoutingResult;
 import com.grydtech.msstack.request.netty.util.InjectionUtils;
 import com.grydtech.msstack.util.JsonConverter;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -17,9 +18,14 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
+    private static Logger LOGGER = Logger.getLogger(FullHttpRequestHandler.class.getSimpleName());
     private final Router httpRouter;
 
     public FullHttpRequestHandler(Router router) {
@@ -27,46 +33,82 @@ public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<Fu
     }
 
     @Override
-    protected final void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request)
-            throws IllegalAccessException, InstantiationException, RouteNotFoundException {
+    protected final void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
+
+        // Find the HTTP method and URI
         final HttpMethod httpMethod = request.method();
-        final QueryStringDecoder queryStringDecoder = new QueryStringDecoder(request.uri());
-        Object methodResult = null;
+        final QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
+        final String path = decoder.path();
+        final DefaultFullHttpResponse response;
 
-        // Find destination method
-        RoutingResult routeResult = httpRouter.route(httpMethod, queryStringDecoder.path());
-
-        // Cast Payload to Object
-        String payloadStr = request.content().toString(Charset.defaultCharset());
-        Class<?> argClass = routeResult.getArgClass();
-        Object argObject = payloadStr.isEmpty()
-                ? argClass.newInstance()
-                : JsonConverter.getObject(payloadStr, argClass);
-
-        if (argObject != null) {
-            // AutoInjected query parameters and path parameters to targetObject
-            InjectionUtils.injectParameters(argObject, queryStringDecoder.parameters());
-            InjectionUtils.injectParameters(argObject, routeResult.getPathParameters());
-            // Invoke method with argObject, and get the result
-            methodResult = routeResult.getMethod().invoke(argObject);
+        // Get Routing Result
+        RoutingResult routeResult;
+        try {
+            routeResult = httpRouter.route(httpMethod, path);
+        } catch (RouteNotFoundException e) {
+            // If Routing Result not found, return a HTTP Response indicating this
+            ResponseStatus status = e.getClass().getAnnotation(ResponseStatus.class);
+            response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(status.value(), status.message()));
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+            ctx.write(response);
+            return;
         }
 
-        // Set response parameters
-        FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        // Extract payload from request in the class type given by routeResult
+        final Object payload;
+        try {
+            payload = extractPayload(request.content(), routeResult.getArgClass());
+        } catch (InstantiationException | IllegalAccessException e) {
+            response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+            ctx.write(response);
+            return;
+        }
 
-        // Write response as HTTP content
-        if (methodResult != null) {
-            String responsePayload = JsonConverter.toJsonString(methodResult);
-            if (responsePayload != null) {
-                byte[] responsePayloadBytes = responsePayload.getBytes(Charset.defaultCharset());
-                httpResponse.content().clear().writeBytes(responsePayloadBytes);
-                httpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, responsePayloadBytes.length);
-            }
+        // Inject parameters into payload, execute method, and get the result
+        this.injectFields(payload, routeResult.getPathParameters(), decoder.parameters());
+        Object methodResult = routeResult.getMethod().invoke(payload);
+        Optional<String> payloadStr = JsonConverter.toJsonString(methodResult);
+
+        // TODO implement a way to get STATUS_CODE from methodResult as well
+        response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+
+        // Prepare HTTP Response Payload
+        if (payloadStr.isPresent()) {
+            byte[] responsePayloadBytes = payloadStr.get().getBytes(Charset.defaultCharset());
+            response.content().clear().writeBytes(responsePayloadBytes);
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json");
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         } else {
-            httpResponse.headers().set(HttpHeaderNames.CONTENT_LENGTH, 0);
+            // Send a no content response
+            response.content().clear();
+            response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
         }
 
         // Write Response to Channel Context
-        ctx.writeAndFlush(httpResponse);
+        ctx.write(response);
+    }
+
+    private void injectFields(Object payload, Map<String, String> pathParameters, Map<String, List<String>> queryParameters) {
+        InjectionUtils.injectParameters(payload, pathParameters);
+        InjectionUtils.injectParameters(payload, queryParameters);
+    }
+
+    private <T> T extractPayload(ByteBuf content, Class<T> ofType) throws InstantiationException, IllegalAccessException {
+        String payloadStr = content.toString(Charset.defaultCharset());
+        return payloadStr.isEmpty()
+                ? ofType.newInstance()
+                : JsonConverter.getObject(payloadStr, ofType).orElseThrow(ClassCastException::new);
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        LOGGER.info(cause.getLocalizedMessage());
+        ctx.close();
     }
 }

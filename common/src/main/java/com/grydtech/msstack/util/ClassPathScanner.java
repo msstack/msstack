@@ -3,7 +3,9 @@ package com.grydtech.msstack.util;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ClassPathScanner {
 
@@ -14,7 +16,9 @@ public class ClassPathScanner {
     }
 
     public <T> Set<Class<? extends T>> getSubTypesOf(Class<T> baseType) {
-        return reflections.getSubTypesOf(baseType);
+        return reflections.getSubTypesOf(baseType).stream()
+                .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers()))
+                .collect(Collectors.toSet());
     }
 
     public <T extends Annotation> Set<Class<?>> getTypesAnnotatedWith(Class<T> annotationClass) {
@@ -24,6 +28,7 @@ public class ClassPathScanner {
     public <T> T getInstance(Class<T> tClass) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         return getSubTypesOf(tClass)
                 .stream()
+                .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers()))
                 .findFirst()
                 .orElseThrow(ClassNotFoundException::new)
                 .newInstance();

@@ -2,8 +2,7 @@ package com.grydtech.msstack.transport.kafka;
 
 import com.google.common.base.CaseFormat;
 import com.grydtech.msstack.core.Event;
-import com.grydtech.msstack.core.annotation.FrameworkComponent;
-import com.grydtech.msstack.core.annotation.Server;
+import com.grydtech.msstack.core.annotation.ServerComponent;
 import com.grydtech.msstack.core.component.EventBroker;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.util.JsonConverter;
@@ -15,8 +14,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-@FrameworkComponent
-@Server
+
+@ServerComponent
 public class KafkaEventBroker extends EventBroker {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaEventBroker.class.toGenericString());
@@ -39,7 +38,7 @@ public class KafkaEventBroker extends EventBroker {
     @Override
     public void publish(Event event) {
         String topic = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, event.getClass().getSimpleName());
-        String message = JsonConverter.toJsonString(event);
+        String message = JsonConverter.toJsonString(event).orElseThrow(RuntimeException::new);
         this.producer.send(new ProducerRecord<>(topic, message));
         this.producer.flush();
     }

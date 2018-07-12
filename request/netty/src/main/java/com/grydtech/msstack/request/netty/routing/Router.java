@@ -38,8 +38,10 @@ public final class Router {
      * @param handlerClasses The set of handler classes to find endpoints in
      * @return {@link Router} instance with all routes configured
      */
-    public static Router build(Set<Class<? extends RequestHandler>> handlerClasses) {
+    public static Router build(Set<Class<?>> handlerClasses) {
         Set<Endpoint> endpoints = handlerClasses.stream()
+                .filter(RequestHandler.class::isAssignableFrom)
+                .map(aClass -> (Class<? extends RequestHandler>) aClass.asSubclass(RequestHandler.class))
                 .map(EndpointUtils::extractEndpoint)
                 .filter(Optional::isPresent)
                 .map(Optional::get)

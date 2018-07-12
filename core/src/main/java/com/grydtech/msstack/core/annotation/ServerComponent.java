@@ -6,13 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for a Server.
+ * Annotation for a ServerComponent.
  * A server has a <b>host</b> and a <b>port</b>
  * This provides the ability to run services on different hosts/ports
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Server {
+@FrameworkComponent
+public @interface ServerComponent {
 
     int port() default 8080;
 
