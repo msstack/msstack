@@ -52,20 +52,26 @@ public abstract class MicroserviceApplication {
         final EventBroker eventBroker = EventBroker.getInstance();
         final RequestBroker requestBroker = RequestBroker.getInstance();
 
-        // Register Event Handlers
-        this.getEventHandlers().forEach(eventBroker::subscribe);
+        try {
+            // Register Event Handlers
+            this.getEventHandlers().forEach(eventBroker::subscribe);
 
-        // Register Request Handlers
-        this.getRequestHandlers().forEach(requestBroker::subscribe);
+            // Register Request Handlers
+            this.getRequestHandlers().forEach(requestBroker::subscribe);
 
-        // Start Event Broker
-        EventBroker.getInstance().start();
+            // Start Event Broker
+            EventBroker.getInstance().start();
 
-        // Start Request Broker
-        RequestBroker.getInstance().start();
+            // Start Request Broker
+            RequestBroker.getInstance().start();
 
-        // Register Service
+            // Register Service
 
-        // Optional
+            // Optional
+
+        } finally {
+            // Cleanup before termination
+            eventBroker.flush();
+        }
     }
 }

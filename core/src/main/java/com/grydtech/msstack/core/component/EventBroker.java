@@ -27,6 +27,11 @@ public abstract class EventBroker implements AbstractBroker<EventHandler> {
      */
     public abstract void publish(Event event);
 
+    /**
+     * Flushes any buffered events and block until completion
+     */
+    public abstract void flush();
+
     @Override
     public final int getPort() {
         return getClass().getAnnotation(ServerComponent.class).port();

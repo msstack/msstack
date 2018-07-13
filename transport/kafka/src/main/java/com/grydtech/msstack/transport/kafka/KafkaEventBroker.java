@@ -11,7 +11,11 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 
@@ -20,6 +24,8 @@ public class KafkaEventBroker extends EventBroker {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaEventBroker.class.toGenericString());
     private final Producer<String, String> producer;
+    private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
+
 
     public KafkaEventBroker() {
         Properties props = new Properties();
@@ -33,19 +39,38 @@ public class KafkaEventBroker extends EventBroker {
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
         this.producer = new KafkaProducer<>(props);
+
+        LOGGER.info("Starting scheduled EventBroker dispatcher");
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LOGGER.info("Checking for tasks in broker queue...");
+                Runnable task = taskQueue.poll();
+                while (task != null) {
+                    task.run();
+                    task = taskQueue.poll();
+                }
+                producer.flush();
+            }
+        }, 6000);
     }
 
     @Override
     public void publish(Event event) {
-        String topic = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, event.getClass().getSimpleName());
+        String topic = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, event.getClass().getName());
         String message = JsonConverter.toJsonString(event).orElseThrow(RuntimeException::new);
-        this.producer.send(new ProducerRecord<>(topic, message));
+        Runnable sendTask = () -> this.producer.send(new ProducerRecord<>(topic, message));
+        taskQueue.add(sendTask);
+    }
+
+    @Override
+    public void flush() {
         this.producer.flush();
     }
 
     @Override
     public void subscribe(Class<? extends EventHandler> handlerClass) {
-        LOGGER.info(String.format("Subscribed to KafkaEventBroker -%s", handlerClass.getName()));
+        LOGGER.info(String.format("Subscribed to KafkaEventBroker -%s", handlerClass.getSimpleName()));
     }
 
     @Override
@@ -55,7 +80,7 @@ public class KafkaEventBroker extends EventBroker {
 
     @Override
     public void unsubscribe(Class<? extends EventHandler> handlerClass) {
-        LOGGER.info(String.format("Unsubscribed from KafkaEventBroker -%s", handlerClass.getName()));
+        LOGGER.info(String.format("Unsubscribed from KafkaEventBroker -%s", handlerClass.getSimpleName()));
     }
 
     @Override
