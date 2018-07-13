@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,8 +49,14 @@ public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<Fu
         } catch (RouteNotFoundException e) {
             // If Routing Result not found, return a HTTP Response indicating this
             ResponseStatus status = e.getClass().getAnnotation(ResponseStatus.class);
-            response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(status.value(), status.message()));
+            response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(status.value()));
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
+            // Put error message in response body as JSON
+            Map<String, String> message = new HashMap<>();
+            message.put("error", status.message());
+            String payload = JsonConverter.toJsonString(message).orElse("");
+            response.content().writeBytes(payload.getBytes(Charset.defaultCharset()));
+            // Write response
             ctx.write(response);
             return;
         }

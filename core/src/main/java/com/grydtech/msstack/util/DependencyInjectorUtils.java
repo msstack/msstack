@@ -36,7 +36,7 @@ public final class DependencyInjectorUtils {
             field.set(null, implementedClassInstance);
         }
         field.setAccessible(isFieldAccessible);
-        LOGGER.info(String.format("Injected - %s", field.getType().toGenericString()));
+        LOGGER.info(String.format("Injected - %s", field.getType().getName()));
     }
 
     /**
