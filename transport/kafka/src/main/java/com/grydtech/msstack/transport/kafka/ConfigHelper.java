@@ -6,7 +6,7 @@ import java.util.Properties;
  * @implNote this is a temporary class to hold kafka configs
  * need to extract kafka config from application config file
  */
-public class Config {
+public final class ConfigHelper {
 
     public static final Properties PRODUCER_PROPERTIES;
     public static final Properties CONSUMER_PROPERTIES;
@@ -29,5 +29,8 @@ public class Config {
         CONSUMER_PROPERTIES.put("auto.commit.interval.ms", "1000");
         CONSUMER_PROPERTIES.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         CONSUMER_PROPERTIES.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+    }
+
+    private ConfigHelper() {
     }
 }

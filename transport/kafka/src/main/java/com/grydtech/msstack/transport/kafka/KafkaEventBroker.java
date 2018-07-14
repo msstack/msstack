@@ -47,41 +47,45 @@ public class KafkaEventBroker extends EventBroker {
     @Override
     public void start() {
         LOGGER.info("Starting KafkaEventBroker");
-        this.producer = new KafkaProducer<>(Config.PRODUCER_PROPERTIES);
-        this.consumer = new KafkaConsumer<>(Config.CONSUMER_PROPERTIES);
+        this.producer = new KafkaProducer<>(ConfigHelper.PRODUCER_PROPERTIES);
+        this.consumer = new KafkaConsumer<>(ConfigHelper.CONSUMER_PROPERTIES);
         consumer.subscribe(getStreams());
 
-        LOGGER.info("Starting scheduled consumer");
-        new Thread(() -> {
-            while (true) {
+        Timer timer = new Timer();
+
+        LOGGER.info("Starting scheduled EventBroker dispatcher");
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                producer.flush();
+            }
+        }, 0, 100);
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
                 ConsumerRecords<String, String> records = consumer.poll(100);
                 for (ConsumerRecord<String, String> record : records) {
-                    JsonNode jsonObject = JsonConverter.getJsonNode(record.value()).orElseThrow(RuntimeException::new);
+                    JsonNode jsonObject = JsonConverter.getJsonNode(record.value()).orElse(null);
+                    assert jsonObject != null;
                     String key = record.topic() + "::" + jsonObject.get("event").asText();
 
-                    if (getHandlers().containsKey(key)) {
+                    if (jsonObject.has("data") && getHandlers().containsKey(key)) {
                         Class<? extends EventHandler> handlerClass = getHandlers().get(key);
                         try {
-                            Method handleMethod = handlerClass.getMethod("handle", BasicEvent.class);
+                            Method handleMethod = handlerClass.getDeclaredMethods()[0];
                             Class<?> eventParameter = handleMethod.getParameterTypes()[0];
                             JsonNode eventData = jsonObject.get("data");
-                            Object o = JsonConverter.nodeToObject(eventData, eventParameter);
-                            handlerClass.newInstance().handle((BasicEvent)o);
-                        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
+                            Object o = JsonConverter.nodeToObject(eventData, eventParameter).orElse(null);
+                            handlerClass.newInstance().handle((BasicEvent) o);
+                        } catch (IllegalAccessException | InstantiationException e) {
                             LOGGER.log(Level.SEVERE, e.getMessage(), e);
                         }
                     }
                 }
             }
-        });
-
-        LOGGER.info("Starting scheduled EventBroker dispatcher");
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                producer.flush();
-            }
-        }, 1000);
+        }, 0, 100);
 
         LOGGER.info("KafkaEventBroker Started");
     }

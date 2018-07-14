@@ -6,7 +6,9 @@ import com.grydtech.msstack.core.annotation.Event;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.handler.EventHandler;
 
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -34,13 +36,15 @@ public abstract class EventBroker implements AbstractBroker<EventHandler> {
 
     @Override
     public final void subscribe(Class<? extends EventHandler> handlerClass) {
-        Event event = handlerClass.getAnnotation(Event.class);
+        Method handleMethod = handlerClass.getDeclaredMethods()[0];
+        Class<?> eventParameter = handleMethod.getParameterTypes()[0];
+        Event event = eventParameter.getAnnotation(Event.class);
 
         if (streams.stream().noneMatch(s -> s.equals(event.stream()))) {
             streams.add(event.stream());
         }
 
-        String key = event.stream() + "::" + handlerClass.getSimpleName();
+        String key = event.stream() + "::" + eventParameter.getSimpleName();
         this.handlers.put(key, handlerClass);
         LOGGER.info(String.format("Added class for subscription: %s", handlerClass.getSimpleName()));
     }
