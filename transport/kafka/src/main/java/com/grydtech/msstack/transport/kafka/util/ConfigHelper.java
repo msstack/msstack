@@ -30,7 +30,7 @@ public final class ConfigHelper {
         CONSUMER_PROPERTIES.put("auto.commit.interval.ms", "1000");
         CONSUMER_PROPERTIES.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         CONSUMER_PROPERTIES.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        PRODUCER_PROPERTIES.put("poll.interval.ms", 100);
+        CONSUMER_PROPERTIES.put("poll.interval.ms", 100);
     }
 
     private ConfigHelper() {
