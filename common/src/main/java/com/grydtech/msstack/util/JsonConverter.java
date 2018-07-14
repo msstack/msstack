@@ -1,7 +1,9 @@
 package com.grydtech.msstack.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -18,7 +20,6 @@ public final class JsonConverter {
     }
 
     private JsonConverter() {
-
     }
 
     public static Optional<String> toJsonString(Object object) {
@@ -34,6 +35,24 @@ public final class JsonConverter {
         try {
             return Optional.of(objectMapper.readValue(jsonString, sendingClass));
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<JsonNode> getJsonNode(String jsonString) {
+        try {
+            return Optional.of(objectMapper.readTree(jsonString));
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return Optional.empty();
+    }
+
+    public static <T> Optional<T> nodeToObject(JsonNode jsonNode, Class<T> sendingClass) {
+        try {
+            return Optional.of(objectMapper.treeToValue(jsonNode, sendingClass));
+        } catch (JsonProcessingException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
         return Optional.empty();

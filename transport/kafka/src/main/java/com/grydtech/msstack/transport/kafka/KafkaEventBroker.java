@@ -1,21 +1,24 @@
 package com.grydtech.msstack.transport.kafka;
 
-import com.google.common.base.CaseFormat;
-import com.grydtech.msstack.core.Event;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.grydtech.msstack.core.BasicEvent;
+import com.grydtech.msstack.core.annotation.Event;
 import com.grydtech.msstack.core.annotation.ServerComponent;
 import com.grydtech.msstack.core.component.EventBroker;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.util.JsonConverter;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import java.util.Properties;
-import java.util.Queue;
-import java.util.Set;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -23,44 +26,17 @@ import java.util.logging.Logger;
 public class KafkaEventBroker extends EventBroker {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaEventBroker.class.toGenericString());
-    private final Producer<String, String> producer;
-    private final Queue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
-
-
-    public KafkaEventBroker() {
-        Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("acks", "all");
-        props.put("retries", 0);
-        props.put("batch.size", 16384);
-        props.put("linger.ms", 1);
-        props.put("buffer.memory", 33554432);
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-        this.producer = new KafkaProducer<>(props);
-
-        LOGGER.info("Starting scheduled EventBroker dispatcher");
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                LOGGER.info("Checking for tasks in broker queue...");
-                Runnable task = taskQueue.poll();
-                while (task != null) {
-                    task.run();
-                    task = taskQueue.poll();
-                }
-                producer.flush();
-            }
-        }, 6000);
-    }
+    private KafkaProducer<String, String> producer;
+    private KafkaConsumer<String, String> consumer;
 
     @Override
-    public void publish(Event event) {
-        String topic = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, event.getClass().getName());
-        String message = JsonConverter.toJsonString(event).orElseThrow(RuntimeException::new);
-        Runnable sendTask = () -> this.producer.send(new ProducerRecord<>(topic, message));
-        taskQueue.add(sendTask);
+    public void publish(BasicEvent event) {
+        Event eventAnnotation = event.getClass().getAnnotation(Event.class);
+        Map<String, Object> object = new HashMap<>();
+        object.put("event", event.getClass().getSimpleName());
+        object.put("data", event);
+        String message = JsonConverter.toJsonString(object).orElseThrow(RuntimeException::new);
+        this.producer.send(new ProducerRecord<>(eventAnnotation.stream(), message));
     }
 
     @Override
@@ -69,22 +45,44 @@ public class KafkaEventBroker extends EventBroker {
     }
 
     @Override
-    public void subscribe(Class<? extends EventHandler> handlerClass) {
-        LOGGER.info(String.format("Subscribed to KafkaEventBroker -%s", handlerClass.getSimpleName()));
-    }
-
-    @Override
-    public void subscribeAll(Set<Class<? extends EventHandler>> subscriberSet) {
-        LOGGER.info(String.format("Subscribed to KafkaEventBroker -%s", subscriberSet.toString()));
-    }
-
-    @Override
-    public void unsubscribe(Class<? extends EventHandler> handlerClass) {
-        LOGGER.info(String.format("Unsubscribed from KafkaEventBroker -%s", handlerClass.getSimpleName()));
-    }
-
-    @Override
     public void start() {
+        LOGGER.info("Starting KafkaEventBroker");
+        this.producer = new KafkaProducer<>(Config.PRODUCER_PROPERTIES);
+        this.consumer = new KafkaConsumer<>(Config.CONSUMER_PROPERTIES);
+        consumer.subscribe(getStreams());
+
+        LOGGER.info("Starting scheduled consumer");
+        new Thread(() -> {
+            while (true) {
+                ConsumerRecords<String, String> records = consumer.poll(100);
+                for (ConsumerRecord<String, String> record : records) {
+                    JsonNode jsonObject = JsonConverter.getJsonNode(record.value()).orElseThrow(RuntimeException::new);
+                    String key = record.topic() + "::" + jsonObject.get("event").asText();
+
+                    if (getHandlers().containsKey(key)) {
+                        Class<? extends EventHandler> handlerClass = getHandlers().get(key);
+                        try {
+                            Method handleMethod = handlerClass.getMethod("handle", BasicEvent.class);
+                            Class<?> eventParameter = handleMethod.getParameterTypes()[0];
+                            JsonNode eventData = jsonObject.get("data");
+                            Object o = JsonConverter.nodeToObject(eventData, eventParameter);
+                            handlerClass.newInstance().handle((BasicEvent)o);
+                        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e) {
+                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                        }
+                    }
+                }
+            }
+        });
+
+        LOGGER.info("Starting scheduled EventBroker dispatcher");
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                producer.flush();
+            }
+        }, 1000);
+
         LOGGER.info("KafkaEventBroker Started");
     }
 }
