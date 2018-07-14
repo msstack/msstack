@@ -1,4 +1,4 @@
-package com.grydtech.msstack.transport.kafka;
+package com.grydtech.msstack.transport.kafka.util;
 
 import java.util.Properties;
 
@@ -21,6 +21,7 @@ public final class ConfigHelper {
         PRODUCER_PROPERTIES.put("buffer.memory", 33554432);
         PRODUCER_PROPERTIES.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         PRODUCER_PROPERTIES.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        PRODUCER_PROPERTIES.put("flush.interval.ms", 100);
 
         CONSUMER_PROPERTIES = new Properties();
         CONSUMER_PROPERTIES.put("bootstrap.servers", "localhost:9092");
@@ -29,6 +30,7 @@ public final class ConfigHelper {
         CONSUMER_PROPERTIES.put("auto.commit.interval.ms", "1000");
         CONSUMER_PROPERTIES.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         CONSUMER_PROPERTIES.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        PRODUCER_PROPERTIES.put("poll.interval.ms", 100);
     }
 
     private ConfigHelper() {
