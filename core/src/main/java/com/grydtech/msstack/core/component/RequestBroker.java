@@ -19,7 +19,7 @@ public abstract class RequestBroker extends Application implements AbstractBroke
     @AutoInjected
     private static RequestBroker instance;
 
-    private Set<Class<?>> handlers;
+    private final Set<Class<?>> handlers;
 
     protected RequestBroker() {
         handlers = new HashSet<>();
@@ -49,12 +49,10 @@ public abstract class RequestBroker extends Application implements AbstractBroke
         this.handlers.remove(subscriberClass);
     }
 
-    @Override
     public final int getPort() {
         return getClass().getAnnotation(ServerComponent.class).port();
     }
 
-    @Override
     public final String getHost() {
         return getClass().getAnnotation(ServerComponent.class).host();
     }

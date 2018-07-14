@@ -34,19 +34,4 @@ public interface AbstractBroker<B> {
      * @throws Exception Exception if starting fails
      */
     void start() throws Exception;
-
-    /**
-     * Gets the port where this is deployed
-     *
-     * @return Port {@link Integer}
-     */
-    int getPort();
-
-    /**
-     * Gets the host name where this is deployed
-     *
-     * @return Host Name {@link String}
-     */
-    @SuppressWarnings("unused")
-    String getHost();
 }

@@ -35,7 +35,7 @@ public abstract class MicroserviceApplication {
     /**
      * Returns the set of event handler classes in the classpath
      *
-     * @return Set of Event Handler Classes
+     * @return Set of BasicEvent Handler Classes
      */
     public final Set<Class<? extends EventHandler>> getEventHandlers() {
         return eventHandlers;
@@ -53,13 +53,13 @@ public abstract class MicroserviceApplication {
         final RequestBroker requestBroker = RequestBroker.getInstance();
 
         try {
-            // Register Event Handlers
+            // Register BasicEvent Handlers
             this.getEventHandlers().forEach(eventBroker::subscribe);
 
             // Register Request Handlers
             this.getRequestHandlers().forEach(requestBroker::subscribe);
 
-            // Start Event Broker
+            // Start BasicEvent Broker
             EventBroker.getInstance().start();
 
             // Start Request Broker
