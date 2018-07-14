@@ -2,8 +2,8 @@ package com.grydtech.msstack.core.component;
 
 import com.grydtech.msstack.core.BasicEvent;
 import com.grydtech.msstack.core.annotation.AutoInjected;
-import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.annotation.Event;
+import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.handler.EventHandler;
 
 import java.util.*;
