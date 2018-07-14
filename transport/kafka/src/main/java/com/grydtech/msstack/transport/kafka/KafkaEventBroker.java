@@ -60,7 +60,7 @@ public class KafkaEventBroker extends EventBroker {
             public void run() {
                 producer.flush();
             }
-        }, 0, 100);
+        }, 6000, 100);
 
         timer.schedule(new TimerTask() {
             @Override
@@ -73,19 +73,21 @@ public class KafkaEventBroker extends EventBroker {
 
                     if (jsonObject.has("data") && getHandlers().containsKey(key)) {
                         Class<? extends EventHandler> handlerClass = getHandlers().get(key);
-                        try {
-                            Method handleMethod = handlerClass.getDeclaredMethods()[0];
-                            Class<?> eventParameter = handleMethod.getParameterTypes()[0];
-                            JsonNode eventData = jsonObject.get("data");
-                            Object o = JsonConverter.nodeToObject(eventData, eventParameter).orElse(null);
-                            handlerClass.newInstance().handle((BasicEvent) o);
-                        } catch (IllegalAccessException | InstantiationException e) {
-                            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                        }
+                        Method handleMethod = handlerClass.getDeclaredMethods()[0];
+                        Class<?> eventParameter = handleMethod.getParameterTypes()[0];
+                        JsonNode eventData = jsonObject.get("data");
+                        Object o = JsonConverter.nodeToObject(eventData, eventParameter).orElse(null);
+                        new Thread(() -> {
+                            try {
+                                handlerClass.newInstance().handle((BasicEvent) o);
+                            } catch (Exception e) {
+                                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                            }
+                        }).run();
                     }
                 }
             }
-        }, 0, 100);
+        }, 6000, 100);
 
         LOGGER.info("KafkaEventBroker Started");
     }
