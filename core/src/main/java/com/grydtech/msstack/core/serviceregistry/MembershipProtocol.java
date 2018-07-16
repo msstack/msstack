@@ -19,11 +19,12 @@ public abstract class MembershipProtocol {
     /**
      * Register a member with attributes in service registry
      *
-     * @param memberName Name of member
-     * @param attributes Attributes of member
+     * @param serviceName Base Service of the member
+     * @param host host of member
+     * @param port port of member
      * @return Member if found, else exception
      */
-    public abstract Member registerMember(String memberName, Map<String, String> attributes);
+    public abstract Member registerMember(String serviceName, String host, int port);
 
     public abstract Member updateMember(Member member);
 

@@ -24,6 +24,10 @@ public abstract class MicroserviceApplication {
         requestHandlers = classPathScanner.getSubTypesOf(RequestHandler.class);
     }
 
+    public String getServiceName() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Returns the set of request handler classes in the classpath
      *
@@ -59,21 +63,22 @@ public abstract class MicroserviceApplication {
             membershipProtocol.setConnectionString("127.0.0.1:2181");
 
             // Register BasicEvent Handlers
-            this.getEventHandlers().forEach(eventBroker::subscribe);
+            this.eventHandlers.forEach(eventBroker::subscribe);
 
             // Register Request Handlers
-            this.getRequestHandlers().forEach(requestBroker::subscribe);
+            this.requestHandlers.forEach(requestBroker::subscribe);
 
             // Start BasicEvent Broker
-            EventBroker.getInstance().start();
+            eventBroker.start();
 
             // Start Request Broker
-            RequestBroker.getInstance().start();
+            requestBroker.start();
 
             // Start Service Discovery
-            MembershipProtocol.getInstance().start();
+            membershipProtocol.start();
 
             // Register Service
+            membershipProtocol.registerMember(getServiceName(), requestBroker.getHost(), requestBroker.getPort());
 
             // Optional
 

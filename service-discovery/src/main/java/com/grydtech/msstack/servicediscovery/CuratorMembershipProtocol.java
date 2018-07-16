@@ -14,10 +14,8 @@ import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class CuratorMembershipProtocol extends MembershipProtocol {
 
@@ -29,17 +27,11 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
     private UriSpec uriSpec;
     private ServiceInstance<Member> serviceInstance;
 
-    private Member createMember(String memberName, Map<String, String> attributes) {
-        return new Member()
-                .setHost(attributes.get("host"))
-                .setName(memberName)
-                .setPort(Integer.valueOf(attributes.get("port")));
-    }
-
     @Override
-    public Member registerMember(String memberName, Map<String, String> attributes) {
+    public Member registerMember(String serviceName, String host, int port) {
         try {
-            Member member = createMember(memberName, attributes);
+            String servicePath = BASE_PATH + serviceName + "/";
+            Member member = new Member().setName(host + ":" + port).setHost(host).setPort(port);
             JsonInstanceSerializer<Member> serializer = new JsonInstanceSerializer<>(Member.class);
 
             uriSpec = new UriSpec("{scheme}://{address}:{port}");
@@ -47,7 +39,7 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
             serviceInstance = ServiceInstance
                     .<Member>builder()
                     .uriSpec(uriSpec)
-                    .name(memberName)
+                    .name(member.getName())
                     .address(member.getHost())
                     .port(member.getPort())
                     .payload(member)
@@ -55,7 +47,7 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
 
             serviceDiscovery = ServiceDiscoveryBuilder.builder(Member.class)
                     .client(curatorFrameworkClient)
-                    .basePath(BASE_PATH)
+                    .basePath(servicePath)
                     .serializer(serializer)
                     .thisInstance(serviceInstance)
                     .build();

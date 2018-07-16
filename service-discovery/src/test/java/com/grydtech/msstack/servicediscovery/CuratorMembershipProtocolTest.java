@@ -58,13 +58,14 @@ public class CuratorMembershipProtocolTest extends TestCase {
     public void testRegisterMember() {
         System.out.println("Test Register Member");
         // Create Member
-        String memberName = "member";
-        int memberPort = 7182;
-        Map<String, String> attributes = createMemberAttributes(host, memberPort);
+        String serviceName = "order";
+        String memberName = "127.0.0.1:8888";
+        int memberPort = 8888;
+//        Map<String, String> attributes = createMemberAttributes(host, memberPort);
 
         // Insert member and assert properties
-        String expResult = "member";
-        Member result = instance.registerMember(memberName, attributes);
+        String expResult = "127.0.0.1:8888";
+        Member result = instance.registerMember(serviceName, host,memberPort);
         instance.findMember(memberName);
         assertEquals(expResult, result.getName());
         assertEquals(memberPort, result.getPort());
