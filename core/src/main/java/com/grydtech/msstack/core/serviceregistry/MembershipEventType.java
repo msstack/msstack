@@ -1,4 +1,4 @@
-package com.grydtech.msstack.servicediscovery;
+package com.grydtech.msstack.core.serviceregistry;
 
 public enum MembershipEventType {
     MEMBER_ADDED,

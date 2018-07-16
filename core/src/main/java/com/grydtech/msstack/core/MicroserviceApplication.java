@@ -4,6 +4,7 @@ import com.grydtech.msstack.core.component.EventBroker;
 import com.grydtech.msstack.core.component.RequestBroker;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.core.handler.RequestHandler;
+import com.grydtech.msstack.core.serviceregistry.MembershipProtocol;
 import com.grydtech.msstack.util.ClassPathScanner;
 
 import java.util.Set;
@@ -51,8 +52,12 @@ public abstract class MicroserviceApplication {
         // Brokers
         final EventBroker eventBroker = EventBroker.getInstance();
         final RequestBroker requestBroker = RequestBroker.getInstance();
+        final MembershipProtocol membershipProtocol = MembershipProtocol.getInstance();
 
         try {
+            // Configure Membership Protocol (Assuming ZK up and running in 2181)
+            membershipProtocol.setConnectionString("127.0.0.1:2181");
+
             // Register BasicEvent Handlers
             this.getEventHandlers().forEach(eventBroker::subscribe);
 
@@ -64,6 +69,9 @@ public abstract class MicroserviceApplication {
 
             // Start Request Broker
             RequestBroker.getInstance().start();
+
+            // Start Service Discovery
+            MembershipProtocol.getInstance().start();
 
             // Register Service
 
