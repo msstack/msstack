@@ -29,10 +29,6 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
     private UriSpec uriSpec;
     private ServiceInstance<Member> serviceInstance;
 
-    public CuratorMembershipProtocol() {
-
-    }
-
     private Member createMember(String memberName, Map<String, String> attributes) {
         return new Member()
                 .setHost(attributes.get("host"))

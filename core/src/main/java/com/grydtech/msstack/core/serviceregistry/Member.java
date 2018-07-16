@@ -6,10 +6,6 @@ public class Member {
     private String host;
     private int port;
 
-    public Member() {
-
-    }
-
     public String getName() {
         return name;
     }
