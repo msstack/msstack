@@ -1,10 +1,14 @@
 ## Description
-A brief description of feature implemented, or bug fixed
+A brief description of the feature(s) implemented / bug(s) fixed
 
 ### Changes Included
-- [ ] Bugfix (a non-breaking change that fixes an issue)
-- [ ] Feature (a non-breaking change that adds functionality)
-- [ ] Breaking Change (a feature/fix that could break existing functionality)
+- [ ] Bugfix (a change that fixes an issue)
+- [ ] Feature (a change that adds new functionality)
+- [ ] Refactor (a change that improves code quality and/or architecture)
+
+### Type of Change
+- [ ] Non Breaking (existing functionality remains intact)
+- [ ] Breaking (existing functionality might not remain intact)
 
 ### Dependencies Added
 e.g:
@@ -13,7 +17,7 @@ compile 'com.grydtech.msstack:core:1.0-SNAPSHOT'
 ```
 
 ## Testing
-How has this feature/fix been tested?
+A brief description of the testing procedure(s) followed
 
 ### Tests Included
 - [ ] Unit tests
@@ -22,9 +26,9 @@ How has this feature/fix been tested?
 ## Checklist
 - [ ] My code follows the style guidelines for this project.
 - [ ] I have performed a self-review of my code.
+- [ ] My changes do not generate new warnings.
 - [ ] I have commented my code, particularly in hard-to-understand areas.
 - [ ] I have updated the documentation to reflect my changes.
-- [ ] My changes do not generate new warnings.
 - [ ] I have added tests to confirm that my fix is effective / my feature works.
 - [ ] New and existing unit tests pass with my changes.
 - [ ] Dependent changes have been merged and published in downstream modules.
