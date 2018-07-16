@@ -6,6 +6,13 @@ branches:
   only:
     - master
 
+deploy:
+  provider: packagecloud
+  repository: "msstack-artifacts"
+  username: "msstack"
+  token:
+    secure: jloHxptuBYIKqNPDNO+L47Rdb3denL3x1evJ4a+1StVs6QJFz2iUrdshHH3RYuU6MA7lYs1xato9F/o1qOEd4WL67OvR4O5FeJC99iCrWf2v2cRE247a93pTAVGzqaj5HtQNCoI/YSJJBmRA9xIVqisaASmkzRDs0X5l2XLkKwo3338Gh78g9PE+ow8oanLybEHeh1Y8l03k47VF/rPqWZaAy7FKHN8j022u7UsMz2oCzCzNJHEL6kRQthx9mzCygb6Ya6pAnEgNMM830O9ovKlMDcr7eY+96zQEW52ppFRVfwAp1D7t9EegawoXBhNmyy78kf0QcZ4wwQ5az9hlcA1GxS5OwJYfqzMGCfwZYQjZyXyBxFWludnq03Ic/82811qzQ1/3e9z6mnNns0IqYLvNmiIoNIJr4497TBBruoDeuZgeuD0oPNesgBPElBjnndI7qPnDI3LlC9ex0nY8gGi2fIQc0Ec45ZymnEyzqeUTT6Q68PatY49hdGxhxfnrcX62RIE6HGfh7dmKUUy4MQ8/FMB+DWDacJS8u7Qki/gGnJ26liJ0DMM+OS/Z2MhujxrBaafFk+psZEGxF6q0T++p14Z8kdtLgYm2YpEY49L/EEZ3cmHSMW/RfKPN2iGA5HpgZvEmOWefHJ7be1d+xYUBGk41pZYTeub8iXoBd4E=
+
 before_install:
   - sudo apt-get install jq
   - wget -O ~/codacy-coverage-reporter-assembly-latest.jar https://oss.sonatype.org/service/local/repositories/releases/content/com/codacy/codacy-coverage-reporter/4.0.0/codacy-coverage-reporter-4.0.0-assembly.jar
@@ -13,11 +20,3 @@ before_install:
 after_success:
   - mvn clean verify jacoco:report
   - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r reports/target/site/jacoco-aggregate/jacoco.xml
-
-deploy:
-  provider: packagecloud
-  repository: "msstack-artifacts"
-  username: "msstack"
-  token:
-    secure: jloHxptuBYIKqNPDNO+L47Rdb3denL3x1evJ4a+1StVs6QJFz2iUrdshHH3RYuU6MA7lYs1xato9F/o1qOEd4WL67OvR4O5FeJC99iCrWf2v2cRE247a93pTAVGzqaj5HtQNCoI/YSJJBmRA9xIVqisaASmkzRDs0X5l2XLkKwo3338Gh78g9PE+ow8oanLybEHeh1Y8l03k47VF/rPqWZaAy7FKHN8j022u7UsMz2oCzCzNJHEL6kRQthx9mzCygb6Ya6pAnEgNMM830O9ovKlMDcr7eY+96zQEW52ppFRVfwAp1D7t9EegawoXBhNmyy78kf0QcZ4wwQ5az9hlcA1GxS5OwJYfqzMGCfwZYQjZyXyBxFWludnq03Ic/82811qzQ1/3e9z6mnNns0IqYLvNmiIoNIJr4497TBBruoDeuZgeuD0oPNesgBPElBjnndI7qPnDI3LlC9ex0nY8gGi2fIQc0Ec45ZymnEyzqeUTT6Q68PatY49hdGxhxfnrcX62RIE6HGfh7dmKUUy4MQ8/FMB+DWDacJS8u7Qki/gGnJ26liJ0DMM+OS/Z2MhujxrBaafFk+psZEGxF6q0T++p14Z8kdtLgYm2YpEY49L/EEZ3cmHSMW/RfKPN2iGA5HpgZvEmOWefHJ7be1d+xYUBGk41pZYTeub8iXoBd4E=
-    
