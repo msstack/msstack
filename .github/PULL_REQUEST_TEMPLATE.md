@@ -1,7 +1,7 @@
 ## Description
 A brief description of feature implemented, or bug fixed
 
-### Type of Change
+### Changes Included
 - [ ] Bugfix (a non-breaking change that fixes an issue)
 - [ ] Feature (a non-breaking change that adds functionality)
 - [ ] Breaking Change (a feature/fix that could break existing functionality)
@@ -9,24 +9,15 @@ A brief description of feature implemented, or bug fixed
 ### Dependencies Added
 e.g:
 ```
-<dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>4.12</version>
-</dependency>
+compile 'com.grydtech.msstack:core:1.0-SNAPSHOT'
 ```
 
-## Testing Procedure
+## Testing
 How has this feature/fix been tested?
 
-### Test coverage
-Mention the coverage of methods in code. e.g:
-- [ ] MethodA
-- [X] MethodB
-
-### Test Configuration
-* OS: (e.g: Ubuntu 18.04)
-* SDK: (e.g: OpenJDK 8)
+### Tests Included
+- [ ] Unit tests
+- [ ] Integration tests
 
 ## Checklist
 - [ ] My code follows the style guidelines for this project.
