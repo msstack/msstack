@@ -13,14 +13,6 @@ after_success:
   - java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r reports/target/site/jacoco-aggregate/jacoco.xml
 
 deploy:
-  provider: packagecloud
-  repository: "msstack-artifacts"
-  username: "msstack"
-  token:
-    secure: jloHxptuBYIKqNPDNO+L47Rdb3denL3x1evJ4a+1StVs6QJFz2iUrdshHH3RYuU6MA7lYs1xato9F/o1qOEd4WL67OvR4O5FeJC99iCrWf2v2cRE247a93pTAVGzqaj5HtQNCoI/YSJJBmRA9xIVqisaASmkzRDs0X5l2XLkKwo3338Gh78g9PE+ow8oanLybEHeh1Y8l03k47VF/rPqWZaAy7FKHN8j022u7UsMz2oCzCzNJHEL6kRQthx9mzCygb6Ya6pAnEgNMM830O9ovKlMDcr7eY+96zQEW52ppFRVfwAp1D7t9EegawoXBhNmyy78kf0QcZ4wwQ5az9hlcA1GxS5OwJYfqzMGCfwZYQjZyXyBxFWludnq03Ic/82811qzQ1/3e9z6mnNns0IqYLvNmiIoNIJr4497TBBruoDeuZgeuD0oPNesgBPElBjnndI7qPnDI3LlC9ex0nY8gGi2fIQc0Ec45ZymnEyzqeUTT6Q68PatY49hdGxhxfnrcX62RIE6HGfh7dmKUUy4MQ8/FMB+DWDacJS8u7Qki/gGnJ26liJ0DMM+OS/Z2MhujxrBaafFk+psZEGxF6q0T++p14Z8kdtLgYm2YpEY49L/EEZ3cmHSMW/RfKPN2iGA5HpgZvEmOWefHJ7be1d+xYUBGk41pZYTeub8iXoBd4E=
-  on:
-      branch: production
-
-env:
-  global:
-    - secure: "malOhq5piQL+ryJn48+5YCJz/cgnBc/6PZ6exAP7TXwBhuDoa0Pn5+G+jT08VVUUa83zr9fXk3cs2eRHPm6UzJMW5M9zQBoFgs0aU7FUeJqqJAjEhlQbsc2XNEGpW5+bERrCWYRQHuf65eFTWefqgIRog0YYyiM+n55vrbZDCup/4hd/Dg3dFHh3bSoEOj6oK8zBBGGqCw2+pcObNU07HF4IqnkgKnJni3is7YBsF4WSvRzxTbvWBVQobztopf7SU8aovHSYpYO5n5aTkACJRbG2fyU/Tz+RVMzlXkepz7eI5b21nLDbK1S6HzMtfABwQ+xNMH1Jkl3w9iiTxylBXjKPZdlfWXhLydkE9U3zj4dGK0EgO/OWsKIvG3Vgi1WPEAkusq0qxTLUKUShpmtbGx8yPHuVOMf4tdS75KXgJqyOUVH0yCPTahP9kI2/wfuJ/14qHxAJywCo33TevGK09WhbVroIa0TKDlyfhNLxUKNgyfSSx/IHq1sYVvV0HqZ1+RrXRsqFX9YkqpWrVXDxEBpp868Efrv/F9etm7lIxGL5elbpqflqnGJvyozl20wBMA/jCfq4hyYtNw7BitZg4v8AvZhcby2xlyi6F2gkF4h9ksidzWXv29bBHbdS5devUH3mLIvNj/fsmGskfOKsPMPK6ArIZW2eDrdFrsJzEqc="
+  provider: script
+  script: mvn deploy --settings .travis.settings.xml
+  skip_cleanup: true
