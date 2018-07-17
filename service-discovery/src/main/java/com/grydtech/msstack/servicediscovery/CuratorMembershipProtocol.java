@@ -6,14 +6,13 @@ import com.grydtech.msstack.core.serviceregistry.MembershipProtocol;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
-import org.apache.curator.x.discovery.ServiceDiscovery;
-import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
-import org.apache.curator.x.discovery.ServiceInstance;
-import org.apache.curator.x.discovery.UriSpec;
+import org.apache.curator.x.discovery.*;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,6 +69,26 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Member> getRegisteredServices(String serviceName){
+        try {
+            String path = BASE_PATH+serviceName;
+            List<String> memberPaths =  curatorFrameworkClient.getChildren().forPath(path);
+            ArrayList<Member> members = new ArrayList<>();
+            for(String memPath : memberPaths ){
+                String[] attributes = memPath.split(":");
+                Member mem = new Member()
+                        .setName(memPath)
+                        .setHost(attributes[0])
+                        .setPort(Integer.valueOf(attributes[1]));
+                members.add(mem);
+            }
+            return members;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
