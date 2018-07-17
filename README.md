@@ -1,5 +1,5 @@
 # MSstack
-[![Build Status](https://www.travis-ci.org/msstack/msstack.svg?branch=master)](https://www.travis-ci.org/msstack/msstack)
+[![Build Status](https://travis-ci.com/msstack/msstack.svg?branch=master)](https://travis-ci.com/msstack/msstack)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce8eef5d7745439db402f3b5650211f3)](https://www.codacy.com/app/msstack/msstack?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=msstack/msstack&amp;utm_campaign=Badge_Grade)
 
 ## About this project
