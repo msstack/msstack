@@ -6,6 +6,7 @@ import org.apache.curator.test.TestingServer;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CuratorMembershipProtocolTest extends TestCase {
@@ -66,10 +67,38 @@ public class CuratorMembershipProtocolTest extends TestCase {
         // Insert member and assert properties
         String expResult = "127.0.0.1:8888";
         Member result = instance.registerMember(serviceName, host,memberPort);
+
+
+        //get the member named "127.0.0.1:8888"
         instance.findMember(memberName);
+
+        //get all the members under /services/order
+        List<Member> list =  instance.getRegisteredServices("order");
+        for(Member s : list){
+            System.out.println(s.getHost()+" : "+s.getPort());
+        }
+
         assertEquals(expResult, result.getName());
         assertEquals(memberPort, result.getPort());
         System.out.println("Register Member Test Completed");
+
+
+
+//        // Create Member
+//        String serviceName = "order";
+//        String memberName = "127.0.0.1:8888";
+//        int memberPort = 8888;
+////        Map<String, String> attributes = createMemberAttributes(host, memberPort);
+//
+//        // Insert member and assert properties
+//        String expResult = "127.0.0.1:8888";
+//        Member result = instance.registerMember(serviceName, host,memberPort);
+//
+////        instance.findMember("order");
+//
+//        assertEquals(expResult, result.getName());
+//        assertEquals(memberPort, result.getPort());
+//        System.out.println("Register Member Test Completed");
     }
 
 }
