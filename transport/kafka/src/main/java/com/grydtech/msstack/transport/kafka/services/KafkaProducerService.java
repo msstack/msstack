@@ -17,7 +17,7 @@ public class KafkaProducerService implements KafkaService {
 
     public KafkaProducerService(Properties properties) {
         this.kafkaProducer = new KafkaProducer<>(properties);
-        this.flushIntervalMs = (Integer) properties.get("flush.interval.ms");
+        this.flushIntervalMs = Integer.parseInt((String) properties.get("flush.interval.ms"));
     }
 
     public void publish(String topic, Object object) {
