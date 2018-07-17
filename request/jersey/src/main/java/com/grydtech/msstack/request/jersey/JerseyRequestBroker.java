@@ -1,6 +1,6 @@
 package com.grydtech.msstack.request.jersey;
 
-import com.grydtech.msstack.core.annotation.ServerComponent;
+import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.request.jaxrs.JaxRSRequestBroker;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -9,8 +9,7 @@ import org.glassfish.jersey.CommonProperties;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
-
-@ServerComponent
+@FrameworkComponent
 public class JerseyRequestBroker extends JaxRSRequestBroker {
 
     @Override

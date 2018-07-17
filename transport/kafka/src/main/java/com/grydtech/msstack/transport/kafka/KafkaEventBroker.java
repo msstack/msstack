@@ -2,27 +2,27 @@ package com.grydtech.msstack.transport.kafka;
 
 import com.grydtech.msstack.core.BasicEvent;
 import com.grydtech.msstack.core.annotation.Event;
-import com.grydtech.msstack.core.annotation.ServerComponent;
+import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.component.EventBroker;
 import com.grydtech.msstack.transport.kafka.services.KafkaConsumerService;
 import com.grydtech.msstack.transport.kafka.services.KafkaProducerService;
-import com.grydtech.msstack.transport.kafka.util.ConfigHelper;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-
-@ServerComponent
+@SuppressWarnings("unused")
+@FrameworkComponent
 public class KafkaEventBroker extends EventBroker {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaEventBroker.class.toGenericString());
+
     private KafkaProducerService kafkaProducerService;
     private KafkaConsumerService kafkaConsumerService;
 
     public KafkaEventBroker() {
-        this.kafkaProducerService = new KafkaProducerService(ConfigHelper.PRODUCER_PROPERTIES);
-        this.kafkaConsumerService = new KafkaConsumerService(ConfigHelper.CONSUMER_PROPERTIES);
+        this.kafkaProducerService = new KafkaProducerService(this.getApplicationProperties());
+        this.kafkaConsumerService = new KafkaConsumerService(this.getApplicationProperties());
     }
 
     @Override

@@ -21,7 +21,7 @@ public class KafkaConsumerService implements KafkaService {
 
     public KafkaConsumerService(Properties properties) {
         this.kafkaConsumer = new KafkaConsumer<>(properties);
-        this.pollIntervalMs = (Integer) properties.get("poll.interval.ms");
+        this.pollIntervalMs = Integer.parseInt((String) properties.get("poll.interval.ms"));
     }
 
     public void setHandlerClassMap(Map<String, Class<? extends EventHandler>> handlerClassMap) {

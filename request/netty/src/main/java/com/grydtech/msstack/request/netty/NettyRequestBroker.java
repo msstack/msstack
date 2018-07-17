@@ -1,11 +1,11 @@
 package com.grydtech.msstack.request.netty;
 
-import com.grydtech.msstack.core.annotation.ServerComponent;
+import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.component.RequestBroker;
 import com.grydtech.msstack.request.netty.routing.Router;
 
-
-@ServerComponent
+@SuppressWarnings("unused")
+@FrameworkComponent
 public class NettyRequestBroker extends RequestBroker {
 
     @Override
