@@ -1,6 +1,7 @@
 # MSstack
 [![Build Status](https://travis-ci.com/msstack/msstack.svg?branch=master)](https://travis-ci.com/msstack/msstack)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce8eef5d7745439db402f3b5650211f3)](https://www.codacy.com/app/msstack/msstack?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=msstack/msstack&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/7e957cfe7e8346969d073dc730a9fa3b)](https://www.codacy.com/app/msstack/msstack?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=msstack/msstack&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/7e957cfe7e8346969d073dc730a9fa3b)](https://www.codacy.com/app/msstack/msstack?utm_source=github.com&utm_medium=referral&utm_content=msstack/msstack&utm_campaign=Badge_Coverage)
 
 ## About this project
 Full Stack Microservices Framework for Java.
