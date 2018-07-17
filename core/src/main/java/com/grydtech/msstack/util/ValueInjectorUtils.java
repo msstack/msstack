@@ -29,7 +29,7 @@ public final class ValueInjectorUtils {
             field.setAccessible(true);
         }
         // Inject into static fields
-        String objectKey = key.equals("") ? field.getName() : key;
+        String objectKey = "".equals(key) ? field.getName() : key;
         if (Modifier.isStatic(field.getModifiers()) && valueObjectMap.containsKey(objectKey)) {
             field.set(null, valueObjectMap.get(objectKey));
         }
