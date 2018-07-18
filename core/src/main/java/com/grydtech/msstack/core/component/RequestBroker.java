@@ -8,7 +8,6 @@ import com.grydtech.msstack.core.handler.RequestHandler;
 
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 /**

@@ -1,6 +1,5 @@
 package com.grydtech.msstack.transport.kafka.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.grydtech.msstack.core.BasicEvent;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.util.JsonConverter;
