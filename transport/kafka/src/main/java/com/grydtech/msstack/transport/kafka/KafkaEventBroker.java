@@ -6,9 +6,8 @@ import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.component.EventBroker;
 import com.grydtech.msstack.transport.kafka.services.KafkaConsumerService;
 import com.grydtech.msstack.transport.kafka.services.KafkaProducerService;
+import com.grydtech.msstack.util.JsonConverter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -21,17 +20,16 @@ public class KafkaEventBroker extends EventBroker {
     private KafkaConsumerService kafkaConsumerService;
 
     public KafkaEventBroker() {
-        this.kafkaProducerService = new KafkaProducerService(this.getApplicationProperties());
-        this.kafkaConsumerService = new KafkaConsumerService(this.getApplicationProperties());
+        this.kafkaProducerService = new KafkaProducerService(this.getApplicationConfiguration());
+        this.kafkaConsumerService = new KafkaConsumerService(this.getApplicationConfiguration());
     }
 
     @Override
     public void publish(BasicEvent event) {
-        Event eventAnnotation = event.getClass().getAnnotation(Event.class);
-        Map<String, Object> object = new HashMap<>();
-        object.put("event", event.getClass().getSimpleName());
-        object.put("data", event);
-        this.kafkaProducerService.publish(eventAnnotation.stream(), object);
+        String eventStream = event.getClass().getAnnotation(Event.class).stream();
+        String eventName = event.getClass().getSimpleName();
+        String eventData = JsonConverter.toJsonString(event).orElseThrow(RuntimeException::new);
+        this.kafkaProducerService.publish(eventStream, eventName, eventData);
     }
 
     @Override

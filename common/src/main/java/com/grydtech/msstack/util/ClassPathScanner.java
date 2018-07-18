@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ClassPathScanner {
+public final class ClassPathScanner {
 
     private final Reflections reflections;
 

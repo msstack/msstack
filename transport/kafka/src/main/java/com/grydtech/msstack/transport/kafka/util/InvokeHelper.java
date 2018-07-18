@@ -16,10 +16,10 @@ public final class InvokeHelper {
     private InvokeHelper() {
     }
 
-    public static void invokeHandleMethod(Class<? extends EventHandler> handlerClass, JsonNode data) {
+    public static void invokeHandleMethod(Class<? extends EventHandler> handlerClass, String message) {
         Method handleMethod = handlerClass.getDeclaredMethods()[0];
         Class<?> eventParameter = handleMethod.getParameterTypes()[0];
-        BasicEvent event = (BasicEvent) JsonConverter.nodeToObject(data, eventParameter).orElse(null);
+        BasicEvent event = (BasicEvent) JsonConverter.getObject(message, eventParameter).orElse(null);
         new Thread(() -> {
             try {
                 handlerClass.newInstance().handle(event);

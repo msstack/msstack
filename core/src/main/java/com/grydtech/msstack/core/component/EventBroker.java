@@ -1,5 +1,6 @@
 package com.grydtech.msstack.core.component;
 
+import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 import com.grydtech.msstack.core.BasicEvent;
 import com.grydtech.msstack.core.annotation.AutoInjected;
 import com.grydtech.msstack.core.annotation.Event;
@@ -19,9 +20,11 @@ import java.util.logging.Logger;
 public abstract class EventBroker implements AbstractBroker<EventHandler> {
 
     @Value
-    private static Properties applicationProperties;
+    private static ApplicationConfiguration applicationConfiguration;
+
     @AutoInjected
     private static EventBroker instance;
+
     private static final Logger LOGGER = Logger.getLogger(EventBroker.class.toGenericString());
 
     private final List<String> streams;
@@ -61,8 +64,8 @@ public abstract class EventBroker implements AbstractBroker<EventHandler> {
         LOGGER.info(String.format("Removed class from subscription: %s", handlerClass.getSimpleName()));
     }
 
-    protected final Properties getApplicationProperties() {
-        return applicationProperties;
+    protected final ApplicationConfiguration getApplicationConfiguration() {
+        return applicationConfiguration;
     }
 
     protected final List<String> getStreams() {
