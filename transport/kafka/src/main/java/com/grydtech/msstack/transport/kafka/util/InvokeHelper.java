@@ -1,6 +1,5 @@
 package com.grydtech.msstack.transport.kafka.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.grydtech.msstack.core.BasicEvent;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.util.JsonConverter;
@@ -16,10 +15,10 @@ public final class InvokeHelper {
     private InvokeHelper() {
     }
 
-    public static void invokeHandleMethod(Class<? extends EventHandler> handlerClass, JsonNode data) {
+    public static void invokeHandleMethod(Class<? extends EventHandler> handlerClass, String message) {
         Method handleMethod = handlerClass.getDeclaredMethods()[0];
         Class<?> eventParameter = handleMethod.getParameterTypes()[0];
-        BasicEvent event = (BasicEvent) JsonConverter.nodeToObject(data, eventParameter).orElse(null);
+        BasicEvent event = (BasicEvent) JsonConverter.getObject(message, eventParameter).orElse(null);
         new Thread(() -> {
             try {
                 handlerClass.newInstance().handle(event);

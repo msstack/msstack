@@ -3,11 +3,11 @@ package com.grydtech.msstack.core.component;
 import com.grydtech.msstack.core.annotation.AutoInjected;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.annotation.Value;
+import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 import com.grydtech.msstack.core.handler.RequestHandler;
 
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -18,7 +18,7 @@ import java.util.Set;
 public abstract class RequestBroker extends Application implements AbstractBroker<RequestHandler> {
 
     @Value
-    private static Properties applicationProperties;
+    private static ApplicationConfiguration applicationConfiguration;
 
     @AutoInjected
     private static RequestBroker instance;
@@ -54,10 +54,10 @@ public abstract class RequestBroker extends Application implements AbstractBroke
     }
 
     public final int getPort() {
-        return Integer.parseInt((String) applicationProperties.get("server.port"));
+        return applicationConfiguration.getServer().getPort();
     }
 
     public final String getHost() {
-        return (String) applicationProperties.get("server.host");
+        return applicationConfiguration.getServer().getHost();
     }
 }

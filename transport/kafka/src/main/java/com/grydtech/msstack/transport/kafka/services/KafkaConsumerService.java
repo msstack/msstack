@@ -1,27 +1,34 @@
 package com.grydtech.msstack.transport.kafka.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 import com.grydtech.msstack.core.handler.EventHandler;
 import com.grydtech.msstack.transport.kafka.util.InvokeHelper;
-import com.grydtech.msstack.util.JsonConverter;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.*;
 import java.util.logging.Logger;
 
-public class KafkaConsumerService implements KafkaService {
+public class KafkaConsumerService extends KafkaService {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.toGenericString());
     private final KafkaConsumer<String, String> kafkaConsumer;
-    private final int pollIntervalMs;
     private Map<String, Class<? extends EventHandler>> handlerClassMap;
     private List<String> streams;
 
-    public KafkaConsumerService(Properties properties) {
+    public KafkaConsumerService(ApplicationConfiguration applicationConfiguration) {
+        super(applicationConfiguration);
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getBroker().getBootstrap());
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, applicationConfiguration.getServer().getGroup());
         this.kafkaConsumer = new KafkaConsumer<>(properties);
-        this.pollIntervalMs = Integer.parseInt((String) properties.get("poll.interval.ms"));
     }
 
     public void setHandlerClassMap(Map<String, Class<? extends EventHandler>> handlerClassMap) {
@@ -39,19 +46,17 @@ public class KafkaConsumerService implements KafkaService {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                ConsumerRecords<String, String> records = kafkaConsumer.poll(pollIntervalMs);
+                ConsumerRecords<String, String> records = kafkaConsumer.poll(applicationConfiguration.getBroker().getInterval());
                 for (ConsumerRecord<String, String> record : records) {
-                    JsonNode jsonObject = JsonConverter.getJsonNode(record.value()).orElse(null);
-                    assert jsonObject != null;
-                    String key = record.topic() + "::" + jsonObject.get("event").asText();
+                    String key = record.topic() + "::" + record.key();
 
-                    if (jsonObject.has("data") && handlerClassMap.containsKey(key)) {
+                    if (handlerClassMap.containsKey(key)) {
                         Class<? extends EventHandler> handlerClass = handlerClassMap.get(key);
-                        InvokeHelper.invokeHandleMethod(handlerClass, jsonObject.get("data"));
+                        InvokeHelper.invokeHandleMethod(handlerClass, record.value());
                     }
                 }
             }
-        }, 6000, pollIntervalMs);
+        }, 6000, applicationConfiguration.getBroker().getInterval());
         LOGGER.info("Scheduled event consumer started");
     }
 }

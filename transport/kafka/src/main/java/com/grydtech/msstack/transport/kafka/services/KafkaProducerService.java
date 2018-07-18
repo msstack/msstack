@@ -1,28 +1,36 @@
 package com.grydtech.msstack.transport.kafka.services;
 
-import com.grydtech.msstack.util.JsonConverter;
+import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-public class KafkaProducerService implements KafkaService {
+public class KafkaProducerService extends KafkaService {
 
     private final KafkaProducer<String, String> kafkaProducer;
-    private final int flushIntervalMs;
     private static final Logger LOGGER = Logger.getLogger(KafkaProducerService.class.toGenericString());
 
-    public KafkaProducerService(Properties properties) {
+    public KafkaProducerService(ApplicationConfiguration applicationConfiguration) {
+        super(applicationConfiguration);
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getBroker().getBootstrap());
+        properties.put(ProducerConfig.ACKS_CONFIG, applicationConfiguration.getBroker().getAcks());
+        properties.put(ProducerConfig.RETRIES_CONFIG, applicationConfiguration.getBroker().getRetries());
+
         this.kafkaProducer = new KafkaProducer<>(properties);
-        this.flushIntervalMs = Integer.parseInt((String) properties.get("flush.interval.ms"));
     }
 
-    public void publish(String topic, Object object) {
-        String message = JsonConverter.toJsonString(object).orElseThrow(RuntimeException::new);
-        this.kafkaProducer.send(new ProducerRecord<>(topic, message));
+    public void publish(String topic, String eventName, String eventData) {
+        this.kafkaProducer.send(new ProducerRecord<>(topic, eventName, eventData));
     }
 
     public void flush() {
@@ -37,7 +45,7 @@ public class KafkaProducerService implements KafkaService {
             public void run() {
                 kafkaProducer.flush();
             }
-        }, 6000, flushIntervalMs);
+        }, 6000, applicationConfiguration.getBroker().getInterval());
         LOGGER.info("Scheduled event publisher started");
     }
 }
