@@ -2,9 +2,19 @@ package com.grydtech.msstack.core.serviceregistry;
 
 public class Member {
 
+    private String id;
     private String name;
     private String host;
     private int port;
+
+    public String getId() {
+        return id;
+    }
+
+    public Member setId(String id) {
+        this.id = id;
+        return this;
+    }
 
     public String getName() {
         return name;
@@ -36,7 +46,8 @@ public class Member {
     @Override
     public String toString() {
         return "Member{" +
-                "name='" + name + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
                 ", host='" + host + '\'' +
                 ", port=" + port +
                 '}';

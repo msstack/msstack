@@ -6,7 +6,10 @@ import com.grydtech.msstack.core.serviceregistry.MembershipProtocol;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
-import org.apache.curator.x.discovery.*;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
+import org.apache.curator.x.discovery.ServiceInstance;
+import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
 import java.util.ArrayList;
@@ -27,10 +30,10 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
     private ServiceInstance<Member> serviceInstance;
 
     @Override
-    public Member registerMember(String serviceName, String host, int port) {
+    public Member registerMember(String serviceId, String serviceName, String host, int port) {
         try {
-            String servicePath = BASE_PATH + serviceName + "/";
-            Member member = new Member().setName(host + ":" + port).setHost(host).setPort(port);
+            //ToDo: added id attribute host and port is redundant because serviceInstance contain host and port
+            Member member = new Member().setId(serviceId).setName(serviceName).setHost(host).setPort(port);
             JsonInstanceSerializer<Member> serializer = new JsonInstanceSerializer<>(Member.class);
 
             uriSpec = new UriSpec("{scheme}://{address}:{port}");
@@ -39,14 +42,14 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
                     .<Member>builder()
                     .uriSpec(uriSpec)
                     .name(member.getName())
-                    .address(member.getHost())
-                    .port(member.getPort())
+                    .address(host)
+                    .port(port)
                     .payload(member)
                     .build();
 
             serviceDiscovery = ServiceDiscoveryBuilder.builder(Member.class)
                     .client(curatorFrameworkClient)
-                    .basePath(servicePath)
+                    .basePath(BASE_PATH)
                     .serializer(serializer)
                     .thisInstance(serviceInstance)
                     .build();
