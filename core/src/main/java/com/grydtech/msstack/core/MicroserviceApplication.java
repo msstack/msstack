@@ -64,17 +64,17 @@ public abstract class MicroserviceApplication {
             // Register Request Handlers
             this.requestHandlers.forEach(requestBroker::subscribe);
 
-            // Start BasicEvent Broker
-            eventBroker.start();
-
-            // Start Request Broker
-            requestBroker.start();
-
             // Start Service Discovery
             membershipProtocol.start();
 
             // Register Service
-            membershipProtocol.registerMember(membershipProtocol.getServerName(), requestBroker.getHost(), requestBroker.getPort());
+            membershipProtocol.registerMember(membershipProtocol.getServerId(), membershipProtocol.getServerName(), requestBroker.getHost(), requestBroker.getPort());
+
+            // Start BasicEvent Broker
+            eventBroker.start();
+
+            // Start Request Broker
+            requestBroker.start(); // ToDo: main thread block after this call
 
             // Optional
 
