@@ -74,7 +74,7 @@ public abstract class MicroserviceApplication {
             membershipProtocol.start();
 
             // Register Service
-            membershipProtocol.registerMember(membershipProtocol.getServerGroup(), requestBroker.getHost(), requestBroker.getPort());
+            membershipProtocol.registerMember(membershipProtocol.getServerName(), requestBroker.getHost(), requestBroker.getPort());
 
             // Optional
 

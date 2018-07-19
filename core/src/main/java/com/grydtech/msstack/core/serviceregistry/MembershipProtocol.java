@@ -21,8 +21,8 @@ public abstract class MembershipProtocol {
         return instance;
     }
 
-    public final String getServerGroup() {
-        return applicationConfiguration.getServer().getGroup();
+    public final String getServerName() {
+        return applicationConfiguration.getServer().getName();
     }
 
     /**
