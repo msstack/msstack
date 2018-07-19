@@ -24,10 +24,6 @@ public abstract class MicroserviceApplication {
         requestHandlers = classPathScanner.getSubTypesOf(RequestHandler.class);
     }
 
-    public String getServiceName() {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * Returns the set of request handler classes in the classpath
      *
@@ -78,7 +74,7 @@ public abstract class MicroserviceApplication {
             membershipProtocol.start();
 
             // Register Service
-            membershipProtocol.registerMember(getServiceName(), requestBroker.getHost(), requestBroker.getPort());
+            membershipProtocol.registerMember(membershipProtocol.getServerGroup(), requestBroker.getHost(), requestBroker.getPort());
 
             // Optional
 

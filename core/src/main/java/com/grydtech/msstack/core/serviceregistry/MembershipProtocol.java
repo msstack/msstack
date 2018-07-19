@@ -2,11 +2,16 @@ package com.grydtech.msstack.core.serviceregistry;
 
 import com.grydtech.msstack.core.annotation.AutoInjected;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
+import com.grydtech.msstack.core.annotation.Value;
+import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 
 import java.util.Map;
 
 @FrameworkComponent
 public abstract class MembershipProtocol {
+
+    @Value
+    private static ApplicationConfiguration applicationConfiguration;
 
     @AutoInjected
     @SuppressWarnings("unused")
@@ -14,6 +19,10 @@ public abstract class MembershipProtocol {
 
     public static MembershipProtocol getInstance() {
         return instance;
+    }
+
+    public final String getServerGroup() {
+        return applicationConfiguration.getServer().getGroup();
     }
 
     /**
