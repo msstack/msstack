@@ -2,11 +2,14 @@ package com.grydtech.msstack.core.serviceregistry;
 
 import com.grydtech.msstack.core.annotation.AutoInjected;
 import com.grydtech.msstack.core.annotation.FrameworkComponent;
-
-import java.util.Map;
+import com.grydtech.msstack.core.annotation.Value;
+import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 
 @FrameworkComponent
 public abstract class MembershipProtocol {
+
+    @Value
+    private static ApplicationConfiguration applicationConfiguration;
 
     @AutoInjected
     @SuppressWarnings("unused")
@@ -16,15 +19,23 @@ public abstract class MembershipProtocol {
         return instance;
     }
 
+    public final String getServerId() {
+        return applicationConfiguration.getServer().getId();
+    }
+
+    public final String getServerName() {
+        return applicationConfiguration.getServer().getName();
+    }
+
     /**
      * Register a member with attributes in service registry
      *
      * @param serviceName Base Service of the member
-     * @param host host of member
-     * @param port port of member
+     * @param host        host of member
+     * @param port        port of member
      * @return Member if found, else exception
      */
-    public abstract Member registerMember(String serviceName, String host, int port);
+    public abstract Member registerMember(String serviceId, String serviceName, String host, int port);
 
     public abstract Member updateMember(Member member);
 

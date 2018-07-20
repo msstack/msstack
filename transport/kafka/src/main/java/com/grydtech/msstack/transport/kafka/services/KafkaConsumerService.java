@@ -27,7 +27,7 @@ public class KafkaConsumerService extends KafkaService {
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
 
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getBroker().getBootstrap());
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, applicationConfiguration.getServer().getGroup());
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, applicationConfiguration.getServer().getName());
         this.kafkaConsumer = new KafkaConsumer<>(properties);
     }
 
