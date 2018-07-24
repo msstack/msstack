@@ -1,7 +1,7 @@
 package com.grydtech.msstack.core.configuration;
 
 @SuppressWarnings("all")
-public final class Server {
+public final class ServerConfiguration {
     private String id = null; // id of service node
     private String name = null; // group services in cluster
     private String host = "localhost";

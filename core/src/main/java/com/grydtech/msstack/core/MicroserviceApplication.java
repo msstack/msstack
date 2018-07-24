@@ -55,9 +55,6 @@ public abstract class MicroserviceApplication {
         final MembershipProtocol membershipProtocol = MembershipProtocol.getInstance();
 
         try {
-            // Configure Membership Protocol (Assuming ZK up and running in 2181)
-            membershipProtocol.setConnectionString("127.0.0.1:2181");
-
             // Register BasicEvent Handlers
             this.eventHandlers.forEach(eventBroker::subscribe);
 
@@ -68,12 +65,12 @@ public abstract class MicroserviceApplication {
             membershipProtocol.start();
 
             // Register Service
-            membershipProtocol.registerMember(membershipProtocol.getServerId(), membershipProtocol.getServerName(), requestBroker.getHost(), requestBroker.getPort());
+            membershipProtocol.register();
 
-            // Start BasicEvent Broker
+            // Start BasicEvent MessageBrokerConfiguration
             eventBroker.start();
 
-            // Start Request Broker
+            // Start Request MessageBrokerConfiguration
             requestBroker.start(); // ToDo: main thread block after this call
 
             // Optional

@@ -1,7 +1,7 @@
 package com.grydtech.msstack.core.configuration;
 
 @SuppressWarnings("all")
-public final class Broker {
+public final class MessageBrokerConfiguration {
     private String bootstrap = null;
     private Integer retries = Integer.MAX_VALUE;
     private String acks = "all";

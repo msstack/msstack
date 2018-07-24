@@ -9,7 +9,7 @@ import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
 public abstract class MembershipProtocol {
 
     @Value
-    private static ApplicationConfiguration applicationConfiguration;
+    protected static ApplicationConfiguration applicationConfiguration;
 
     @AutoInjected
     @SuppressWarnings("unused")
@@ -19,31 +19,15 @@ public abstract class MembershipProtocol {
         return instance;
     }
 
-    public final String getServerId() {
-        return applicationConfiguration.getServer().getId();
-    }
+    public abstract Member register();
 
-    public final String getServerName() {
-        return applicationConfiguration.getServer().getName();
-    }
-
-    /**
-     * Register a member with attributes in service registry
-     *
-     * @param serviceName Base Service of the member
-     * @param host        host of member
-     * @param port        port of member
-     * @return Member if found, else exception
-     */
-    public abstract Member registerMember(String serviceId, String serviceName, String host, int port);
-
+    //ToDo: need to change implementation (member details already in application config)
     public abstract Member updateMember(Member member);
 
+    //ToDo: need to change implementation (member details already in application config)
     public abstract void removeMember(String memberName);
 
     public abstract void listen(String name, MemberListener memberListener);
-
-    public abstract void setConnectionString(String connectionString);
 
     public abstract void start();
 

@@ -11,14 +11,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Base class for plugging in a Request Broker.
+ * Base class for plugging in a Request MessageBrokerConfiguration.
  * The first instance in the classpath that extends this class is injected in
  */
 @FrameworkComponent
 public abstract class RequestBroker extends Application implements AbstractBroker<RequestHandler> {
 
     @Value
-    private static ApplicationConfiguration applicationConfiguration;
+    protected static ApplicationConfiguration applicationConfiguration;
 
     @AutoInjected
     private static RequestBroker instance;
@@ -51,13 +51,5 @@ public abstract class RequestBroker extends Application implements AbstractBroke
     @Override
     public final void unsubscribe(Class<? extends RequestHandler> subscriberClass) {
         this.handlers.remove(subscriberClass);
-    }
-
-    public final int getPort() {
-        return applicationConfiguration.getServer().getPort();
-    }
-
-    public final String getHost() {
-        return applicationConfiguration.getServer().getHost();
     }
 }

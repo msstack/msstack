@@ -20,7 +20,7 @@ public class JerseyRequestBroker extends JaxRSRequestBroker {
         ServletHolder holder = new ServletHolder(jerseyServlet);
         holder.setInitParameter(CommonProperties.METAINF_SERVICES_LOOKUP_DISABLE, "true");
 
-        Server server = new Server(this.getPort());
+        Server server = new Server(applicationConfiguration.getServer().getPort());
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addServlet(holder, "/*");

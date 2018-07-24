@@ -12,6 +12,7 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,15 +26,18 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
     private static final String BASE_PATH = "/services/";
     private CuratorFramework curatorFrameworkClient;
     private ServiceDiscovery<Member> serviceDiscovery;
-    private String connectionString;
     private UriSpec uriSpec;
     private ServiceInstance<Member> serviceInstance;
 
     @Override
-    public Member registerMember(String serviceId, String serviceName, String host, int port) {
+    public Member register() {
         try {
             //ToDo: added id attribute host and port is redundant because serviceInstance contain host and port
-            Member member = new Member().setId(serviceId).setName(serviceName).setHost(host).setPort(port);
+            Member member = new Member()
+                    .setId(applicationConfiguration.getServer().getId())
+                    .setName(applicationConfiguration.getServer().getName())
+                    .setHost(InetAddress.getLocalHost().getHostAddress())
+                    .setPort(applicationConfiguration.getServer().getPort());
             JsonInstanceSerializer<Member> serializer = new JsonInstanceSerializer<>(Member.class);
 
             uriSpec = new UriSpec("{scheme}://{address}:{port}");
@@ -42,8 +46,8 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
                     .<Member>builder()
                     .uriSpec(uriSpec)
                     .name(member.getName())
-                    .address(host)
-                    .port(port)
+                    .address(member.getHost())
+                    .port(member.getPort())
                     .payload(member)
                     .build();
 
@@ -127,14 +131,9 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
     }
 
     @Override
-    public void setConnectionString(String connectionString) {
-        this.connectionString = connectionString;
-    }
-
-    @Override
     public void start() {
         curatorFrameworkClient = CuratorFrameworkFactory.newClient(
-                connectionString,
+                applicationConfiguration.getServiceRegistry().getBootstrap(),
                 new RetryNTimes(5, 1000)
         );
         curatorFrameworkClient.start();

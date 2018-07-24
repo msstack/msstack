@@ -26,7 +26,7 @@ public class KafkaConsumerService extends KafkaService {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
 
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getBroker().getBootstrap());
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getMessageBroker().getBootstrap());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, applicationConfiguration.getServer().getName());
         this.kafkaConsumer = new KafkaConsumer<>(properties);
     }
@@ -46,7 +46,7 @@ public class KafkaConsumerService extends KafkaService {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                ConsumerRecords<String, String> records = kafkaConsumer.poll(applicationConfiguration.getBroker().getInterval());
+                ConsumerRecords<String, String> records = kafkaConsumer.poll(applicationConfiguration.getMessageBroker().getInterval());
                 for (ConsumerRecord<String, String> record : records) {
                     String key = record.topic() + "::" + record.key();
 
@@ -56,7 +56,7 @@ public class KafkaConsumerService extends KafkaService {
                     }
                 }
             }
-        }, 6000, applicationConfiguration.getBroker().getInterval());
+        }, 6000, applicationConfiguration.getMessageBroker().getInterval());
         LOGGER.info("Scheduled event consumer started");
     }
 }

@@ -20,8 +20,8 @@ public class KafkaEventBroker extends EventBroker {
     private KafkaConsumerService kafkaConsumerService;
 
     public KafkaEventBroker() {
-        this.kafkaProducerService = new KafkaProducerService(this.getApplicationConfiguration());
-        this.kafkaConsumerService = new KafkaConsumerService(this.getApplicationConfiguration());
+        this.kafkaProducerService = new KafkaProducerService(applicationConfiguration);
+        this.kafkaConsumerService = new KafkaConsumerService(applicationConfiguration);
     }
 
     @Override
