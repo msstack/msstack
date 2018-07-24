@@ -11,7 +11,7 @@ public class NettyRequestBroker extends RequestBroker {
     @Override
     public void start() throws Exception {
         final Router router = Router.build(getClasses());
-        final NettyServer server = new NettyServer(this.getPort())
+        final NettyServer server = new NettyServer(applicationConfiguration.getServer().getPort())
                 .setRouter(router)
                 .build();
         server.run();

@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public abstract class EventBroker implements AbstractBroker<EventHandler> {
 
     @Value
-    private static ApplicationConfiguration applicationConfiguration;
+    protected static ApplicationConfiguration applicationConfiguration;
 
     @AutoInjected
     private static EventBroker instance;
@@ -62,10 +62,6 @@ public abstract class EventBroker implements AbstractBroker<EventHandler> {
     @Override
     public final void unsubscribe(Class<? extends EventHandler> handlerClass) {
         LOGGER.info(String.format("Removed class from subscription: %s", handlerClass.getSimpleName()));
-    }
-
-    protected final ApplicationConfiguration getApplicationConfiguration() {
-        return applicationConfiguration;
     }
 
     protected final List<String> getStreams() {

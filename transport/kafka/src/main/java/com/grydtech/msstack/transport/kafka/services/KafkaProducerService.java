@@ -22,9 +22,9 @@ public class KafkaProducerService extends KafkaService {
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getBroker().getBootstrap());
-        properties.put(ProducerConfig.ACKS_CONFIG, applicationConfiguration.getBroker().getAcks());
-        properties.put(ProducerConfig.RETRIES_CONFIG, applicationConfiguration.getBroker().getRetries());
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getMessageBroker().getBootstrap());
+        properties.put(ProducerConfig.ACKS_CONFIG, applicationConfiguration.getMessageBroker().getAcks());
+        properties.put(ProducerConfig.RETRIES_CONFIG, applicationConfiguration.getMessageBroker().getRetries());
 
         this.kafkaProducer = new KafkaProducer<>(properties);
     }
@@ -45,7 +45,7 @@ public class KafkaProducerService extends KafkaService {
             public void run() {
                 kafkaProducer.flush();
             }
-        }, 6000, applicationConfiguration.getBroker().getInterval());
+        }, 6000, applicationConfiguration.getMessageBroker().getInterval());
         LOGGER.info("Scheduled event publisher started");
     }
 }

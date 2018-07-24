@@ -2,14 +2,19 @@ package com.grydtech.msstack.core.configuration;
 
 @SuppressWarnings("all")
 public final class ApplicationConfiguration {
-    private Server server = null;
-    private Broker broker = null;
+    private ServerConfiguration server = null;
+    private MessageBrokerConfiguration messageBroker = null;
+    private ServiceRegistryConfiguration serviceRegistry = null;
 
-    public Server getServer() {
+    public ServerConfiguration getServer() {
         return server;
     }
 
-    public Broker getBroker() {
-        return broker;
+    public MessageBrokerConfiguration getMessageBroker() {
+        return messageBroker;
+    }
+
+    public ServiceRegistryConfiguration getServiceRegistry() {
+        return serviceRegistry;
     }
 }
