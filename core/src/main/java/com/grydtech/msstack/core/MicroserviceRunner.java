@@ -5,8 +5,7 @@ import com.grydtech.msstack.util.DependencyInjectorUtils;
 import com.grydtech.msstack.util.ValueInjectorUtils;
 import com.grydtech.msstack.util.YamlConverter;
 
-import java.io.File;
-import java.util.Objects;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +22,8 @@ public final class MicroserviceRunner {
 
     public static void run(Class<? extends MicroserviceApplication> applicationClass) throws Exception {
         // Inject dependencies from classpath
-        File configFile = new File(Objects.requireNonNull(applicationClass.getClassLoader().getResource("application.yml")).toURI());
-        ApplicationConfiguration applicationConfiguration = YamlConverter.getObject(configFile, ApplicationConfiguration.class).orElseThrow(RuntimeException::new);
+        InputStream configFileStream = applicationClass.getClassLoader().getResourceAsStream("application.yml");
+        ApplicationConfiguration applicationConfiguration = YamlConverter.getObject(configFileStream, ApplicationConfiguration.class).orElseThrow(RuntimeException::new);
 
         ValueInjectorUtils.putValueObject("applicationConfiguration", applicationConfiguration);
         ValueInjectorUtils.inject();
