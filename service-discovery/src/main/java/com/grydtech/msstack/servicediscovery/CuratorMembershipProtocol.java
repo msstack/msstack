@@ -12,7 +12,6 @@ import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.UriSpec;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,7 +35,7 @@ public class CuratorMembershipProtocol extends MembershipProtocol {
             Member member = new Member()
                     .setId(applicationConfiguration.getServer().getId())
                     .setName(applicationConfiguration.getServer().getName())
-                    .setHost(InetAddress.getLocalHost().getHostAddress())
+                    .setHost(applicationConfiguration.getServer().getHost())
                     .setPort(applicationConfiguration.getServer().getPort());
             JsonInstanceSerializer<Member> serializer = new JsonInstanceSerializer<>(Member.class);
 

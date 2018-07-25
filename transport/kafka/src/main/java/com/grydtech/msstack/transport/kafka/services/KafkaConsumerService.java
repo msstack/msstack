@@ -28,6 +28,7 @@ public class KafkaConsumerService extends KafkaService {
 
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getMessageBroker().getBootstrap());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, applicationConfiguration.getServer().getName());
+        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, applicationConfiguration.getServer().getId());
         this.kafkaConsumer = new KafkaConsumer<>(properties);
     }
 
