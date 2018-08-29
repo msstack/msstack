@@ -15,6 +15,7 @@
         <module>service-discovery</module>
         <module>transport</module>
         <module>reports</module>
+        <module>database</module>
     </modules>
 
     <properties>
