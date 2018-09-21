@@ -5,7 +5,12 @@ public final class ApplicationConfiguration {
     private ServerConfiguration server = null;
     private MessageBrokerConfiguration messageBroker = null;
     private ServiceRegistryConfiguration serviceRegistry = null;
-
+    private DatabaseConfiguration database = null;
+    
+    public DatabaseConfiguration getDatabase() {
+        return database;
+    }
+    
     public ServerConfiguration getServer() {
         return server;
     }
