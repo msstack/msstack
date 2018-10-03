@@ -14,22 +14,36 @@
     <packaging>jar</packaging>
 
     <properties>
-        <cassandra.version>0.9</cassandra.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <guava.version>19.0</guava.version>
+
+        <!-- Cassandra -->
+        <cassandra-driver-core.version>3.1.2</cassandra-driver-core.version>
+        <cassandra-unit.version>3.1.1.0</cassandra-unit.version>
     </properties>
 
     <dependencies>
-        <!-- connect to cassandra -->
+        <!-- Cassandra -->
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
             <artifactId>cassandra-driver-core</artifactId>
-            <version>3.1.0</version>
+            <version>${cassandra-driver-core.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit -->
         <dependency>
             <groupId>org.cassandraunit</groupId>
             <artifactId>cassandra-unit</artifactId>
-            <version>3.0.0.1</version>
+            <version>${cassandra-unit.version}</version>
         </dependency>
-        
+
+        <!-- This guava version is required for cassandra-unit 3.0.0.1 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

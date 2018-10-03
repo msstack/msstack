@@ -16,6 +16,7 @@
 
     <modules>
         <module>leveldb</module>
+        <module>cassandra</module>
     </modules>
 
     <properties>

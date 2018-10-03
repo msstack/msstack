@@ -18,7 +18,7 @@ import java.util.List;
 import static org.iq80.leveldb.impl.Iq80DBFactory.bytes;
 import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
 
-public class LeveldbConnector extends DatabaseConnector {
+public class LeveldbConnector extends DatabaseConnector<String> {
     
     private static LeveldbConnector leveldbTest = null;
     
@@ -32,6 +32,11 @@ public class LeveldbConnector extends DatabaseConnector {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    @Override
+    public void putKey(String key) {
+        
     }
     
     public void putKey(String key, String value) {

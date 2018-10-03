@@ -9,7 +9,7 @@ import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
  * Created by dileka on 9/19/18.
  */
 @FrameworkComponent
-public abstract class DatabaseConnector {
+public abstract class DatabaseConnector<T> {
     
     @Value
     protected static ApplicationConfiguration applicationConfiguration;
@@ -24,8 +24,8 @@ public abstract class DatabaseConnector {
         return instance;
     }
     
-    public abstract void putKey(String key, String Value);
+    public abstract void putKey(T key);
     
-    public abstract String getValue(String key);
+    public abstract T getValue(String key);
     
 }
