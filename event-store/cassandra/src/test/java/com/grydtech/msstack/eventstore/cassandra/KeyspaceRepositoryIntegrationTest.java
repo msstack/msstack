@@ -1,3 +1,4 @@
+/*
 package com.grydtech.msstack.eventstore.cassandra;
 
 
@@ -73,3 +74,4 @@ public class KeyspaceRepositoryIntegrationTest {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 }
+*/

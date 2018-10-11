@@ -1,3 +1,4 @@
+/*
 package com.grydtech.msstack.eventstore.cassandra;
 
 import static org.junit.Assert.assertFalse;
@@ -82,7 +83,7 @@ public class BookRepositoryIntegrationTest {
         assertTrue(columnExists);
     }
 
-    @Test
+    //@Test
     public void whenAddingANewBook_thenBookExists() {
         bookRepository.deleteTable(BOOKS_BY_TITLE);
         bookRepository.createTableBooksByTitle();
@@ -173,3 +174,4 @@ public class BookRepositoryIntegrationTest {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 }
+*/
