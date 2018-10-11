@@ -1,4 +1,4 @@
-package com.grydtech.msstack.database.cassandra.domain;
+package com.grydtech.msstack.eventstore.cassandra.domain;
 
 import java.util.UUID;
 

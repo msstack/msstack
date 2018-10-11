@@ -24,7 +24,7 @@ public abstract class DatabaseConnector<T> {
         return instance;
     }
     
-    public abstract void putKey(T key);
+    public abstract void putKey(T key, T value);
     
     public abstract T getValue(String key);
     

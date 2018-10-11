@@ -1,6 +1,6 @@
-package com.grydtech.msstack.database.cassandra.repository;
+package com.grydtech.msstack.eventstore.cassandra.repository;
 
-import com.grydtech.msstack.database.cassandra.domain.Book;
+import com.grydtech.msstack.eventstore.cassandra.domain.Book;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;

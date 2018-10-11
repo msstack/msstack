@@ -20,11 +20,11 @@ import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
 
 public class LeveldbConnector extends DatabaseConnector<String> {
     
-    private static LeveldbConnector leveldbConnector = null;
+    private  LeveldbConnector leveldbConnector = null;
     
     private static DB levelDBStore= null;
     
-    private LeveldbConnector() {
+    public LeveldbConnector() {
         Options options = new Options();
         try {
             levelDBStore = factory.open(new File(applicationConfiguration.getDatabase().getDatabaseName()), options);
@@ -34,18 +34,7 @@ public class LeveldbConnector extends DatabaseConnector<String> {
         }
     }
     
-    public static LeveldbConnector getInstance(){
-        if (leveldbConnector == null)
-            leveldbConnector = new LeveldbConnector();
-    
-        return leveldbConnector;
-    }
-    
     @Override
-    public void putKey(String key) {
-        
-    }
-    
     public void putKey(String key, String value) {
         levelDBStore.put(bytes(key), bytes(value));
     }

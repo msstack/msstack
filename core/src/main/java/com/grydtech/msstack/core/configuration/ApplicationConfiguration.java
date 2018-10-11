@@ -6,6 +6,11 @@ public final class ApplicationConfiguration {
     private MessageBrokerConfiguration messageBroker = null;
     private ServiceRegistryConfiguration serviceRegistry = null;
     private DatabaseConfiguration database = null;
+    private EventStoreConfiguration eventStore = null;
+    
+    public EventStoreConfiguration getEventStore() {
+        return eventStore;
+    }
     
     public DatabaseConfiguration getDatabase() {
         return database;

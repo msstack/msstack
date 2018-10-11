@@ -1,4 +1,4 @@
-package com.grydtech.msstack.database.cassandra.repository;
+package com.grydtech.msstack.eventstore.cassandra.repository;
 
 import com.datastax.driver.core.Session;
 
@@ -16,7 +16,7 @@ public class KeyspaceRepository {
     /**
      * Method used to create any keyspace - schema.
      * 
-     * @param schemaName the name of the schema.
+     * @param keyspaceName the name of the schema.
      * @param replicatioonStrategy the replication strategy.
      * @param numberOfReplicas the number of replicas.
      * 
@@ -37,7 +37,7 @@ public class KeyspaceRepository {
      * Method used to delete the specified schema.
      * It results in the immediate, irreversable removal of the keyspace, including all tables and data contained in the keyspace.
      * 
-     * @param schemaName the name of the keyspace to delete.
+     * @param keyspaceName the name of the keyspace to delete.
      */
     public void deleteKeyspace(String keyspaceName) {
         StringBuilder sb = new StringBuilder("DROP KEYSPACE ").append(keyspaceName);

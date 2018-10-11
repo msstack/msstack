@@ -16,6 +16,7 @@
         <module>transport</module>
         <module>reports</module>
         <module>database</module>
+        <module>event-store</module>
     </modules>
 
     <properties>
