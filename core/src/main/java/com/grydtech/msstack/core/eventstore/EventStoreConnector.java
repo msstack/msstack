@@ -12,7 +12,7 @@ import java.util.UUID;
 /**
  * Created by dileka on 9/19/18.
  */
-//@FrameworkComponent
+@FrameworkComponent
 public abstract class EventStoreConnector {
     
     @Value
