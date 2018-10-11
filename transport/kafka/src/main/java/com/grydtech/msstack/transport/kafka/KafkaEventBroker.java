@@ -30,6 +30,7 @@ public class KafkaEventBroker extends EventBroker {
         String eventName = event.getClass().getSimpleName();
         String eventData = JsonConverter.toJsonString(event).orElseThrow(RuntimeException::new);
         this.kafkaProducerService.publish(eventStream, eventName, eventData);
+        
     }
 
     @Override
