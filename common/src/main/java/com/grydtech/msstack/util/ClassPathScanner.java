@@ -17,8 +17,13 @@ public final class ClassPathScanner {
 
     public <T> Set<Class<? extends T>> getSubTypesOf(Class<T> baseType) {
         return reflections.getSubTypesOf(baseType).stream()
-                .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers()))
+                .filter(this::isConcrete)
                 .collect(Collectors.toSet());
+    }
+
+    private boolean isConcrete(Class c) {
+        final int cm = c.getModifiers();
+        return !Modifier.isInterface(cm) && !Modifier.isAbstract(cm) && !Modifier.isNative(cm);
     }
 
     public <T extends Annotation> Set<Class<?>> getTypesAnnotatedWith(Class<T> annotationClass) {
@@ -28,7 +33,7 @@ public final class ClassPathScanner {
     public <T> T getInstance(Class<T> tClass) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         return getSubTypesOf(tClass)
                 .stream()
-                .filter(aClass -> !Modifier.isAbstract(aClass.getModifiers()))
+                .filter(this::isConcrete)
                 .findFirst()
                 .orElseThrow(ClassNotFoundException::new)
                 .newInstance();

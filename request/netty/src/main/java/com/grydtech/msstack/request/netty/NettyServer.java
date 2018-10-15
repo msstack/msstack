@@ -44,7 +44,7 @@ final class NettyServer {
 
     protected void run() throws InterruptedException {
         try {
-            // Bind and run to accept incoming connections
+            // Bind and start to accept incoming connections
             Channel ch = serverBootstrap.bind(port).sync().channel();
             ch.closeFuture().sync();
         } finally {

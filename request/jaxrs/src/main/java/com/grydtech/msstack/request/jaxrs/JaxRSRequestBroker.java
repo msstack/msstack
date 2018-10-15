@@ -1,15 +1,14 @@
 package com.grydtech.msstack.request.jaxrs;
 
-import com.grydtech.msstack.core.annotation.FrameworkComponent;
-import com.grydtech.msstack.core.component.RequestBroker;
-import com.grydtech.msstack.request.jaxrs.features.JacksonFeature;
+import com.grydtech.msstack.annotation.FrameworkComponent;
 
 @FrameworkComponent
-public abstract class JaxRSRequestBroker extends RequestBroker {
+public abstract class JaxRSRequestBroker {
 
-    @Override
-    public void start() throws Exception {
-        getClasses().add(JacksonFeature.class);
-    }
+// COMMENTED OUT BECAUSE INTERNAL COMMUNICATION NOW HAPPENS VIA MESSAGE BUS
+//    @Override
+//    public void start() throws Exception {
+//        getClasses().add(JacksonFeature.class);
+//    }
 
 }

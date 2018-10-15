@@ -30,6 +30,6 @@
             <artifactId>leveldb</artifactId>
             <version>${leveldb.version}</version>
         </dependency>
-        
+
     </dependencies>
 </project>

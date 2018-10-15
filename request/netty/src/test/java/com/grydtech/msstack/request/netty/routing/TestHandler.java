@@ -1,17 +1,25 @@
 package com.grydtech.msstack.request.netty.routing;
 
 import com.grydtech.msstack.core.handler.CommandHandler;
+import com.grydtech.msstack.core.types.QueryArgs;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import java.util.function.Consumer;
 
-@Path("/")
-public class TestHandler implements CommandHandler<TestRequest, TestResponse> {
+public class TestHandler implements CommandHandler<TestEntity, TestRequest> {
 
-    @POST
     @Override
-    @Path("/test")
-    public TestResponse handle(TestRequest request) {
-        return new TestResponse().setResult(request.getId() + request.getData());
+    public TestEntity get(QueryArgs args) {
+        return new TestEntity();
+    }
+
+    @Override
+    public void accept(TestRequest testRequest) {
+        // Emit TestEvent
+        new TestEvent().setPayload(get(null)).emit();
+    }
+
+    @Override
+    public Consumer<TestRequest> andThen(Consumer<? super TestRequest> after) {
+        return null;
     }
 }

@@ -20,7 +20,7 @@
     </properties>
 
     <dependencies>
-        <!-- run jersey dependencies -->
+        <!-- start jersey dependencies -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-jetty-http</artifactId>
@@ -50,7 +50,7 @@
         </dependency>
         <!-- end jersey dependencies -->
 
-        <!-- run jetty dependencies -->
+        <!-- start jetty dependencies -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>

@@ -11,7 +11,7 @@ public final class InjectionUtils {
     }
 
     /**
-     * AutoInjected parameters to object, and return it
+     * InjectInstance parameters to object, and return it
      *
      * @param object     Object to which to injectParameters
      * @param parameters Parameters to injectParameters

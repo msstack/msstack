@@ -1,6 +1,6 @@
 package com.grydtech.msstack.request.netty.util;
 
-import com.grydtech.msstack.core.handler.RequestHandler;
+import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.request.netty.routing.MethodWrapper;
 import com.grydtech.msstack.request.netty.uri.Endpoint;
 
@@ -19,13 +19,13 @@ public final class EndpointUtils {
     }
 
     /**
-     * Finds {@link Path} policy in a given {@link RequestHandler} class and its methods,
+     * Finds {@link Path} policy in a given {@link com.grydtech.msstack.core.handler.Handler} class and its methods,
      * and create a map from each complete path to the corresponding {@link Method}.
      *
-     * @param handlerClass A {@link Class} that extends {@link RequestHandler}
+     * @param handlerClass A {@link Class} that extends {@link com.grydtech.msstack.core.handler.Handler}
      * @return A mapping from Path String to {@link Method}
      */
-    public static Optional<Endpoint> extractEndpoint(Class<? extends RequestHandler> handlerClass) {
+    public static Optional<Endpoint> extractEndpoint(Class<? extends Handler> handlerClass) {
         // Base URI
         final Path baseURI = handlerClass.getDeclaredAnnotation(Path.class);
         // If no Path annotation found, return empty

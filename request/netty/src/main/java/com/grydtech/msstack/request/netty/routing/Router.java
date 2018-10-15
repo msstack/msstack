@@ -1,7 +1,6 @@
 package com.grydtech.msstack.request.netty.routing;
 
-import com.grydtech.msstack.core.handler.RequestHandler;
-import com.grydtech.msstack.exception.RouteNotFoundException;
+import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.request.netty.uri.Endpoint;
 import com.grydtech.msstack.request.netty.uri.EndpointMatch;
 import com.grydtech.msstack.request.netty.util.EndpointUtils;
@@ -31,7 +30,7 @@ public final class Router {
     }
 
     /**
-     * This static method accepts a set of {@link RequestHandler} classes, traverses through each annotation,
+     * This static method accepts a set of {@link com.grydtech.msstack.core.handler.Handler} classes, traverses through each annotation,
      * and builds a route map for each handler. It generates {@link Endpoint} objects that correspond to each
      * {@link javax.ws.rs.Path} annotation, gets the methods, and wrap them in {@link MethodWrapper} instances.
      *
@@ -40,8 +39,8 @@ public final class Router {
      */
     public static Router build(Set<Class<?>> handlerClasses) {
         Set<Endpoint> endpoints = handlerClasses.stream()
-                .filter(RequestHandler.class::isAssignableFrom)
-                .map(aClass -> (Class<? extends RequestHandler>) aClass.asSubclass(RequestHandler.class))
+                .filter(Handler.class::isAssignableFrom)
+                .map(aClass -> (Class<? extends Handler>) aClass.asSubclass(Handler.class))
                 .map(EndpointUtils::extractEndpoint)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -58,13 +57,13 @@ public final class Router {
      * @return {@link RoutingResult} for the {@code httpMethod} and {@code path}.
      * This object contains the {@link EndpointMatch} and {@link MethodWrapper} for that particular request.
      */
-    public final RoutingResult route(HttpMethod httpMethod, String path) throws RouteNotFoundException {
+    public final RoutingResult route(HttpMethod httpMethod, String path) throws Exception {
         // TODO use HTTP Method as well for the routes
         httpMethod.name();
         // Find endpoint that matches path
         Endpoint endpoint = endpoints.stream()
                 .filter(e -> e.match(path).isPresent())
-                .findFirst().orElseThrow(RouteNotFoundException::new);
+                .findFirst().orElseThrow(Exception::new);
         // Get the destination EndpointMatch and MethodWrapper
         EndpointMatch endpointMatch = endpoint.match(path).orElseThrow(RuntimeException::new);
         MethodWrapper methodWrapper = endpoint.getMethod();

@@ -1,8 +1,8 @@
 package com.grydtech.msstack.core;
 
-import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
+import com.grydtech.msstack.configuration.ApplicationConfiguration;
+import com.grydtech.msstack.util.ConfigurationInjectorUtils;
 import com.grydtech.msstack.util.DependencyInjectorUtils;
-import com.grydtech.msstack.util.ValueInjectorUtils;
 import com.grydtech.msstack.util.YamlConverter;
 
 import java.io.InputStream;
@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class with static run method that can be used to run a microservice
+ * Class with static start method that can be used to start a microservice
  */
 @SuppressWarnings("unused")
 public final class MicroserviceRunner {
@@ -25,13 +25,13 @@ public final class MicroserviceRunner {
         InputStream configFileStream = applicationClass.getClassLoader().getResourceAsStream("application.yml");
         ApplicationConfiguration applicationConfiguration = YamlConverter.getObject(configFileStream, ApplicationConfiguration.class).orElseThrow(RuntimeException::new);
 
-        ValueInjectorUtils.putValueObject("applicationConfiguration", applicationConfiguration);
-        ValueInjectorUtils.inject();
+        ConfigurationInjectorUtils.putValueObject("applicationConfiguration", applicationConfiguration);
+        ConfigurationInjectorUtils.inject();
         DependencyInjectorUtils.inject();
 
         LOGGER.log(Level.ALL, "Starting application...");
         // Start Application
-        applicationClass.newInstance().run();
+        applicationClass.newInstance().start();
         LOGGER.log(Level.ALL, "MicroserviceApplication Started.");
     }
 }

@@ -1,15 +1,17 @@
 package com.grydtech.msstack.eventstore.cassandra.domain;
 
+import com.grydtech.msstack.core.types.Entity;
+
 import java.util.UUID;
 
-public class Book {
+public class Book implements Entity<UUID> {
 
     private UUID id;
 
     private String title;
 
     private String author;
- 
+
     private String subject;
 
     private String publisher;
@@ -24,12 +26,15 @@ public class Book {
         this.subject = subject;
     }
 
+    @Override
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    @Override
+    public Book setId(UUID id) {
         this.id = id;
+        return this;
     }
 
     public String getTitle() {

@@ -3,8 +3,8 @@ package com.grydtech.msstack.eventstore.cassandra.repository;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.grydtech.msstack.core.BasicEvent;
-import com.grydtech.msstack.eventstore.cassandra.domain.Event;
+import com.grydtech.msstack.core.types.messaging.Event;
+import com.grydtech.msstack.eventstore.cassandra.domain.BookEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +53,12 @@ public class EventRepository {
     }
 
     /**
-     * Insert a row in the table Events. 
-     * 
+     * Insert a row in the table Events.
+     *
      * @param event
      */
     public void insertEvent(Event event) {
-        StringBuilder sb = new StringBuilder("INSERT INTO ").append(TABLE_NAME).append("(uuid, topic, message) ").append("VALUES (").append(event.getUuid()).append(", '").append(event.getTopic()).append("', '").append(event.getMessage())
+        StringBuilder sb = new StringBuilder("INSERT INTO ").append(TABLE_NAME).append("(uuid, topic, message) ").append("VALUES (").append(event.getId()).append(", '").append(event.getTopic()).append("', '").append(event.getPayload())
                 .append("');");
 
         final String query = sb.toString();
@@ -67,10 +67,11 @@ public class EventRepository {
 
     /**
      * Insert a row in the table eventsByTopic.
+     *
      * @param event
      */
     public void insertEventByTopic(Event event) {
-        StringBuilder sb = new StringBuilder("INSERT INTO ").append(TABLE_NAME_BY_TOPIC).append("(uuid, topic) ").append("VALUES (").append(event.getUuid()).append(", '").append(event.getTopic()).append("');");
+        StringBuilder sb = new StringBuilder("INSERT INTO ").append(TABLE_NAME_BY_TOPIC).append("(uuid, topic) ").append("VALUES (").append(event.getId()).append(", '").append(event.getTopic()).append("');");
 
         final String query = sb.toString();
         session.execute(query);
@@ -82,8 +83,8 @@ public class EventRepository {
      * @param event
      */
     public void insertEventBatch(Event event) {
-        StringBuilder sb = new StringBuilder("BEGIN BATCH ").append("INSERT INTO ").append(TABLE_NAME).append("(uuid, topic, message) ").append("VALUES (").append(event.getUuid()).append(", '").append(event.getTopic()).append("', '").append(event.getMessage())
-                .append("');").append("INSERT INTO ").append(TABLE_NAME_BY_TOPIC).append("(uuid, topic) ").append("VALUES (").append(event.getUuid()).append(", '").append(event.getTopic()).append("');")
+        StringBuilder sb = new StringBuilder("BEGIN BATCH ").append("INSERT INTO ").append(TABLE_NAME).append("(uuid, topic, message) ").append("VALUES (").append(event.getId()).append(", '").append(event.getTopic()).append("', '").append(event.getPayload())
+                .append("');").append("INSERT INTO ").append(TABLE_NAME_BY_TOPIC).append("(uuid, topic) ").append("VALUES (").append(event.getId()).append(", '").append(event.getTopic()).append("');")
                 .append("APPLY BATCH;");
 
         final String query = sb.toString();
@@ -92,7 +93,7 @@ public class EventRepository {
 
     /**
      * Select event by uuid.
-     * 
+     *
      * @return
      */
     public Event selectEventByUUID(UUID uuid) {
@@ -102,10 +103,12 @@ public class EventRepository {
 
         ResultSet rs = session.execute(query);
 
-        List<Event> events = new ArrayList<Event>();
+        List<Event> events = new ArrayList<>();
 
         for (Row r : rs) {
-            Event s = new Event(r.getUUID("id"), r.getString("title"), r.getString("message"));
+            Event<String> s = new BookEvent()
+                    .setId(r.getUUID("id"))
+                    .setPayload(r.getString("message"));
             events.add(s);
         }
 
@@ -114,7 +117,7 @@ public class EventRepository {
 
     /**
      * Select all events from events
-     * 
+     *
      * @return
      */
     public List<Event> selectAll() {
@@ -126,7 +129,9 @@ public class EventRepository {
         List<Event> events = new ArrayList<Event>();
 
         for (Row r : rs) {
-            Event event = new Event(r.getUUID("uuid"), r.getString("topic"), r.getString("message"));
+            Event<String> event = new BookEvent()
+                    .setId(r.getUUID("uuid"))
+                    .setPayload(r.getString("message"));
             events.add(event);
         }
         return events;
@@ -134,10 +139,12 @@ public class EventRepository {
 
     /**
      * Select all events from eventsByTopic
+     *
      * @return
      */
     public List<Event> selectAllEventByTopic(String topic) {
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_NAME_BY_TOPIC).append(" WHERE topic = '").append(topic).append("';");;
+        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_NAME_BY_TOPIC).append(" WHERE topic = '").append(topic).append("';");
+        ;
 
         final String query = sb.toString();
         ResultSet rs = session.execute(query);
@@ -145,7 +152,9 @@ public class EventRepository {
         List<Event> events = new ArrayList<Event>();
 
         for (Row r : rs) {
-            Event event = new Event(r.getUUID("uuid"), r.getString("topic"), r.getString(null));
+            Event<String> event = new BookEvent()
+                    .setId(r.getUUID("uuid"))
+                    .setPayload(r.getString(null));
             events.add(event);
         }
         return events;
@@ -163,7 +172,7 @@ public class EventRepository {
 
     /**
      * Delete table.
-     * 
+     *
      * @param tableName the name of the table to delete.
      */
     public void deleteTable(String tableName) {

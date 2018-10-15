@@ -1,11 +1,37 @@
 package com.grydtech.msstack.request.netty.routing;
 
-public class TestResponse {
+import com.grydtech.msstack.core.types.messaging.Response;
 
-    private String result;
+import java.util.UUID;
 
-    public TestResponse setResult(String result) {
-        this.result = result;
+public class TestResponse extends Response {
+
+    private UUID id;
+    private String payload;
+
+    public TestResponse() {
+        this.id = UUID.randomUUID();
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public Response setId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public String getPayload() {
+        return payload;
+    }
+
+    @Override
+    public TestResponse setPayload(String payload) {
+        this.payload = payload;
         return this;
     }
 
@@ -16,11 +42,14 @@ public class TestResponse {
 
         TestResponse that = (TestResponse) o;
 
-        return result.equals(that.result);
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return payload != null ? payload.equals(that.payload) : that.payload == null;
     }
 
     @Override
     public int hashCode() {
-        return result.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (payload != null ? payload.hashCode() : 0);
+        return result;
     }
 }

@@ -1,83 +1,67 @@
 package com.grydtech.msstack.core;
 
-import com.grydtech.msstack.core.component.EventBroker;
-import com.grydtech.msstack.core.component.RequestBroker;
-import com.grydtech.msstack.core.handler.EventHandler;
-import com.grydtech.msstack.core.handler.RequestHandler;
-import com.grydtech.msstack.core.serviceregistry.MembershipProtocol;
+import com.grydtech.msstack.core.connectors.database.DatabaseConnector;
+import com.grydtech.msstack.core.connectors.eventstore.EventStoreConnector;
+import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
+import com.grydtech.msstack.core.connectors.serviceregistry.ServiceRegistryConnector;
+import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.util.ClassPathScanner;
 
 import java.util.Set;
 
 /**
- * Base class for a Microservice Application created using MSStack.
- * All applications should have one class that inherits this in the module root
+ * Base class for a MSStack application
+ * The class path should have exactly one implementation of this class
  */
 public abstract class MicroserviceApplication {
 
-    private final Set<Class<? extends RequestHandler>> requestHandlers;
-    private final Set<Class<? extends EventHandler>> eventHandlers;
+    private final Set<Class<? extends Handler>> handlers;
 
     public MicroserviceApplication() {
         ClassPathScanner classPathScanner = new ClassPathScanner(getClass().getPackage().getName());
-        eventHandlers = classPathScanner.getSubTypesOf(EventHandler.class);
-        requestHandlers = classPathScanner.getSubTypesOf(RequestHandler.class);
+        handlers = classPathScanner.getSubTypesOf(Handler.class);
     }
 
     /**
-     * Returns the set of request handler classes in the classpath
+     * Returns the set of handler classes in the classpath
      *
-     * @return Set of Request Handler Classes
+     * @return Set of Handler Classes
      */
-    public final Set<Class<? extends RequestHandler>> getRequestHandlers() {
-        return requestHandlers;
+    public final Set<Class<? extends Handler>> getHandlers() {
+        return handlers;
     }
 
     /**
-     * Returns the set of event handler classes in the classpath
-     *
-     * @return Set of BasicEvent Handler Classes
-     */
-    public final Set<Class<? extends EventHandler>> getEventHandlers() {
-        return eventHandlers;
-    }
-
-    /**
-     * Runs the Microservice
+     * Starts the Microservice Application
      *
      * @throws Exception If an exception occurs that is not handled within the framework
      */
-    public final void run() throws Exception {
+    public final void start() throws Exception {
 
-        // Brokers
-        final EventBroker eventBroker = EventBroker.getInstance();
-        final RequestBroker requestBroker = RequestBroker.getInstance();
-        final MembershipProtocol membershipProtocol = MembershipProtocol.getInstance();
+        // Connectors
+        final DatabaseConnector databaseConnector = DatabaseConnector.getInstance();
+        final EventStoreConnector eventStoreConnector = EventStoreConnector.getInstance();
+        final MessageBusConnector messageBusConnector = MessageBusConnector.getInstance();
+        final ServiceRegistryConnector serviceRegistryConnector = ServiceRegistryConnector.getInstance();
 
         try {
-            // Register BasicEvent Handlers
-            this.eventHandlers.forEach(eventBroker::subscribe);
+            // Register Handlers
+            this.handlers.forEach(messageBusConnector::attach);
 
-            // Register Request Handlers
-            this.requestHandlers.forEach(requestBroker::subscribe);
+            // Start connectors
+            databaseConnector.connect();
+            eventStoreConnector.connect();
+            messageBusConnector.connect();
+            serviceRegistryConnector.connect();
 
-            // Start Service Discovery
-            membershipProtocol.start();
-
-            // Register Service
-            membershipProtocol.register();
-
-            // Start BasicEvent MessageBrokerConfiguration
-            eventBroker.start();
-
-            // Start Request MessageBrokerConfiguration
-            requestBroker.start(); // ToDo: main thread block after this call
-
-            // Optional
-
+            // Block until user terminates
+            this.wait();
         } finally {
             // Cleanup before termination
-            eventBroker.flush();
+            databaseConnector.disconnect();
+            eventStoreConnector.disconnect();
+            messageBusConnector.disconnect();
+            serviceRegistryConnector.disconnect();
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.grydtech.msstack.transport.kafka.services;
 
-import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
+import com.grydtech.msstack.configuration.ApplicationConfiguration;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 
 public class KafkaProducerService extends KafkaService {
 
-    private final KafkaProducer<String, String> kafkaProducer;
     private static final Logger LOGGER = Logger.getLogger(KafkaProducerService.class.toGenericString());
+    private final KafkaProducer<String, String> kafkaProducer;
 
     public KafkaProducerService(ApplicationConfiguration applicationConfiguration) {
         super(applicationConfiguration);
@@ -22,9 +22,9 @@ public class KafkaProducerService extends KafkaService {
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getMessageBroker().getBootstrap());
-        properties.put(ProducerConfig.ACKS_CONFIG, applicationConfiguration.getMessageBroker().getAcks());
-        properties.put(ProducerConfig.RETRIES_CONFIG, applicationConfiguration.getMessageBroker().getRetries());
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getMessageBusConfiguration().getBootstrap());
+        properties.put(ProducerConfig.ACKS_CONFIG, applicationConfiguration.getMessageBusConfiguration().getAcks());
+        properties.put(ProducerConfig.RETRIES_CONFIG, applicationConfiguration.getMessageBusConfiguration().getRetries());
 
         this.kafkaProducer = new KafkaProducer<>(properties);
     }
@@ -45,7 +45,7 @@ public class KafkaProducerService extends KafkaService {
             public void run() {
                 kafkaProducer.flush();
             }
-        }, 6000, applicationConfiguration.getMessageBroker().getInterval());
+        }, 6000, applicationConfiguration.getMessageBusConfiguration().getInterval());
         LOGGER.info("Scheduled event publisher started");
     }
 }

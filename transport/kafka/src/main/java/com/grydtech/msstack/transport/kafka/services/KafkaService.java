@@ -1,6 +1,6 @@
 package com.grydtech.msstack.transport.kafka.services;
 
-import com.grydtech.msstack.core.configuration.ApplicationConfiguration;
+import com.grydtech.msstack.configuration.ApplicationConfiguration;
 
 public abstract class KafkaService {
     protected final ApplicationConfiguration applicationConfiguration;

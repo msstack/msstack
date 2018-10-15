@@ -9,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * This is an implementation of a simple Java client.
- *
  */
 public class CassandraConnector {
     private static final Logger LOG = LoggerFactory.getLogger(CassandraConnector.class);

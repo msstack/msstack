@@ -1,19 +1,18 @@
 package com.grydtech.msstack.request.netty;
 
-import com.grydtech.msstack.core.annotation.FrameworkComponent;
-import com.grydtech.msstack.core.component.RequestBroker;
-import com.grydtech.msstack.request.netty.routing.Router;
+import com.grydtech.msstack.annotation.FrameworkComponent;
 
 @SuppressWarnings("unused")
 @FrameworkComponent
-public class NettyRequestBroker extends RequestBroker {
+public class NettyRequestBroker {
 
-    @Override
-    public void start() throws Exception {
-        final Router router = Router.build(getClasses());
-        final NettyServer server = new NettyServer(applicationConfiguration.getServer().getPort())
-                .setRouter(router)
-                .build();
-        server.run();
-    }
+// COMMENTED OUT BECAUSE INTERNAL COMMUNICATION NOW HAPPENS VIA MESSAGE BUS
+//    @Override
+//    public void start() throws Exception {
+//        final Router router = Router.build(getClasses());
+//        final NettyServer server = new NettyServer(applicationConfiguration.getServer().getPort())
+//                .setRouter(router)
+//                .build();
+//        server.run();
+//    }
 }

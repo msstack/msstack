@@ -18,7 +18,7 @@
     </properties>
 
     <dependencies>
-        <!-- connect to kafka message broker -->
+        <!-- connect to kafka payload broker -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>

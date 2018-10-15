@@ -1,7 +1,7 @@
 package com.grydtech.msstack.util;
 
-import com.grydtech.msstack.core.annotation.AutoInjected;
-import com.grydtech.msstack.core.annotation.FrameworkComponent;
+import com.grydtech.msstack.annotation.FrameworkComponent;
+import com.grydtech.msstack.annotation.InjectInstance;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -17,7 +17,7 @@ public final class DependencyInjectorUtils {
     }
 
     /**
-     * Assume @AutoInjected only annotates static fields in Class
+     * Assume @InjectInstance only annotates static fields in Class
      *
      * @param field Field to inject instance into
      * @throws ClassNotFoundException No Implementation of the annotated class found in classpath
@@ -40,7 +40,7 @@ public final class DependencyInjectorUtils {
     }
 
     /**
-     * Automatically inject properties annotated with @AutoInjected
+     * Automatically inject properties annotated with @InjectInstance
      * in classes annotated with @FrameworkComponent
      * with first occurrence from classpath
      */
@@ -48,7 +48,7 @@ public final class DependencyInjectorUtils {
             throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         for (Class aClass : scanner.getTypesAnnotatedWith(FrameworkComponent.class)) {
             for (Field field : aClass.getDeclaredFields()) {
-                if (field.isAnnotationPresent(AutoInjected.class)) {
+                if (field.isAnnotationPresent(InjectInstance.class)) {
                     injectInstanceIntoField(field);
                 }
             }

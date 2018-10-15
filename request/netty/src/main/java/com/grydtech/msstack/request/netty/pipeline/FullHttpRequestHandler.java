@@ -1,7 +1,5 @@
 package com.grydtech.msstack.request.netty.pipeline;
 
-import com.grydtech.msstack.core.annotation.ResponseStatus;
-import com.grydtech.msstack.exception.RouteNotFoundException;
 import com.grydtech.msstack.request.netty.routing.Router;
 import com.grydtech.msstack.request.netty.routing.RoutingResult;
 import com.grydtech.msstack.request.netty.util.InjectionUtils;
@@ -46,14 +44,13 @@ public final class FullHttpRequestHandler extends SimpleChannelInboundHandler<Fu
         RoutingResult routeResult;
         try {
             routeResult = httpRouter.route(httpMethod, path);
-        } catch (RouteNotFoundException e) {
+        } catch (Exception e) {
             // If Routing Result not found, return a HTTP Response indicating this
-            ResponseStatus status = e.getClass().getAnnotation(ResponseStatus.class);
-            response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(status.value()));
+            response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND);
             response.headers().set(HttpHeaderNames.CONTENT_LENGTH, response.content().readableBytes());
             // Put error message in response body as JSON
             Map<String, String> message = new HashMap<>();
-            message.put("error", status.message());
+            message.put("error", HttpResponseStatus.NOT_FOUND.reasonPhrase());
             String payload = JsonConverter.toJsonString(message).orElse("");
             response.content().writeBytes(payload.getBytes(Charset.defaultCharset()));
             // Write response
