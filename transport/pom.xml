@@ -12,7 +12,8 @@
     <groupId>com.grydtech.msstack.transport</groupId>
     <artifactId>transport</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${parent.version}</version>
+    <description>Transport Layer implementations for MSStack</description>
 
     <modules>
         <module>kafka</module>

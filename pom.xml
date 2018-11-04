@@ -7,6 +7,7 @@
     <artifactId>msstack</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <description>MSStack is a Full-Stack Micro Service framework for Java</description>
 
     <modules>
         <module>common</module>
@@ -14,8 +15,9 @@
         <module>service-discovery</module>
         <module>transport</module>
         <module>reports</module>
-        <module>database</module>
-        <module>event-store</module>
+        <module>snapshot</module>
+        <module>eventstore</module>
+        <module>e2e</module>
     </modules>
 
     <properties>

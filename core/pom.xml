@@ -18,8 +18,9 @@
     </parent>
 
     <artifactId>core</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${parent.version}</version>
     <packaging>jar</packaging>
+    <description>Core Classes and Interfaces in MSStack</description>
 
     <properties>
         <jaxrs.version>2.1</jaxrs.version>

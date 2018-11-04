@@ -4,13 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.grydtech.msstack.event-store</groupId>
-        <artifactId>event-store</artifactId>
+        <groupId>com.grydtech.msstack.eventstore</groupId>
+        <artifactId>eventstore</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>cassandra</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${parent.version}</version>
+    <description>Event Store Implementation using Cassandra for MSStack</description>
     <packaging>jar</packaging>
 
 

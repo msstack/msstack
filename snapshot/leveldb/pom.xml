@@ -4,14 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.grydtech.msstack.database</groupId>
-        <artifactId>database</artifactId>
+        <groupId>com.grydtech.msstack.snapshot</groupId>
+        <artifactId>snapshot</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>leveldb</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${parent.version}</version>
     <packaging>jar</packaging>
+    <description>Event Store Snapshot implementation using LevelDB for MSStack</description>
 
     <properties>
         <leveldb.version>0.9</leveldb.version>

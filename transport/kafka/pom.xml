@@ -20,6 +20,7 @@
     <artifactId>kafka</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <description>Transport Layer implementation using Apache Kafka for MSStack</description>
 
     <properties>
         <kafka.version>1.0.1</kafka.version>
