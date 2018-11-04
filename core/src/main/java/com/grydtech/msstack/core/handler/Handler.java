@@ -10,6 +10,7 @@ public interface Handler<E extends Entity, M extends Message> extends Consumer<M
 
     /**
      * Get the entity that the handler needs to handle
+     *
      * @return Entity
      */
     E get();

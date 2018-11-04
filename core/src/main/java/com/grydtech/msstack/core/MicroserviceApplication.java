@@ -1,9 +1,9 @@
 package com.grydtech.msstack.core;
 
-import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.connectors.eventstore.EventStoreConnector;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.connectors.serviceregistry.ServiceRegistryConnector;
+import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.util.ClassPathScanner;
 

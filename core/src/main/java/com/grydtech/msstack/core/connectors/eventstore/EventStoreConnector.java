@@ -25,7 +25,7 @@ public abstract class EventStoreConnector<K, V> implements IConnector {
 
     public abstract void push(V event);
 
-    public abstract V get(K uuid);
+    public abstract V get(K id);
 
     public abstract List<V> get(String topic);
 }

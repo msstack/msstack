@@ -5,14 +5,8 @@ import com.grydtech.msstack.annotation.InjectInstance;
 import com.grydtech.msstack.core.connectors.IConnector;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.core.types.messaging.Message;
-import com.grydtech.msstack.util.HandlerUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Base class for plugging in Message Brokers
