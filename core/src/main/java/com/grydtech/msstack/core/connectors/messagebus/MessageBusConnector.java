@@ -6,16 +6,12 @@ import com.grydtech.msstack.core.connectors.IConnector;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.core.types.messaging.Message;
 
-import java.util.logging.Logger;
-
 /**
  * Base class for plugging in Message Brokers
  * The first instance in the classpath that extends this class is injected in
  */
 @FrameworkComponent
 public abstract class MessageBusConnector implements IConnector {
-
-    private static final Logger LOGGER = Logger.getLogger(MessageBusConnector.class.toGenericString());
 
     @InjectInstance
     private static MessageBusConnector instance;

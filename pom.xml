@@ -12,12 +12,12 @@
     <modules>
         <module>common</module>
         <module>core</module>
-        <module>service-discovery</module>
-        <module>transport</module>
+        <module>e2e</module>
+        <module>eventstore</module>
+        <module>registry</module>
         <module>reports</module>
         <module>snapshot</module>
-        <module>eventstore</module>
-        <module>e2e</module>
+        <module>transport</module>
     </modules>
 
     <properties>

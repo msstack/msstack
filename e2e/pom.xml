@@ -3,8 +3,10 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.grydtech.msstack.e2e</groupId>
     <artifactId>e2e</artifactId>
-    <groupId>com.grydtech.msstack</groupId>
     <version>1.0-SNAPSHOT</version>
     <description>End to End tests for MSStack</description>
+    
 </project>

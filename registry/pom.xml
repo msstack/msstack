@@ -9,10 +9,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>service-discovery</artifactId>
+    <groupId>com.grydtech.msstack.registry</groupId>
+    <artifactId>registry</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <description>Service Discovery Module for MSStack</description>
+    <description>Service Discovery and Registry Module for MSStack</description>
 
     <properties>
         <curator-framework.version>2.12.0</curator-framework.version>

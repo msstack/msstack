@@ -8,7 +8,6 @@ import com.grydtech.msstack.core.connectors.IConnector;
 public abstract class ServiceRegistryConnector implements IConnector {
 
     @InjectInstance
-    @SuppressWarnings("unused")
     private static ServiceRegistryConnector instance;
 
     public static ServiceRegistryConnector getInstance() {

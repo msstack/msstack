@@ -26,32 +26,32 @@
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.request</groupId>
-            <artifactId>jaxrs</artifactId>
+            <groupId>com.grydtech.msstack.e2e</groupId>
+            <artifactId>e2e</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.request</groupId>
-            <artifactId>jersey</artifactId>
+            <groupId>com.grydtech.msstack.eventstore</groupId>
+            <artifactId>cassandra</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.request</groupId>
-            <artifactId>netty</artifactId>
+            <groupId>com.grydtech.msstack.registry</groupId>
+            <artifactId>registry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.grydtech.msstack.snapshot</groupId>
+            <artifactId>leveldb</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.grydtech.msstack.transport</groupId>
             <artifactId>kafka</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.grydtech.msstack</groupId>
-            <artifactId>service-discovery</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
