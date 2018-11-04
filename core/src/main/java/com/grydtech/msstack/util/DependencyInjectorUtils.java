@@ -19,7 +19,7 @@ public final class DependencyInjectorUtils {
     /**
      * Assume @InjectInstance only annotates static fields in Class
      *
-     * @param field Field to inject instance into
+     * @param field Field to resolveAll instance into
      * @throws ClassNotFoundException No Implementation of the annotated class found in classpath
      * @throws IllegalAccessException The field cannot be accessed
      * @throws InstantiationException The class cannot be instantiated
@@ -40,11 +40,11 @@ public final class DependencyInjectorUtils {
     }
 
     /**
-     * Automatically inject properties annotated with @InjectInstance
+     * Automatically resolveAll properties annotated with @InjectInstance
      * in classes annotated with @FrameworkComponent
      * with first occurrence from classpath
      */
-    public static void inject()
+    public static void resolveAll()
             throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         for (Class aClass : scanner.getTypesAnnotatedWith(FrameworkComponent.class)) {
             for (Field field : aClass.getDeclaredFields()) {

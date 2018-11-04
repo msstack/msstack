@@ -1,34 +1,19 @@
 package com.grydtech.msstack.core.types.messaging;
 
+import lombok.Data;
+
 import java.util.UUID;
 
-@SuppressWarnings("unused")
-public abstract class Event<E> implements Message<UUID, E> {
+/**
+ * Event Class
+ *
+ * @param <P> Payload Type
+ */
+@Data
+public class Event<P> implements Message<UUID, P> {
 
-    private UUID uuid;
-    private E payload;
-
-    @Override
-    public final UUID getId() {
-        return uuid;
-    }
-
-    @Override
-    public final Event<E> setId(UUID id) {
-        this.uuid = id;
-        return this;
-    }
-
-    @Override
-    public final E getPayload() {
-        return payload;
-    }
-
-    @Override
-    public final Event<E> setPayload(E payload) {
-        this.payload = payload;
-        return this;
-    }
+    private UUID id;
+    private P payload;
 
     @Override
     public final String getTopic() {

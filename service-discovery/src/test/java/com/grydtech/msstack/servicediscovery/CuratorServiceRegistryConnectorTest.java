@@ -33,7 +33,7 @@ public class CuratorServiceRegistryConnectorTest extends TestCase {
 //        super.setUp();
 //        startZookeeper();
 //        instance = new CuratorServiceRegistryConnector();
-//        instance.setConnectionString(host + ":" + port);
+//        instance.setConnectionString(host + ":" + databasePort);
 //        instance.start();
     }
 
@@ -47,7 +47,7 @@ public class CuratorServiceRegistryConnectorTest extends TestCase {
     private Map<String, String> createMemberAttributes(String host, int port) {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("host", host);
-        attributes.put("port", String.valueOf(port));
+        attributes.put("databasePort", String.valueOf(port));
         return attributes;
     }
 
@@ -75,11 +75,11 @@ public class CuratorServiceRegistryConnectorTest extends TestCase {
 //        //get all the members under /services/order
 //        List<Member> list =  instance.getRegisteredServices("order");
 //        for(Member s : list){
-//            System.out.println(s.getHost()+" : "+s.getPort());
+//            System.out.println(s.getHost()+" : "+s.getDatabasePort());
 //        }
 //
-//        assertEquals(expResult, result.getName());
-//        assertEquals(memberPort, result.getPort());
+//        assertEquals(expResult, result.getDatabaseName());
+//        assertEquals(memberPort, result.getDatabasePort());
 //        System.out.println("Register Member Test Completed");
 
 
@@ -95,8 +95,8 @@ public class CuratorServiceRegistryConnectorTest extends TestCase {
 //
 ////        instance.findMember("order");
 //
-//        assertEquals(expResult, result.getName());
-//        assertEquals(memberPort, result.getPort());
+//        assertEquals(expResult, result.getDatabaseName());
+//        assertEquals(memberPort, result.getDatabasePort());
 //        System.out.println("Register Member Test Completed");
     }
 

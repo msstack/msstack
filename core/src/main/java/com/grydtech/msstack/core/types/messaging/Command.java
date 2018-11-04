@@ -1,11 +1,21 @@
 package com.grydtech.msstack.core.types.messaging;
 
+import lombok.Data;
+
 import java.util.UUID;
 
-public abstract class Command implements Message<UUID, String>, Metadata {
+/**
+ * Command Class
+ *
+ * @param <P> Payload Type
+ * @param <M> Metadata Type
+ */
+@Data
+public class Command<P, M> implements Request<P, M> {
 
     private UUID id;
-    private String payload;
+    private P payload;
+    private M metadata;
 
     @Override
     public final String getTopic() {
@@ -14,27 +24,5 @@ public abstract class Command implements Message<UUID, String>, Metadata {
         } catch (NoSuchMethodException e) {
             return null;
         }
-    }
-
-    @Override
-    public final String getPayload() {
-        return payload;
-    }
-
-    @Override
-    public final Command setPayload(String payload) {
-        this.payload = payload;
-        return this;
-    }
-
-    @Override
-    public final UUID getId() {
-        return id;
-    }
-
-    @Override
-    public final Command setId(UUID id) {
-        this.id = id;
-        return this;
     }
 }

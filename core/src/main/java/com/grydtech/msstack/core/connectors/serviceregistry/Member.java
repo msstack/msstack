@@ -47,9 +47,9 @@ public class Member {
     public String toString() {
         return "Member{" +
                 "id='" + id + '\'' +
-                ", name='" + name + '\'' +
+                ", databaseName='" + name + '\'' +
                 ", host='" + host + '\'' +
-                ", port=" + port +
+                ", databasePort=" + port +
                 '}';
     }
 }

@@ -4,13 +4,19 @@ import com.grydtech.msstack.core.connectors.eventstore.EventStoreConnector;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.types.Unique;
 
-public interface Message<I, M> extends Unique<I> {
+/**
+ * Base class for all Messaging in MSStack
+ *
+ * @param <I> Identifier Type
+ * @param <P> Payload Type
+ */
+public interface Message<I, P> extends Unique<I> {
 
     String getTopic();
 
-    M getPayload();
+    P getPayload();
 
-    Message<I, M> setPayload(M payload);
+    void setPayload(P payload);
 
     default void emit() {
         MessageBusConnector.getInstance().push(this);

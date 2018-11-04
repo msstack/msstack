@@ -1,11 +1,19 @@
 package com.grydtech.msstack.core.types.messaging;
 
+import lombok.Data;
+
 import java.util.UUID;
 
-public abstract class Response implements Message<UUID, String> {
+/**
+ * Response Class
+ *
+ * @param <P> Payload Type
+ */
+@Data
+public class Response<P> implements Message<UUID, P> {
 
     private UUID id;
-    private String payload;
+    private P payload;
 
     @Override
     public final String getTopic() {
@@ -14,27 +22,5 @@ public abstract class Response implements Message<UUID, String> {
         } catch (NoSuchMethodException e) {
             return null;
         }
-    }
-
-    @Override
-    public String getPayload() {
-        return payload;
-    }
-
-    @Override
-    public Response setPayload(String payload) {
-        this.payload = payload;
-        return this;
-    }
-
-    @Override
-    public UUID getId() {
-        return id;
-    }
-
-    @Override
-    public Response setId(UUID id) {
-        this.id = id;
-        return this;
     }
 }

@@ -4,5 +4,5 @@ public interface Unique<I> {
 
     I getId();
 
-    Unique<I> setId(I id);
+    void setId(I id);
 }

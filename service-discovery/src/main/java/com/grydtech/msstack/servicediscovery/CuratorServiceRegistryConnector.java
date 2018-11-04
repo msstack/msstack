@@ -4,8 +4,6 @@ import com.grydtech.msstack.core.connectors.serviceregistry.Member;
 import com.grydtech.msstack.core.connectors.serviceregistry.MemberListener;
 import com.grydtech.msstack.core.connectors.serviceregistry.ServiceRegistryConnector;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
@@ -31,16 +29,17 @@ public class CuratorServiceRegistryConnector extends ServiceRegistryConnector {
 
     @Override
     public Member register() {
+        Member member = null;
         try {
-            //ToDo: added id attribute host and port is redundant because serviceInstance contain host and port
-            Member member = new Member()
-                    .setId(applicationConfiguration.getServiceRegistryConfiguration().getId())
-                    .setName(applicationConfiguration.getServiceRegistryConfiguration().getName())
-                    .setHost(applicationConfiguration.getServiceRegistryConfiguration().getHost())
-                    .setPort(applicationConfiguration.getServiceRegistryConfiguration().getPort());
+            //ToDo: added id attribute host and databasePort is redundant because serviceInstance contain host and databasePort
+//            member = new Member()
+//                    .setId(configurationStore.getServiceRegistryConfiguration().getId())
+//                    .setName(configurationStore.getServiceRegistryConfiguration().getName())
+//                    .setHost(configurationStore.getServiceRegistryConfiguration().getHost())
+//                    .setPort(configurationStore.getServiceRegistryConfiguration().getPort());
             JsonInstanceSerializer<Member> serializer = new JsonInstanceSerializer<>(Member.class);
 
-            uriSpec = new UriSpec("{scheme}://{address}:{port}");
+            uriSpec = new UriSpec("{scheme}://{address}:{databasePort}");
 
             serviceInstance = ServiceInstance
                     .<Member>builder()
@@ -132,11 +131,11 @@ public class CuratorServiceRegistryConnector extends ServiceRegistryConnector {
 
     @Override
     public void connect() throws IOException {
-        curatorFrameworkClient = CuratorFrameworkFactory.newClient(
-                applicationConfiguration.getServiceRegistryConfiguration().getBootstrap(),
-                new RetryNTimes(5, 1000)
-        );
-        curatorFrameworkClient.start();
+//        curatorFrameworkClient = CuratorFrameworkFactory.newClient(
+//                configurationStore.getServiceRegistryConfiguration().getBootstrap(),
+//                new RetryNTimes(5, 1000)
+//        );
+//        curatorFrameworkClient.start();
     }
 
     @Override

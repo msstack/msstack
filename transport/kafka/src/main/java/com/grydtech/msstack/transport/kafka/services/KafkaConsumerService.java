@@ -1,69 +1,93 @@
 package com.grydtech.msstack.transport.kafka.services;
 
-import com.grydtech.msstack.configuration.ApplicationConfiguration;
+import com.grydtech.msstack.config.ConfigKey;
+import com.grydtech.msstack.config.ConfigurationProperties;
+import com.grydtech.msstack.config.DataKey;
+import com.grydtech.msstack.config.DataProperties;
 import com.grydtech.msstack.core.handler.Handler;
-import com.grydtech.msstack.transport.kafka.util.InvokeHelper;
+import com.grydtech.msstack.core.types.messaging.Message;
+import com.grydtech.msstack.util.JsonConverter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.util.HashSet;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-public class KafkaConsumerService extends KafkaService {
+public class KafkaConsumerService {
 
-    private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.toGenericString());
+    private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.getName());
+    private static final String bootstrapServers;
+    private static final int partitions;
+    private static final int groupId;
+    private static final String clientId;
+    private static final int pollingInterval;
+    private static final int pollingDelay;
+
+    static {
+        bootstrapServers = ConfigurationProperties.get(ConfigKey.CONFIG_BOOTSTRAP);
+        partitions = Integer.parseInt(DataProperties.get(DataKey.DATA_ENTITY_PARTITIONS));
+        groupId = new Random().nextInt(partitions);
+        pollingInterval = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_INTERVAL));
+        pollingDelay = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_DELAY));
+        clientId = UUID.randomUUID().toString();
+    }
+
     private final KafkaConsumer<String, String> kafkaConsumer;
-    private Map<String, HashSet<String>> topicClassMap;
+    private final ExecutorService executorService;
+    private HashMap<String, Set<Handler>> consumers;
 
-    public KafkaConsumerService(ApplicationConfiguration applicationConfiguration) {
-        super(applicationConfiguration);
+    public KafkaConsumerService() {
+        Properties properties = generateProperties();
+        this.kafkaConsumer = new KafkaConsumer<String, String>(properties);
+        this.executorService = Executors.newCachedThreadPool();
+    }
+
+    private Properties generateProperties() {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, applicationConfiguration.getMessageBusConfiguration().getBootstrap());
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, applicationConfiguration.getServiceRegistryConfiguration().getName());
-        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, applicationConfiguration.getServiceRegistryConfiguration().getId());
-        this.kafkaConsumer = new KafkaConsumer<>(properties);
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
+        return properties;
     }
 
-    public void setTopicClassMap(Map<String, HashSet<String>> topicClassMap) {
-        this.topicClassMap = topicClassMap;
+    public void setConsumers(HashMap<String, Set<Handler>> consumers) {
+        this.consumers = consumers;
     }
 
-    @Override
     public void start() {
         LOGGER.info("Starting scheduled event consumer");
-        kafkaConsumer.subscribe(this.topicClassMap.keySet());
+        kafkaConsumer.subscribe(consumers.keySet());
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                ConsumerRecords<String, String> records = kafkaConsumer.poll(applicationConfiguration.getMessageBusConfiguration().getInterval());
+                ConsumerRecords<String, String> records = kafkaConsumer.poll(pollingInterval);
                 for (ConsumerRecord<String, String> record : records) {
-                    String key = record.topic() + "::" + record.key();
-
-                    if (topicClassMap.containsKey(key)) {
-                        final HashSet<String> classNames = topicClassMap.get(key);
-                        classNames.forEach(s -> {
-                            try {
-                                Class<? extends Handler> h = Class.forName(s).asSubclass(Handler.class);
-                                InvokeHelper.invokeHandleMethod(h, record.value());
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
+                    String key = record.topic();
+                    final Set<Handler> handlers = consumers.get(key);
+                    handlers.forEach(h -> executorService.submit(() -> {
+                        h.accept(JsonConverter.getObject(record.value(), Message.class).get());
+                    }));
                 }
             }
-        }, 6000, applicationConfiguration.getMessageBusConfiguration().getInterval());
+        }, pollingDelay, pollingInterval);
         LOGGER.info("Scheduled event consumer started");
+    }
+
+    public void stop() {
+        kafkaConsumer.unsubscribe();
     }
 }

@@ -1,16 +1,11 @@
 package com.grydtech.msstack.core.connectors.serviceregistry;
 
 import com.grydtech.msstack.annotation.FrameworkComponent;
-import com.grydtech.msstack.annotation.InjectConfiguration;
 import com.grydtech.msstack.annotation.InjectInstance;
-import com.grydtech.msstack.configuration.ApplicationConfiguration;
 import com.grydtech.msstack.core.connectors.IConnector;
 
 @FrameworkComponent
 public abstract class ServiceRegistryConnector implements IConnector {
-
-    @InjectConfiguration
-    protected static ApplicationConfiguration applicationConfiguration;
 
     @InjectInstance
     @SuppressWarnings("unused")

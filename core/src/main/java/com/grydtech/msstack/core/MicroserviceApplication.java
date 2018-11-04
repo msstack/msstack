@@ -1,12 +1,13 @@
 package com.grydtech.msstack.core;
 
-import com.grydtech.msstack.core.connectors.database.DatabaseConnector;
+import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.connectors.eventstore.EventStoreConnector;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.connectors.serviceregistry.ServiceRegistryConnector;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.util.ClassPathScanner;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -39,14 +40,21 @@ public abstract class MicroserviceApplication {
     public final void start() throws Exception {
 
         // Connectors
-        final DatabaseConnector databaseConnector = DatabaseConnector.getInstance();
+        final SnapshotConnector databaseConnector = SnapshotConnector.getInstance();
         final EventStoreConnector eventStoreConnector = EventStoreConnector.getInstance();
         final MessageBusConnector messageBusConnector = MessageBusConnector.getInstance();
         final ServiceRegistryConnector serviceRegistryConnector = ServiceRegistryConnector.getInstance();
 
         try {
             // Register Handlers
-            this.handlers.forEach(messageBusConnector::attach);
+            this.handlers.stream().map(h -> {
+                try {
+                    return h.newInstance();
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }).filter(Objects::nonNull).forEach(messageBusConnector::attach);
 
             // Start connectors
             databaseConnector.connect();
