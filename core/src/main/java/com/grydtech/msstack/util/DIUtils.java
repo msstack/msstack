@@ -2,18 +2,27 @@ package com.grydtech.msstack.util;
 
 import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.annotation.InjectInstance;
+import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.logging.Logger;
 
-public final class DependencyInjectorUtils {
+/**
+ * Dependency Injection Utility Class to manage internal dependencies
+ */
+public final class DIUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(DependencyInjectorUtils.class.toGenericString());
-    private static final ClassPathScanner scanner = new ClassPathScanner("com.grydtech.msstack");
+    private static final Logger LOGGER;
+    @Getter
+    private static final ClassPathScanner scanner;
 
-    private DependencyInjectorUtils() {
+    static {
+        LOGGER = Logger.getLogger(DIUtils.class.getName());
+        scanner = new ClassPathScanner("com.grydtech.msstack");
+    }
 
+    private DIUtils() {
     }
 
     /**
@@ -40,9 +49,8 @@ public final class DependencyInjectorUtils {
     }
 
     /**
-     * Automatically resolveAll properties annotated with @InjectInstance
-     * in classes annotated with @FrameworkComponent
-     * with first occurrence from classpath
+     * Automatically inject the first match in classpath to each property annotated
+     * with @InjectInstance in classes annotated with @FrameworkComponent
      */
     public static void resolveAll()
             throws IllegalAccessException, ClassNotFoundException, InstantiationException {

@@ -1,4 +1,4 @@
-package com.grydtech.msstack.core.connectors.serviceregistry;
+package com.grydtech.msstack.core.connectors.registry;
 
 public interface MemberListener {
 
