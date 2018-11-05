@@ -1,9 +1,13 @@
 package com.grydtech.msstack.core.handler;
 
-import com.grydtech.msstack.core.BasicEvent;
+import com.grydtech.msstack.core.types.Entity;
+import com.grydtech.msstack.core.types.messaging.Message;
 
-@SuppressWarnings("unused")
-public interface EventHandler<E extends BasicEvent> {
-
-    void handle(E event);
+/**
+ * Interface for all Event Handlers
+ *
+ * @param <E> Entity Type
+ * @param <M> Message Type
+ */
+public interface EventHandler<E extends Entity, M extends Message> extends Handler<E, M> {
 }

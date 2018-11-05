@@ -1,11 +1,13 @@
 package com.grydtech.msstack.core.handler;
 
-import javax.ws.rs.POST;
+import com.grydtech.msstack.core.types.Entity;
+import com.grydtech.msstack.core.types.messaging.Message;
 
-@SuppressWarnings("unused")
-public interface CommandHandler<R, S> extends RequestHandler<R, S> {
-
-    @POST
-    @Override
-    S handle(R request);
+/**
+ * Interface for all Command Handlers
+ *
+ * @param <E> Entity Type
+ * @param <M> Message Type
+ */
+public interface CommandHandler<E extends Entity, M extends Message> extends Handler<E, M> {
 }

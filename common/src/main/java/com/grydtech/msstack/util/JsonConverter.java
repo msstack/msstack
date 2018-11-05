@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public final class JsonConverter {
 
-    private static final Logger LOGGER = Logger.getLogger(JsonConverter.class.toGenericString());
+    private static final Logger LOGGER = Logger.getLogger(JsonConverter.class.getName());
     private static ObjectMapper objectMapper;
 
     static {

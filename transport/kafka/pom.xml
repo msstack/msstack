@@ -2,6 +2,14 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <parent>
         <groupId>com.grydtech.msstack.transport</groupId>
@@ -12,13 +20,14 @@
     <artifactId>kafka</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <description>Transport Layer implementation using Apache Kafka for MSStack</description>
 
     <properties>
         <kafka.version>1.0.1</kafka.version>
     </properties>
 
     <dependencies>
-        <!-- connect to kafka message broker -->
+        <!-- connect to kafka payload broker -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
