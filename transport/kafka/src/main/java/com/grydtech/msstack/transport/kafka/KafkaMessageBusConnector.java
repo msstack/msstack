@@ -2,13 +2,13 @@ package com.grydtech.msstack.transport.kafka;
 
 import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
-import com.grydtech.msstack.core.services.EventsConsumer;
+import com.grydtech.msstack.core.services.MessageConsumer;
 import com.grydtech.msstack.core.types.Entity;
 import com.grydtech.msstack.core.types.messaging.Message;
 import com.grydtech.msstack.transport.kafka.services.KafkaConsumerService;
 import com.grydtech.msstack.transport.kafka.services.KafkaProducerService;
-import com.grydtech.msstack.util.EntityUtils;
 import com.grydtech.msstack.util.JsonConverter;
+import com.grydtech.msstack.util.MessageBusUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,22 +32,23 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
         this.kafkaConsumerService = new KafkaConsumerService();
     }
 
-    public final void attach(Class<? extends Entity> entityClass, EventsConsumer consumer) {
-        consumers.put(EntityUtils.getTopic(entityClass), consumer);
-        LOGGER.info(String.format("[TOPIC][%s] -> %s | attached", EntityUtils.getTopic(entityClass), consumer.getClass().getSimpleName()));
+    public final void attach(Class<? extends Entity> entityClass, MessageConsumer consumer) {
+        consumers.put(MessageBusUtils.getTopicByEntityClass(entityClass), consumer);
+        LOGGER.info(String.format("[TOPIC][%s] -> %s | attached", MessageBusUtils.getTopicByEntityClass(entityClass), consumer.getClass().getSimpleName()));
     }
 
     public final void detach(Class<? extends Entity> entityClass) {
-        consumers.remove(EntityUtils.getTopic(entityClass));
-        LOGGER.info(String.format("[TOPIC][%s] | detached", EntityUtils.getTopic(entityClass)));
+        consumers.remove(MessageBusUtils.getTopicByEntityClass(entityClass));
+        LOGGER.info(String.format("[TOPIC][%s] | detached", MessageBusUtils.getTopicByEntityClass(entityClass)));
     }
 
     @Override
-    public void push(Message message) {
+    public void push(Message message, Map metadata) {
         String topic = message.getTopic();
         String eventName = message.getClass().getSimpleName();
-        String eventData = JsonConverter.toJsonString(message.getPayload()).orElseThrow(RuntimeException::new);
-        this.kafkaProducerService.publish(topic, 0, eventName, eventData);
+        String messageString = JsonConverter.toJsonString(message).orElseThrow(RuntimeException::new);
+        String metadataString = JsonConverter.toJsonString(metadata).orElseThrow(RuntimeException::new);
+        this.kafkaProducerService.publish(topic, message.getEntityId().toString(), eventName, metadataString, messageString);
     }
 
     @Override

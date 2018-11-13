@@ -43,12 +43,11 @@ public class KafkaProducerService {
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ProducerConfig.ACKS_CONFIG, acks);
         properties.put(ProducerConfig.RETRIES_CONFIG, retries);
-        properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaPartitioner.class.getName());
         return properties;
     }
 
-    public void publish(String topic, int partition, String eventName, String eventData) {
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, partition, eventName, eventData);
+    public void publish(String topic, String key, String messageName, String metadata, String eventData) {
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, messageName + "::" + metadata + "::" + eventData);
         this.kafkaProducer.send(record);
     }
 

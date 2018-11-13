@@ -3,9 +3,11 @@ package com.grydtech.msstack.core.connectors.messagebus;
 import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.annotation.InjectInstance;
 import com.grydtech.msstack.core.connectors.IConnector;
-import com.grydtech.msstack.core.services.EventsConsumer;
+import com.grydtech.msstack.core.services.MessageConsumer;
 import com.grydtech.msstack.core.types.Entity;
 import com.grydtech.msstack.core.types.messaging.Message;
+
+import java.util.Map;
 
 /**
  * Base class for plugging in Message Brokers
@@ -24,7 +26,7 @@ public abstract class MessageBusConnector implements IConnector {
         return instance;
     }
 
-    public abstract void attach(Class<? extends Entity> entityClass, EventsConsumer consumer);
+    public abstract void attach(Class<? extends Entity> entityClass, MessageConsumer consumer);
 
     public abstract void detach(Class<? extends Entity> entityClass);
 
@@ -33,5 +35,5 @@ public abstract class MessageBusConnector implements IConnector {
      *
      * @param message Published Event
      */
-    public abstract void push(Message message);
+    public abstract void push(Message message, Map metadata);
 }

@@ -3,9 +3,11 @@ package com.grydtech.msstack.core.types.messaging;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.types.Entity;
-import com.grydtech.msstack.util.EntityUtils;
+import com.grydtech.msstack.util.MessageBusUtils;
 import lombok.Data;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -24,11 +26,21 @@ public abstract class Message<E extends Entity> {
     @JsonIgnore
     public abstract Class<E> getEntityClass();
 
-    public final void emit(UUID flowId) {
-        MessageBusConnector.getInstance().push(this);
+    @JsonIgnore
+    public final String getTopic() {
+        return MessageBusUtils.getTopicByEntityClass(this.getEntityClass());
     }
 
-    public final String getTopic() {
-        return EntityUtils.getTopic(this.getEntityClass());
+    @JsonIgnore
+    public final String getMessageName() {
+        return getClass().getSimpleName().toLowerCase() + "_" + this.getEntityClass().getSimpleName().toLowerCase();
+    }
+
+    public final void emit(UUID flowId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", "EVENT");
+        map.put("flowId", flowId);
+
+        MessageBusConnector.getInstance().push(this, map);
     }
 }

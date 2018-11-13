@@ -6,7 +6,8 @@ import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.connectors.registry.RegistryConnector;
 import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.handler.Handler;
-import com.grydtech.msstack.core.services.EntityMessagesConsumer;
+import com.grydtech.msstack.core.services.TopicMessagesConsumer;
+import com.grydtech.msstack.core.types.Entity;
 import com.grydtech.msstack.core.types.messaging.Event;
 import com.grydtech.msstack.util.ClassPathScanner;
 
@@ -27,6 +28,7 @@ public abstract class Application {
         ClassPathScanner classPathScanner = new ClassPathScanner(getClass().getPackage().getName());
         Set<Class<? extends Handler>> handlers = classPathScanner.getSubTypesOf(Handler.class);
         Set<Class<? extends Event>> events = classPathScanner.getSubTypesOf(Event.class);
+        Set<Class<? extends Entity>> entities = classPathScanner.getSubTypesOf(Entity.class);
 
         // Connectors
         final EventStoreConnector eventStoreConnector = EventStoreConnector.getInstance();
@@ -35,16 +37,14 @@ public abstract class Application {
         final RegistryConnector registryConnector = RegistryConnector.getInstance();
         final SnapshotConnector snapshotConnector = SnapshotConnector.getInstance();
 
-        // Services
-        final EntityMessagesConsumer entityMessagesConsumer = EntityMessagesConsumer.getInstance();
+        entities.forEach(en -> {
+            final TopicMessagesConsumer topicMessagesConsumer = new TopicMessagesConsumer(en);
+            handlers.forEach(topicMessagesConsumer::registerHandler);
+            handlers.forEach(topicMessagesConsumer::registerHandler);
+            messageBusConnector.attach(en, topicMessagesConsumer);
+        });
 
         try {
-            // Register Handlers
-            handlers.forEach(entityMessagesConsumer::registerHandler);
-
-            // Register Events
-            events.forEach(entityMessagesConsumer::registerEvent);
-
             // Start connectors
             eventStoreConnector.connect();
             gatewayConnector.connect();
@@ -58,7 +58,7 @@ public abstract class Application {
         } finally {
             // Cleanup before termination
             eventStoreConnector.disconnect();
-            gatewayConnector.connect();
+            gatewayConnector.disconnect();
             messageBusConnector.disconnect();
             registryConnector.disconnect();
             snapshotConnector.disconnect();

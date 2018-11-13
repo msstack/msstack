@@ -7,41 +7,34 @@ import com.grydtech.msstack.core.types.messaging.Event;
 import com.grydtech.msstack.core.types.messaging.Message;
 import com.grydtech.msstack.util.HandlerUtils;
 import com.grydtech.msstack.util.JsonConverter;
-import com.grydtech.msstack.util.MessageUtils;
+import com.grydtech.msstack.util.MessageBusUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class EntityMessagesConsumer implements EventsConsumer {
-    private static final ExecutorService executorService;
-    private static EntityMessagesConsumer entityMessagesConsumer;
-
-    static {
-        executorService = Executors.newCachedThreadPool();
-    }
-
+public class TopicMessagesConsumer implements MessageConsumer {
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final Map<String, Class<? extends Event>> messageMap = new HashMap<>();
     private final Map<String, Set<HandlerWrapper>> handlersMap = new HashMap<>();
 
-    private EntityMessagesConsumer() {
+    private final String topic;
+
+    public TopicMessagesConsumer(Class<? extends Entity> entityClass) {
+        this.topic = MessageBusUtils.getTopicByEntityClass(entityClass);
     }
 
-    public static EntityMessagesConsumer getInstance() {
-        if (entityMessagesConsumer == null) {
-            entityMessagesConsumer = new EntityMessagesConsumer();
-        }
-
-        return entityMessagesConsumer;
-    }
-
+    @Override
     public void registerEvent(Class<? extends Event> event) {
-        String eventName = MessageUtils.getMessageName(event);
-        messageMap.put(eventName, event);
+        if (Objects.equals(MessageBusUtils.getTopicByMessageClass(event), topic)) return;
+        messageMap.put(MessageBusUtils.getMessageName(event), event);
     }
 
+    @Override
     public void registerHandler(Class<? extends Handler> handler) {
         HandlerWrapper handlerWrapper = HandlerUtils.getHandlerWrapper(handler);
+        if (!MessageBusUtils.getTopicByEntityClass(handlerWrapper.getEntityClass()).equals(topic)) return;
+
         if (handlersMap.containsKey(handlerWrapper.getKey())) {
             handlersMap.get(handlerWrapper.getKey()).add(handlerWrapper);
         } else {
@@ -60,11 +53,11 @@ public class EntityMessagesConsumer implements EventsConsumer {
         Message message = JsonConverter.getObject(parts[2], messageClass).get();
         Map metadata = JsonConverter.getMap(parts[1]).get();
 
-        String handlerType = (String) metadata.get("handlerType");
+        String messageType = (String) metadata.get("type");
 
         Entity entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
 
-        if (handlerType.equals("EVENT")) {
+        if (messageType.equals("EVENT")) {
             entity.apply((Event) message);
         }
 

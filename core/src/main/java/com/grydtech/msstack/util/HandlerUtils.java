@@ -12,15 +12,6 @@ public class HandlerUtils {
 
     private static final Logger LOGGER = Logger.getLogger(HandlerUtils.class.getName());
 
-    public static String getTopic(Class<? extends Handler> handlerClass) {
-        try {
-            return handlerClass.getDeclaredMethod("get").getReturnType().getSimpleName();
-        } catch (NoSuchMethodException e) {
-            LOGGER.warning(String.format("Topic for %s not found", handlerClass.getSimpleName()));
-            return null;
-        }
-    }
-
     public static HandlerWrapper getHandlerWrapper(Class<? extends Handler> handlerClass) {
         Method handleMethod = handlerClass.getDeclaredMethods()[0];
         Class<? extends Message> messageClass = (Class<? extends Message>) handleMethod.getParameterTypes()[0];

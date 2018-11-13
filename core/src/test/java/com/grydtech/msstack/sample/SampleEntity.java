@@ -1,13 +1,18 @@
 package com.grydtech.msstack.sample;
 
 import com.grydtech.msstack.core.types.Entity;
-import lombok.Data;
+import com.grydtech.msstack.core.types.messaging.Event;
 
 import java.util.UUID;
 
-@Data
-public final class SampleEntity implements Entity<UUID> {
+public final class SampleEntity extends Entity {
 
-    private UUID id;
-    private SampleRootEntity rootEntity;
+    public SampleEntity(UUID id) {
+        super(id);
+    }
+
+    @Override
+    public void apply(Event event) {
+
+    }
 }
