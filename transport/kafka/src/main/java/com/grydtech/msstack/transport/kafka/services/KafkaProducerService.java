@@ -48,7 +48,7 @@ public class KafkaProducerService {
     }
 
     public void publish(String topic, int partition, String eventName, String eventData) {
-        ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, partition, eventName, eventData);
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, partition, eventName, eventData);
         this.kafkaProducer.send(record);
     }
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +43,15 @@ public final class JsonConverter {
     public static Optional<JsonNode> getJsonNode(String jsonString) {
         try {
             return Optional.of(objectMapper.readTree(jsonString));
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<Map> getMap(String jsonString) {
+        try {
+            return Optional.of(objectMapper.readValue(jsonString, Map.class));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }

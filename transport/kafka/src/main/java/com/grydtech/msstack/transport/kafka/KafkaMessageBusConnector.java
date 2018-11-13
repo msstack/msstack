@@ -2,17 +2,18 @@ package com.grydtech.msstack.transport.kafka;
 
 import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
-import com.grydtech.msstack.core.handler.Handler;
+import com.grydtech.msstack.core.services.EventsConsumer;
+import com.grydtech.msstack.core.types.Entity;
 import com.grydtech.msstack.core.types.messaging.Message;
 import com.grydtech.msstack.transport.kafka.services.KafkaConsumerService;
 import com.grydtech.msstack.transport.kafka.services.KafkaProducerService;
-import com.grydtech.msstack.util.HandlerUtils;
+import com.grydtech.msstack.util.EntityUtils;
 import com.grydtech.msstack.util.JsonConverter;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -24,28 +25,21 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
     private final KafkaProducerService kafkaProducerService;
     private final KafkaConsumerService kafkaConsumerService;
 
-    private final HashMap<String, Set<Handler>> consumers = new HashMap<>();
+    private final Map<String, Consumer<String>> consumers = new HashMap<>();
 
     public KafkaMessageBusConnector() {
         this.kafkaProducerService = new KafkaProducerService();
         this.kafkaConsumerService = new KafkaConsumerService();
     }
 
-    public final void attach(Handler handler) {
-        final String topic = HandlerUtils.getTopic(handler.getClass());
-        Set<Handler> consumersForTopic = consumers.getOrDefault(topic, new HashSet<>());
-        consumersForTopic.add(handler);
-        consumers.put(topic, consumersForTopic);
+    public final void attach(Class<? extends Entity> entityClass, EventsConsumer consumer) {
+        consumers.put(EntityUtils.getTopic(entityClass), consumer);
+        LOGGER.info(String.format("[TOPIC][%s] -> %s | attached", EntityUtils.getTopic(entityClass), consumer.getClass().getSimpleName()));
     }
 
-    public final void detach(Handler handler) {
-        final String topic = HandlerUtils.getTopic(handler.getClass());
-        if (topic != null) {
-            this.consumers.get(topic).removeIf(h -> h.equals(handler));
-            LOGGER.info(String.format("[TOPIC][%s] -> %s | detached", topic, handler.toString()));
-        } else {
-            LOGGER.warning(String.format("[TOPIC][%s] -> %s | not detached", null, handler.toString()));
-        }
+    public final void detach(Class<? extends Entity> entityClass) {
+        consumers.remove(EntityUtils.getTopic(entityClass));
+        LOGGER.info(String.format("[TOPIC][%s] | detached", EntityUtils.getTopic(entityClass)));
     }
 
     @Override

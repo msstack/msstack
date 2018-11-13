@@ -1,28 +1,9 @@
 package com.grydtech.msstack.core.types.messaging;
 
-import lombok.Data;
-
-import java.util.UUID;
+import com.grydtech.msstack.core.types.Entity;
 
 /**
  * Command Class
- *
- * @param <P> Payload Type
- * @param <M> Metadata Type
  */
-@Data
-public class Command<P, M> implements Request<P, M> {
-
-    private UUID id;
-    private P payload;
-    private M metadata;
-
-    @Override
-    public final String getTopic() {
-        try {
-            return getClass().getDeclaredMethod("getPayload").getReturnType().getSimpleName() + "::in";
-        } catch (NoSuchMethodException e) {
-            return null;
-        }
-    }
+public abstract class Command<E extends Entity> extends Message<E> {
 }

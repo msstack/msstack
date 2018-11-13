@@ -3,7 +3,8 @@ package com.grydtech.msstack.core.connectors.messagebus;
 import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.annotation.InjectInstance;
 import com.grydtech.msstack.core.connectors.IConnector;
-import com.grydtech.msstack.core.handler.Handler;
+import com.grydtech.msstack.core.services.EventsConsumer;
+import com.grydtech.msstack.core.types.Entity;
 import com.grydtech.msstack.core.types.messaging.Message;
 
 /**
@@ -23,9 +24,9 @@ public abstract class MessageBusConnector implements IConnector {
         return instance;
     }
 
-    public abstract void attach(Handler handler);
+    public abstract void attach(Class<? extends Entity> entityClass, EventsConsumer consumer);
 
-    public abstract void detach(Handler handler);
+    public abstract void detach(Class<? extends Entity> entityClass);
 
     /**
      * Accepts a Message and notifies the subscribers

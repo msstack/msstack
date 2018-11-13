@@ -6,12 +6,11 @@ import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.connectors.registry.RegistryConnector;
 import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.handler.Handler;
-import com.grydtech.msstack.util.DIUtils;
-import com.grydtech.msstack.util.HandlerUtils;
+import com.grydtech.msstack.core.services.EntityMessagesConsumer;
+import com.grydtech.msstack.core.types.messaging.Event;
+import com.grydtech.msstack.util.ClassPathScanner;
 
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Base class for an application in MSStack
@@ -19,23 +18,15 @@ import java.util.stream.Collectors;
  */
 public abstract class Application {
 
-    private final Set<? extends Handler> handlers;
-
-    public Application() {
-        handlers = DIUtils.getScanner()
-                .getSubTypesOf(Handler.class)
-                .parallelStream()
-                .map(HandlerUtils::instantiate)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-    }
-
     /**
      * Starts the Application
      *
      * @throws Exception If an exception occurs that is not handled within the framework
      */
     public final void start() throws Exception {
+        ClassPathScanner classPathScanner = new ClassPathScanner(getClass().getPackage().getName());
+        Set<Class<? extends Handler>> handlers = classPathScanner.getSubTypesOf(Handler.class);
+        Set<Class<? extends Event>> events = classPathScanner.getSubTypesOf(Event.class);
 
         // Connectors
         final EventStoreConnector eventStoreConnector = EventStoreConnector.getInstance();
@@ -44,9 +35,15 @@ public abstract class Application {
         final RegistryConnector registryConnector = RegistryConnector.getInstance();
         final SnapshotConnector snapshotConnector = SnapshotConnector.getInstance();
 
+        // Services
+        final EntityMessagesConsumer entityMessagesConsumer = EntityMessagesConsumer.getInstance();
+
         try {
             // Register Handlers
-            this.handlers.forEach(messageBusConnector::attach);
+            handlers.forEach(entityMessagesConsumer::registerHandler);
+
+            // Register Events
+            events.forEach(entityMessagesConsumer::registerEvent);
 
             // Start connectors
             eventStoreConnector.connect();

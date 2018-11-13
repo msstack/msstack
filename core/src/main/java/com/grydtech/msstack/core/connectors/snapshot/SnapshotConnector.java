@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by dileka on 9/19/18.
  */
 @FrameworkComponent
-public abstract class SnapshotConnector<K, V> implements IConnector {
+public abstract class SnapshotConnector implements IConnector {
 
     @InjectInstance
     private static SnapshotConnector instance;
@@ -20,16 +20,16 @@ public abstract class SnapshotConnector<K, V> implements IConnector {
         return instance;
     }
 
-    public abstract void put(K key, V value);
+    public abstract void put(String key, Object value);
 
-    public abstract void put(Map<K, V> data) throws IOException;
+    public abstract void put(Map<String, Object> data) throws IOException;
 
-    public abstract V get(K key);
+    public abstract <T> T get(String key, Class<T> outputClass);
 
-    public abstract V getFromSnapshot(K key);
+    public abstract <T> T getFromSnapshot(String key, Class<T> outputClass);
 
     public abstract void updateSnapshot();
 
-    public abstract void delete(K key);
+    public abstract void delete(String key);
 
 }
