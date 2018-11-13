@@ -1,7 +1,7 @@
 package com.grydtech.msstack.core.connectors.registry;
 
-import com.grydtech.msstack.config.DataKey;
-import com.grydtech.msstack.config.DataProperties;
+import com.grydtech.msstack.config.ConfigKey;
+import com.grydtech.msstack.config.ConfigurationProperties;
 import lombok.Data;
 
 import java.util.UUID;
@@ -17,7 +17,7 @@ public class Member {
     static {
         instance = new Member();
         instance.setId(UUID.randomUUID().toString());
-        instance.setName(DataProperties.get(DataKey.DATA_ENTITY).toLowerCase() + "_service");
+        instance.setName(ConfigurationProperties.get(ConfigKey.SERVICE_NAME).toLowerCase());
     }
 
     private String id;

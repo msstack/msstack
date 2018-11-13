@@ -2,8 +2,6 @@ package com.grydtech.msstack.transport.kafka.services;
 
 import com.grydtech.msstack.config.ConfigKey;
 import com.grydtech.msstack.config.ConfigurationProperties;
-import com.grydtech.msstack.config.DataKey;
-import com.grydtech.msstack.config.DataProperties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -18,16 +16,14 @@ public class KafkaConsumerService {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.getName());
     private static final String bootstrapServers;
-    private static final int partitions;
-    private static final int groupId;
+    private static final String groupId;
     private static final String clientId;
     private static final int pollingInterval;
     private static final int pollingDelay;
 
     static {
         bootstrapServers = ConfigurationProperties.get(ConfigKey.CONFIG_BOOTSTRAP);
-        partitions = Integer.parseInt(DataProperties.get(DataKey.DATA_ENTITY_PARTITIONS));
-        groupId = new Random().nextInt(partitions);
+        groupId = ConfigurationProperties.get(ConfigKey.SERVICE_NAME);
         pollingInterval = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_INTERVAL));
         pollingDelay = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_DELAY));
         clientId = UUID.randomUUID().toString();
