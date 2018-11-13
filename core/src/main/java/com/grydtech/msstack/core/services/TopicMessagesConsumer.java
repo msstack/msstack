@@ -57,18 +57,20 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
         String messageType = (String) metadata.get("type");
 
-        final Entity entity;
+        synchronized (message.getEntityId().toString().intern()) {
+            final Entity entity;
 
-        entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
+            entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
 
-        if (entity == null) return;
+            if (entity == null) return;
 
-        if (messageType.equals("EVENT")) {
-            entity.apply((Event) message);
-            SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
+            if (messageType.equals("EVENT")) {
+                entity.applyEventAndIncrementVersion((Event) message);
+                SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
+            }
+
+            this.invokeHandler(handlerWrappers, metadata, message, entity);
         }
-
-        this.invokeHandler(handlerWrappers, metadata, message, entity);
     }
 
     private void invokeHandler(Set<HandlerWrapper> handlerWrappers, Map metadata, Message message, Entity entity) {
