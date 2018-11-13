@@ -45,7 +45,7 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
     @Override
     public void push(Message message, Map metadata) {
         String topic = message.getTopic();
-        String eventName = message.getClass().getSimpleName();
+        String eventName = MessageBusUtils.getMessageName(message.getClass());
         String messageString = JsonConverter.toJsonString(message).orElseThrow(RuntimeException::new);
         String metadataString = JsonConverter.toJsonString(metadata).orElseThrow(RuntimeException::new);
         this.kafkaProducerService.publish(topic, message.getEntityId().toString(), eventName, metadataString, messageString);
