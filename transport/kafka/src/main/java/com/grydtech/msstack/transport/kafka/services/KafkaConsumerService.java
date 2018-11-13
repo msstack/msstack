@@ -10,7 +10,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -22,14 +21,12 @@ public class KafkaConsumerService {
     private static final String groupId;
     private static final String clientId;
     private static final int pollingInterval;
-    private static final int pollingDelay;
 
     static {
         bootstrapServers = ConfigurationProperties.get(ConfigKey.CONFIG_BOOTSTRAP);
         groupId = ConfigurationProperties.get(ConfigKey.SERVICE_NAME);
         pollingInterval = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_INTERVAL));
-        pollingDelay = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_DELAY));
-        clientId = UUID.randomUUID().toString();
+        clientId = ConfigurationProperties.get(ConfigKey.SERVICE_ID);
     }
 
     private final KafkaConsumer<String, String> kafkaConsumer;

@@ -4,6 +4,7 @@ public enum ConfigKey {
 
     // Service
     SERVICE_NAME("config.service.name"),
+    SERVICE_ID("config.service.id"),
 
     // Snapshot (LevelDB)
     SNAPSHOT_NAME("config.snapshot.name"),
