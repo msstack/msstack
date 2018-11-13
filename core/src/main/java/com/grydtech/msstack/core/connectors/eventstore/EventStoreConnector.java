@@ -1,6 +1,5 @@
 package com.grydtech.msstack.core.connectors.eventstore;
 
-import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.annotation.InjectInstance;
 import com.grydtech.msstack.core.connectors.IConnector;
 
@@ -13,7 +12,6 @@ import java.util.List;
  * @param <K> Key Type
  * @param <V> Value Type
  */
-@FrameworkComponent
 public abstract class EventStoreConnector<K, V> implements IConnector {
 
     @InjectInstance

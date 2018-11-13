@@ -1,9 +1,6 @@
 package com.grydtech.msstack.core;
 
-import com.grydtech.msstack.core.connectors.eventstore.EventStoreConnector;
-import com.grydtech.msstack.core.connectors.gateway.GatewayConnector;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
-import com.grydtech.msstack.core.connectors.registry.RegistryConnector;
 import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.core.services.TopicMessagesConsumer;
@@ -31,10 +28,7 @@ public abstract class Application {
         Set<Class<? extends Entity>> entities = classPathScanner.getSubTypesOf(Entity.class);
 
         // Connectors
-        final EventStoreConnector eventStoreConnector = EventStoreConnector.getInstance();
-        final GatewayConnector gatewayConnector = GatewayConnector.getInstance();
         final MessageBusConnector messageBusConnector = MessageBusConnector.getInstance();
-        final RegistryConnector registryConnector = RegistryConnector.getInstance();
         final SnapshotConnector snapshotConnector = SnapshotConnector.getInstance();
 
         entities.forEach(en -> {
@@ -46,10 +40,7 @@ public abstract class Application {
 
         try {
             // Start connectors
-            eventStoreConnector.connect();
-            gatewayConnector.connect();
             messageBusConnector.connect();
-            registryConnector.connect();
             snapshotConnector.connect();
 
             // Block until user terminates
@@ -57,10 +48,7 @@ public abstract class Application {
 
         } finally {
             // Cleanup before termination
-            eventStoreConnector.disconnect();
-            gatewayConnector.disconnect();
             messageBusConnector.disconnect();
-            registryConnector.disconnect();
             snapshotConnector.disconnect();
         }
     }

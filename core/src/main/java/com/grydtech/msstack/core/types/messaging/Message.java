@@ -16,12 +16,13 @@ import java.util.UUID;
 @Data
 public abstract class Message<E extends Entity> {
     private final UUID id;
-    private UUID entityId;
 
-    public Message(UUID entityId) {
+    public Message() {
         this.id = UUID.randomUUID();
-        this.entityId = entityId;
     }
+
+    @JsonIgnore
+    public abstract UUID getEntityId();
 
     @JsonIgnore
     public abstract Class<E> getEntityClass();

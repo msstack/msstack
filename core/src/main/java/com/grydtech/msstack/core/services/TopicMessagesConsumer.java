@@ -62,7 +62,7 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
             if (messageType.equals("EVENT")) {
                 entity.apply((Event) message);
-                SnapshotConnector.getInstance().put(entity.getId().toString(), entity);
+                SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
             }
         }
 

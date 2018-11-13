@@ -6,9 +6,11 @@ import com.grydtech.msstack.core.types.messaging.Event;
 import java.util.UUID;
 
 public final class SampleEntity extends Entity {
+    private String id;
 
-    public SampleEntity(UUID id) {
-        super(id);
+    @Override
+    public UUID getEntityId() {
+        return UUID.fromString(id);
     }
 
     @Override

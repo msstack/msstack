@@ -1,13 +1,11 @@
 package com.grydtech.msstack.core.connectors.registry;
 
-import com.grydtech.msstack.annotation.FrameworkComponent;
 import com.grydtech.msstack.annotation.InjectInstance;
 import com.grydtech.msstack.core.connectors.IConnector;
 
 /**
  * Connector for Service Registry and Discovery
  */
-@FrameworkComponent
 public abstract class RegistryConnector implements IConnector {
 
     @InjectInstance
