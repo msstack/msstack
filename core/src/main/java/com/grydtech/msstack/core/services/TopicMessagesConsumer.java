@@ -50,15 +50,20 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
         if (messageClass == null) return;
 
-        Message message = JsonConverter.getObject(parts[2], messageClass).get();
-        Map metadata = JsonConverter.getMap(parts[1]).get();
+        Message message = JsonConverter.getObject(parts[2], messageClass).orElseThrow(RuntimeException::new);
+        Map metadata = JsonConverter.getMap(parts[1]).orElseThrow(RuntimeException::new);
 
         String messageType = (String) metadata.get("type");
 
-        Entity entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
+        final Entity entity;
 
-        if (messageType.equals("EVENT")) {
-            entity.apply((Event) message);
+        synchronized (this) {
+            entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
+
+            if (messageType.equals("EVENT")) {
+                entity.apply((Event) message);
+                SnapshotConnector.getInstance().put(entity.getId().toString(), entity);
+            }
         }
 
         if (handlerWrappers == null) return;

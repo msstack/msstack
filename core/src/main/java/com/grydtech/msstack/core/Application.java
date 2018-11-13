@@ -40,7 +40,7 @@ public abstract class Application {
         entities.forEach(en -> {
             final TopicMessagesConsumer topicMessagesConsumer = new TopicMessagesConsumer(en);
             handlers.forEach(topicMessagesConsumer::registerHandler);
-            handlers.forEach(topicMessagesConsumer::registerHandler);
+            events.forEach(topicMessagesConsumer::registerEvent);
             messageBusConnector.attach(en, topicMessagesConsumer);
         });
 
