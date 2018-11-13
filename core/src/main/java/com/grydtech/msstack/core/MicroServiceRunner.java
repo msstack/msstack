@@ -21,6 +21,5 @@ public final class MicroServiceRunner {
         LOGGER.log(Level.ALL, "Starting application...");
         application.start();
         LOGGER.log(Level.ALL, "Application Started.");
-        application.wait();
     }
 }

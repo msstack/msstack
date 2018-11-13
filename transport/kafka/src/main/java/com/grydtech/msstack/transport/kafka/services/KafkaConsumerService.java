@@ -55,6 +55,7 @@ public class KafkaConsumerService {
 
     public void start() {
         LOGGER.info("Starting scheduled event consumer");
+        kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
         kafkaConsumer.subscribe(consumers.keySet());
         new Timer().schedule(new TimerTask() {
             @Override

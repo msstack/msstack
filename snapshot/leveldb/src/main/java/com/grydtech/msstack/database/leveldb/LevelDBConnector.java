@@ -10,10 +10,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
-import static org.iq80.leveldb.impl.Iq80DBFactory.*;
+import static org.iq80.leveldb.impl.Iq80DBFactory.asString;
+import static org.iq80.leveldb.impl.Iq80DBFactory.bytes;
+import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
 
 public final class LevelDBConnector extends SnapshotConnector {
+
+
+    private static final Logger LOGGER = Logger.getLogger(LevelDBConnector.class.getName());
 
     private static DB db;
 
@@ -62,6 +68,7 @@ public final class LevelDBConnector extends SnapshotConnector {
         String dbName = ConfigurationProperties.get(ConfigKey.SNAPSHOT_NAME);
         Options options = new Options();
         db = factory.open(new File(dbName), options);
+        LOGGER.info("LevelDB Connected");
     }
 
     @Override

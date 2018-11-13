@@ -16,14 +16,14 @@ public class KafkaProducerService {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaProducerService.class.getName());
     private static final String bootstrapServers;
-    private static final int acks;
+    private static final String acks;
     private static final int retries;
     private static final int pollingDelay;
     private static final int pollingInterval;
 
     static {
         bootstrapServers = ConfigurationProperties.get(ConfigKey.CONFIG_BOOTSTRAP);
-        acks = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_ACKS));
+        acks = ConfigurationProperties.get(ConfigKey.BUS_ACKS);
         retries = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_RETRIES));
         pollingDelay = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_DELAY));
         pollingInterval = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_INTERVAL));

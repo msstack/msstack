@@ -11,21 +11,13 @@ public final class ConfigurationProperties {
 
     static {
         prop = new Properties();
-        InputStream input = null;
 
         try {
-            input = new FileInputStream("config.properties");
+            InputStream input = ConfigurationProperties.class.getClassLoader().getResourceAsStream("config.properties");
             prop.load(input);
         } catch (IOException ex) {
+            System.out.println("Could not load config.properties");
             ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 

@@ -43,9 +43,6 @@ public abstract class Application {
             messageBusConnector.connect();
             snapshotConnector.connect();
 
-            // Block until user terminates
-            this.wait();
-
         } finally {
             // Cleanup before termination
             messageBusConnector.disconnect();

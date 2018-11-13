@@ -53,11 +53,11 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
 
     @Override
     public void connect() throws IOException {
-        LOGGER.info("Starting KafkaMessageBusConnector");
+        LOGGER.info("Starting Kafka Connection");
         this.kafkaConsumerService.setConsumers(this.consumers);
         this.kafkaProducerService.start();
         this.kafkaConsumerService.start();
-        LOGGER.info("KafkaMessageBusConnector Started");
+        LOGGER.info("Kafka Connected");
     }
 
     @Override
