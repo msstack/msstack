@@ -8,7 +8,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -55,11 +58,11 @@ public class KafkaConsumerService {
 
     public void start() {
         LOGGER.info("Starting scheduled event consumer");
-        kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
         kafkaConsumer.subscribe(consumers.keySet());
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
+        LOGGER.info("Topic list: " + consumers.keySet().toString() + " subscribed");
+
+        Executors.newSingleThreadExecutor().submit(() -> {
+            while (true) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(pollingInterval);
                 for (ConsumerRecord<String, String> record : records) {
                     String topic = record.topic();
@@ -67,7 +70,7 @@ public class KafkaConsumerService {
                     consumer.accept(record.value());
                 }
             }
-        }, pollingDelay, pollingInterval);
+        });
         LOGGER.info("Scheduled event consumer started");
     }
 

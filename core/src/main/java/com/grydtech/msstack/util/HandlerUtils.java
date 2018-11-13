@@ -15,7 +15,7 @@ public class HandlerUtils {
     public static HandlerWrapper getHandlerWrapper(Class<? extends Handler> handlerClass) {
         Method handleMethod = handlerClass.getDeclaredMethods()[0];
         Class<? extends Message> messageClass = (Class<? extends Message>) handleMethod.getParameterTypes()[0];
-        Class<? extends Entity> entityClass = (Class<? extends Entity>) handleMethod.getParameterTypes()[1];
+        Class<? extends Entity> entityClass = (Class<? extends Entity>) handleMethod.getParameterTypes()[3];
 
         String handlerId = entityClass.getSimpleName().toLowerCase() + "_" + messageClass.getSimpleName().toLowerCase();
 

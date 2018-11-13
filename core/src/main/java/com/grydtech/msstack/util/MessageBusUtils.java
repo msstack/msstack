@@ -11,8 +11,8 @@ public class MessageBusUtils {
 
     public static String getTopicByMessageClass(Class<? extends Message> messageClass) {
         try {
-            return messageClass.getDeclaredMethod("getEntityClass").getReturnType().getSimpleName().toLowerCase();
-        } catch (NoSuchMethodException e) {
+            return messageClass.newInstance().getEntityClass().getSimpleName().toLowerCase();
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
         return null;
@@ -20,9 +20,8 @@ public class MessageBusUtils {
 
     public static String getMessageName(Class<? extends Message> messageClass) {
         try {
-            return messageClass.getDeclaredMethod("getEntityClass").getReturnType().getSimpleName().toLowerCase() +
-                    "::" + messageClass.getSimpleName().toLowerCase();
-        } catch (NoSuchMethodException e) {
+            return messageClass.newInstance().getEntityClass().getSimpleName().toLowerCase() + "_" + messageClass.getSimpleName().toLowerCase();
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
         return null;

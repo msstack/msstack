@@ -12,9 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import static org.iq80.leveldb.impl.Iq80DBFactory.asString;
-import static org.iq80.leveldb.impl.Iq80DBFactory.bytes;
-import static org.iq80.leveldb.impl.Iq80DBFactory.factory;
+import static org.iq80.leveldb.impl.Iq80DBFactory.*;
 
 public final class LevelDBConnector extends SnapshotConnector {
 
@@ -44,8 +42,23 @@ public final class LevelDBConnector extends SnapshotConnector {
 
     @Override
     public <T> T get(String key, Class<T> outputClass) {
-        Optional entity = JsonConverter.getObject(asString(db.get(bytes(key))), outputClass);
-        return (T) entity.orElse(null);
+        String value = null;
+        try {
+            value = asString(db.get(bytes(key)));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (value == null) {
+                return outputClass.newInstance();
+            } else {
+                return JsonConverter.getObject(value, outputClass).orElse(outputClass.newInstance());
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
