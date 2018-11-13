@@ -61,6 +61,8 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
         entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
 
+        if (entity == null) return;
+
         if (messageType.equals("EVENT")) {
             entity.apply((Event) message);
             SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
@@ -70,23 +72,19 @@ public class TopicMessagesConsumer implements MessageConsumer {
     }
 
     private void invokeHandler(Set<HandlerWrapper> handlerWrappers, Map metadata, Message message, Entity entity) {
-        try {
-            if (handlerWrappers == null) return;
+        if (handlerWrappers == null) return;
 
-            UUID flowId = UUID.fromString((String) metadata.get("flowId"));
+        UUID flowId = UUID.fromString((String) metadata.get("flowId"));
 
-            handlerWrappers.forEach(hw -> {
-                executorService.submit(() -> {
-                    try {
-                        Handler handler = hw.getHandlerClass().newInstance();
-                        handler.handle(message, metadata, flowId, entity);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                });
+        handlerWrappers.forEach(hw -> {
+            executorService.submit(() -> {
+                try {
+                    Handler handler = hw.getHandlerClass().newInstance();
+                    handler.handle(message, metadata, flowId, entity);
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 }

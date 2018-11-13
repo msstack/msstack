@@ -38,15 +38,8 @@ public abstract class Application {
             messageBusConnector.attach(en, topicMessagesConsumer);
         });
 
-        try {
-            // Start connectors
-            messageBusConnector.connect();
-            snapshotConnector.connect();
-
-        } finally {
-            // Cleanup before termination
-            messageBusConnector.disconnect();
-            snapshotConnector.disconnect();
-        }
+        // Start connectors
+        messageBusConnector.connect();
+        snapshotConnector.connect();
     }
 }

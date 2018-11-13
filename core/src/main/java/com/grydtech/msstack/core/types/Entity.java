@@ -14,6 +14,7 @@ public abstract class Entity {
 
     public abstract void apply(Event event);
 
+    @JsonIgnore
     public final String getTopic() {
         return MessageBusUtils.getTopicByEntityClass(getClass());
     }

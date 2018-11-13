@@ -17,6 +17,7 @@
 
     <modules>
         <module>leveldb</module>
+        <module>hashmap</module>
     </modules>
 
     <properties>
