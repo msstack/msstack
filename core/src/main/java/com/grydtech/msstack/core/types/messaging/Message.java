@@ -15,8 +15,6 @@ import java.util.UUID;
  */
 @Data
 public abstract class Message<E extends Entity> {
-    protected E entity;
-
     @JsonIgnore
     public abstract UUID getEntityId();
 
