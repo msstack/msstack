@@ -3,21 +3,10 @@ package com.grydtech.msstack.core.handler;
 import com.grydtech.msstack.core.types.Entity;
 import com.grydtech.msstack.core.types.messaging.Message;
 
-import java.util.function.Consumer;
+import java.util.Map;
+import java.util.UUID;
 
 @SuppressWarnings("unused")
-public interface Handler<E extends Entity, M extends Message> extends Consumer<M> {
-
-    /**
-     * Get the entity that the handler needs to handle
-     *
-     * @return Entity
-     */
-    E get();
-
-    @Override
-    void accept(M m);
-
-    @Override
-    Consumer<M> andThen(Consumer<? super M> after);
+public interface Handler<E extends Entity, M extends Message> {
+    void handle(M message, Map metadata, UUID flowId, E entity);
 }

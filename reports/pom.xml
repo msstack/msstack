@@ -32,12 +32,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.grydtech.msstack.eventstore</groupId>
-            <artifactId>cassandra</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.grydtech.msstack.registry</groupId>
             <artifactId>registry</artifactId>
             <version>${project.version}</version>

@@ -4,24 +4,14 @@ import com.grydtech.msstack.config.ConfigKey;
 import com.grydtech.msstack.config.ConfigurationProperties;
 import com.grydtech.msstack.config.DataKey;
 import com.grydtech.msstack.config.DataProperties;
-import com.grydtech.msstack.core.handler.Handler;
-import com.grydtech.msstack.core.types.messaging.Message;
-import com.grydtech.msstack.util.JsonConverter;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Random;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class KafkaConsumerService {
@@ -44,13 +34,12 @@ public class KafkaConsumerService {
     }
 
     private final KafkaConsumer<String, String> kafkaConsumer;
-    private final ExecutorService executorService;
-    private HashMap<String, Set<Handler>> consumers;
+
+    private Map<String, Consumer<String>> consumers;
 
     public KafkaConsumerService() {
         Properties properties = generateProperties();
-        this.kafkaConsumer = new KafkaConsumer<String, String>(properties);
-        this.executorService = Executors.newCachedThreadPool();
+        this.kafkaConsumer = new KafkaConsumer<>(properties);
     }
 
     private Properties generateProperties() {
@@ -64,7 +53,7 @@ public class KafkaConsumerService {
         return properties;
     }
 
-    public void setConsumers(HashMap<String, Set<Handler>> consumers) {
+    public void setConsumers(Map<String, Consumer<String>> consumers) {
         this.consumers = consumers;
     }
 
@@ -76,11 +65,9 @@ public class KafkaConsumerService {
             public void run() {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(pollingInterval);
                 for (ConsumerRecord<String, String> record : records) {
-                    String key = record.topic();
-                    final Set<Handler> handlers = consumers.get(key);
-                    handlers.forEach(h -> executorService.submit(() -> {
-                        h.accept(JsonConverter.getObject(record.value(), Message.class).get());
-                    }));
+                    String topic = record.topic();
+                    final Consumer<String> consumer = consumers.get(topic);
+                    consumer.accept(record.value());
                 }
             }
         }, pollingDelay, pollingInterval);
