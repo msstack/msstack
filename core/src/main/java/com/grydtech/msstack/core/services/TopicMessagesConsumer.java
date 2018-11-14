@@ -44,11 +44,13 @@ public class TopicMessagesConsumer implements MessageConsumer {
     }
 
     @Override
-    public void setNextOffsetsToProcess(Collection<PartitionMetaData> partitionMetaDataCollection) {
-        nextOffsetsToProcess.clear();
-        partitionMetaDataCollection.forEach(pm -> {
-            nextOffsetsToProcess.put(pm.getPartition(), pm.getSavedComittedOffset());
-        });
+    public void assignPartition(PartitionMetaData partitionMetaData) {
+        nextOffsetsToProcess.put(partitionMetaData.getPartition(), partitionMetaData.getSavedComittedOffset());
+    }
+
+    @Override
+    public void invokePartition(PartitionMetaData partitionMetaData) {
+        nextOffsetsToProcess.remove(partitionMetaData.getPartition());
     }
 
     @Override
