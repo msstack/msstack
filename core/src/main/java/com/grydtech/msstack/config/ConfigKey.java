@@ -13,7 +13,7 @@ public enum ConfigKey {
     EVENTSTORE_HOST("config.eventstore.host"),
     EVENTSTORE_PORT("config.eventstore.port"),
 
-    // Message Bus (Kafka)
+    // ConsumerMessage Bus (Kafka)
     BUS_RETRIES("config.bus.retries"),
     BUS_INTERVAL("config.bus.interval"),
     BUS_ACKS("config.bus.acks"),

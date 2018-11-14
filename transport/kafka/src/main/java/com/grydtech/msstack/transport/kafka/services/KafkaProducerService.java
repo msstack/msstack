@@ -8,8 +8,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class KafkaProducerService {
@@ -57,12 +57,7 @@ public class KafkaProducerService {
 
     public void start() {
         LOGGER.info("Starting scheduled event publisher");
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                kafkaProducer.flush();
-            }
-        }, pollingDelay, pollingInterval);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(kafkaProducer::flush, pollingDelay, pollingInterval, TimeUnit.MILLISECONDS);
         LOGGER.info("Scheduled event publisher started");
     }
 }

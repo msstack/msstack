@@ -1,5 +1,7 @@
 package com.grydtech.msstack.core.services;
 
+import com.grydtech.msstack.core.connectors.messagebus.ConsumerMessage;
+import com.grydtech.msstack.core.connectors.messagebus.PartitionMetaData;
 import com.grydtech.msstack.core.connectors.snapshot.SnapshotConnector;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.core.types.Entity;
@@ -10,13 +12,12 @@ import com.grydtech.msstack.util.JsonConverter;
 import com.grydtech.msstack.util.MessageBusUtils;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class TopicMessagesConsumer implements MessageConsumer {
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final Map<String, Class<? extends Message>> messageMap = new HashMap<>();
     private final Map<String, Set<HandlerWrapper>> handlersMap = new HashMap<>();
+    private final Map<Integer, Long> nextOffsetsToProcess = new HashMap<>();
+    private final Map<Integer, Long> nextOffsetToApply = new HashMap<>();
 
     private final String topic;
 
@@ -43,8 +44,16 @@ public class TopicMessagesConsumer implements MessageConsumer {
     }
 
     @Override
-    public void accept(String s) {
-        String[] parts = s.split("::");
+    public void setNextOffsetsToProcess(Collection<PartitionMetaData> partitionMetaDataCollection) {
+        nextOffsetsToProcess.clear();
+        partitionMetaDataCollection.forEach(pm -> {
+            nextOffsetsToProcess.put(pm.getPartition(), pm.getSavedComittedOffset());
+        });
+    }
+
+    @Override
+    public void accept(ConsumerMessage consumerMessage) {
+        String[] parts = consumerMessage.getValue().split("::");
         Class<? extends Message> messageClass = messageMap.get(parts[0]);
         Set<HandlerWrapper> handlerWrappers = handlersMap.get(parts[0]);
 
@@ -64,22 +73,24 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
             if (entity == null) return;
 
+            // Remove duplicate messages
+            if (nextOffsetToApply.get(consumerMessage.getPartition()) != null &&
+                    consumerMessage.getOffset() < nextOffsetToApply.get(consumerMessage.getPartition())) return;
+
             if (messageType.equals("EVENT")) {
                 entity.applyEventAndIncrementVersion((Event) message);
+                nextOffsetToApply.put(consumerMessage.getPartition(), consumerMessage.getOffset() + 1);
                 SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
             }
 
-            this.invokeHandler(handlerWrappers, metadata, message, entity);
-        }
-    }
+            // If offset previously handled by another service
+            if (consumerMessage.getOffset() < nextOffsetsToProcess.get(consumerMessage.getPartition())) return;
 
-    private void invokeHandler(Set<HandlerWrapper> handlerWrappers, Map metadata, Message message, Entity entity) {
-        if (handlerWrappers == null) return;
+            if (handlerWrappers == null) return;
 
-        UUID flowId = UUID.fromString((String) metadata.get("flowId"));
+            UUID flowId = UUID.fromString((String) metadata.get("flowId"));
 
-        handlerWrappers.forEach(hw -> {
-            executorService.submit(() -> {
+            handlerWrappers.forEach(hw -> {
                 try {
                     Handler handler = hw.getHandlerClass().newInstance();
                     handler.handle(message, metadata, flowId, entity);
@@ -87,6 +98,6 @@ public class TopicMessagesConsumer implements MessageConsumer {
                     e.printStackTrace();
                 }
             });
-        });
+        }
     }
 }
