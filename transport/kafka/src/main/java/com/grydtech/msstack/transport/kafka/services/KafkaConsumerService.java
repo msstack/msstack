@@ -65,9 +65,6 @@ public class KafkaConsumerService {
 
         this.initPartitionRebalancing();
 
-        kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
-        kafkaConsumer.commitSync();
-
         Executors.newSingleThreadExecutor().submit(() -> {
             while (true) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(pollingInterval);
