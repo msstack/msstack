@@ -3,33 +3,22 @@ package com.grydtech.msstack.core.types.messaging;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.grydtech.msstack.core.connectors.messagebus.MessageBusConnector;
 import com.grydtech.msstack.core.types.Entity;
-import com.grydtech.msstack.util.MessageBusUtils;
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Base class for all Messaging in MSStack
- */
 @Data
 public abstract class Message<E extends Entity> {
-    private final UUID id;
-    private UUID entityId;
-
-    public Message(UUID entityId) {
-        this.id = UUID.randomUUID();
-        this.entityId = entityId;
-    }
+    @JsonIgnore
+    public abstract UUID getEntityId();
 
     @JsonIgnore
     public abstract Class<E> getEntityClass();
 
     @JsonIgnore
-    public final String getTopic() {
-        return MessageBusUtils.getTopicByEntityClass(this.getEntityClass());
-    }
+    public abstract String getTopic();
 
     @JsonIgnore
     public final String getMessageName() {

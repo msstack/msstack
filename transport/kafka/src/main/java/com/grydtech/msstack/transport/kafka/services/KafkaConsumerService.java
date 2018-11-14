@@ -2,15 +2,16 @@ package com.grydtech.msstack.transport.kafka.services;
 
 import com.grydtech.msstack.config.ConfigKey;
 import com.grydtech.msstack.config.ConfigurationProperties;
-import com.grydtech.msstack.config.DataKey;
-import com.grydtech.msstack.config.DataProperties;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -18,16 +19,14 @@ public class KafkaConsumerService {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.getName());
     private static final String bootstrapServers;
-    private static final int partitions;
-    private static final int groupId;
+    private static final String groupId;
     private static final String clientId;
     private static final int pollingInterval;
     private static final int pollingDelay;
 
     static {
         bootstrapServers = ConfigurationProperties.get(ConfigKey.CONFIG_BOOTSTRAP);
-        partitions = Integer.parseInt(DataProperties.get(DataKey.DATA_ENTITY_PARTITIONS));
-        groupId = new Random().nextInt(partitions);
+        groupId = ConfigurationProperties.get(ConfigKey.SERVICE_NAME);
         pollingInterval = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_INTERVAL));
         pollingDelay = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_DELAY));
         clientId = UUID.randomUUID().toString();
@@ -60,9 +59,10 @@ public class KafkaConsumerService {
     public void start() {
         LOGGER.info("Starting scheduled event consumer");
         kafkaConsumer.subscribe(consumers.keySet());
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
+        LOGGER.info("Topic list: " + consumers.keySet().toString() + " subscribed");
+
+        Executors.newSingleThreadExecutor().submit(() -> {
+            while (true) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(pollingInterval);
                 for (ConsumerRecord<String, String> record : records) {
                     String topic = record.topic();
@@ -70,7 +70,7 @@ public class KafkaConsumerService {
                     consumer.accept(record.value());
                 }
             }
-        }, pollingDelay, pollingInterval);
+        });
         LOGGER.info("Scheduled event consumer started");
     }
 

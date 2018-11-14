@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-        <!-- connect to leveldb -->
+        <!-- connect to hashmap -->
         <dependency>
             <groupId>org.iq80.leveldb</groupId>
             <artifactId>leveldb-api</artifactId>

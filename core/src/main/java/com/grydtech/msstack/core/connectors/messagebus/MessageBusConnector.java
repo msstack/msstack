@@ -19,9 +19,6 @@ public abstract class MessageBusConnector implements IConnector {
     @InjectInstance
     private static MessageBusConnector instance;
 
-    protected MessageBusConnector() {
-    }
-
     public static MessageBusConnector getInstance() {
         return instance;
     }

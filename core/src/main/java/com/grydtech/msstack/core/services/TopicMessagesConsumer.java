@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 
 public class TopicMessagesConsumer implements MessageConsumer {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    private final Map<String, Class<? extends Event>> messageMap = new HashMap<>();
+    private final Map<String, Class<? extends Message>> messageMap = new HashMap<>();
     private final Map<String, Set<HandlerWrapper>> handlersMap = new HashMap<>();
 
     private final String topic;
@@ -25,9 +25,9 @@ public class TopicMessagesConsumer implements MessageConsumer {
     }
 
     @Override
-    public void registerEvent(Class<? extends Event> event) {
-        if (Objects.equals(MessageBusUtils.getTopicByMessageClass(event), topic)) return;
-        messageMap.put(MessageBusUtils.getMessageName(event), event);
+    public void registerMessage(Class<? extends Message> message) {
+        if (!MessageBusUtils.getTopicByMessageClass(message).equals(this.topic)) return;
+        messageMap.put(MessageBusUtils.getMessageName(message), message);
     }
 
     @Override
@@ -50,20 +50,33 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
         if (messageClass == null) return;
 
-        Message message = JsonConverter.getObject(parts[2], messageClass).get();
-        Map metadata = JsonConverter.getMap(parts[1]).get();
+        Message message = JsonConverter.getObject(parts[2], messageClass).orElse(null);
+        Map metadata = JsonConverter.getMap(parts[1]).orElse(null);
+
+        if (metadata == null || message == null) return;
 
         String messageType = (String) metadata.get("type");
 
-        Entity entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
+        synchronized (message.getEntityId().toString().intern()) {
+            final Entity entity;
 
-        if (messageType.equals("EVENT")) {
-            entity.apply((Event) message);
+            entity = (Entity) SnapshotConnector.getInstance().get(message.getEntityId().toString(), message.getEntityClass());
+
+            if (entity == null) return;
+
+            if (messageType.equals("EVENT")) {
+                entity.applyEventAndIncrementVersion((Event) message);
+                SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
+            }
+
+            this.invokeHandler(handlerWrappers, metadata, message, entity);
         }
+    }
 
+    private void invokeHandler(Set<HandlerWrapper> handlerWrappers, Map metadata, Message message, Entity entity) {
         if (handlerWrappers == null) return;
 
-        UUID flowId = (UUID) metadata.get("flowId");
+        UUID flowId = UUID.fromString((String) metadata.get("flowId"));
 
         handlerWrappers.forEach(hw -> {
             executorService.submit(() -> {

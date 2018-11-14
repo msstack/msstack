@@ -45,7 +45,7 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
     @Override
     public void push(Message message, Map metadata) {
         String topic = message.getTopic();
-        String eventName = message.getClass().getSimpleName();
+        String eventName = MessageBusUtils.getMessageName(message.getClass());
         String messageString = JsonConverter.toJsonString(message).orElseThrow(RuntimeException::new);
         String metadataString = JsonConverter.toJsonString(metadata).orElseThrow(RuntimeException::new);
         this.kafkaProducerService.publish(topic, message.getEntityId().toString(), eventName, metadataString, messageString);
@@ -53,11 +53,11 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
 
     @Override
     public void connect() throws IOException {
-        LOGGER.info("Starting KafkaMessageBusConnector");
+        LOGGER.info("Starting Kafka Connection");
         this.kafkaConsumerService.setConsumers(this.consumers);
         this.kafkaProducerService.start();
         this.kafkaConsumerService.start();
-        LOGGER.info("KafkaMessageBusConnector Started");
+        LOGGER.info("Kafka Connected");
     }
 
     @Override

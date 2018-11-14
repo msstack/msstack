@@ -1,22 +1,22 @@
 package com.grydtech.msstack.core.types;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.grydtech.msstack.core.types.messaging.Event;
-import com.grydtech.msstack.util.MessageBusUtils;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
 public abstract class Entity {
-    private UUID id;
+    private long version = 0;
 
-    public Entity(UUID id) {
-        this.id = id;
-    }
+    @JsonIgnore
+    public abstract UUID getEntityId();
 
     public abstract void apply(Event event);
 
-    public final String getTopic() {
-        return MessageBusUtils.getTopicByEntityClass(getClass());
+    public final void applyEventAndIncrementVersion(Event event) {
+        this.apply(event);
+        this.version++;
     }
 }
