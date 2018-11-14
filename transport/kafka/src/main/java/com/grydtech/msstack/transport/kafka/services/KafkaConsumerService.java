@@ -12,7 +12,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
@@ -24,11 +23,13 @@ public class KafkaConsumerService {
     private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.getName());
     private static final String bootstrapServers;
     private static final String groupId;
+    private static final String clientId;
     private static final int pollingInterval;
 
     static {
         bootstrapServers = ConfigurationProperties.get(ConfigKey.CONFIG_BOOTSTRAP);
         groupId = ConfigurationProperties.get(ConfigKey.SERVICE_NAME);
+        clientId = ConfigurationProperties.get(ConfigKey.SERVICE_ID);
         pollingInterval = Integer.parseInt(ConfigurationProperties.get(ConfigKey.BUS_INTERVAL));
     }
 
@@ -48,7 +49,7 @@ public class KafkaConsumerService {
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
+        properties.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
         return properties;
     }
 
