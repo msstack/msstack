@@ -10,11 +10,8 @@ import com.grydtech.msstack.util.JsonConverter;
 import com.grydtech.msstack.util.MessageBusUtils;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class TopicMessagesConsumer implements MessageConsumer {
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final Map<String, Class<? extends Message>> messageMap = new HashMap<>();
     private final Map<String, Set<HandlerWrapper>> handlersMap = new HashMap<>();
 
@@ -69,17 +66,11 @@ public class TopicMessagesConsumer implements MessageConsumer {
                 SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
             }
 
-            this.invokeHandler(handlerWrappers, metadata, message, entity);
-        }
-    }
+            if (handlerWrappers == null) return;
 
-    private void invokeHandler(Set<HandlerWrapper> handlerWrappers, Map metadata, Message message, Entity entity) {
-        if (handlerWrappers == null) return;
+            UUID flowId = UUID.fromString((String) metadata.get("flowId"));
 
-        UUID flowId = UUID.fromString((String) metadata.get("flowId"));
-
-        handlerWrappers.forEach(hw -> {
-            executorService.submit(() -> {
+            handlerWrappers.forEach(hw -> {
                 try {
                     Handler handler = hw.getHandlerClass().newInstance();
                     handler.handle(message, metadata, flowId, entity);
@@ -87,6 +78,6 @@ public class TopicMessagesConsumer implements MessageConsumer {
                     e.printStackTrace();
                 }
             });
-        });
+        }
     }
 }

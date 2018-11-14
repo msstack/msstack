@@ -10,11 +10,14 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class KafkaConsumerService {
+
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.getName());
     private static final String bootstrapServers;
@@ -64,7 +67,7 @@ public class KafkaConsumerService {
                 for (ConsumerRecord<String, String> record : records) {
                     String topic = record.topic();
                     final Consumer<String> consumer = consumers.get(topic);
-                    consumer.accept(record.value());
+                    executorService.submit(() -> consumer.accept(record.value()));
                 }
             }
         });
