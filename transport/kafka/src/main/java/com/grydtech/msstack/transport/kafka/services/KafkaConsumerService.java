@@ -50,6 +50,7 @@ public class KafkaConsumerService {
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
+        properties.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 10000);
         return properties;
     }
 
