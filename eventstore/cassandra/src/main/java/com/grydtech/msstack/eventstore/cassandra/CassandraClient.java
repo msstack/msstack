@@ -6,11 +6,12 @@ import com.datastax.driver.core.utils.UUIDs;
 import com.grydtech.msstack.eventstore.cassandra.domain.Book;
 import com.grydtech.msstack.eventstore.cassandra.repository.BookRepository;
 import com.grydtech.msstack.eventstore.cassandra.repository.KeyspaceRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class CassandraClient {
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraClient.class);
+    private static final Logger LOG = LogManager.getLogManager().getLogger(CassandraClient.class.getName());
 
     public static void main(String args[]) {
         CassandraConnector connector = new CassandraConnector();

@@ -5,14 +5,15 @@ import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.Host;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * This is an implementation of a simple Java client.
  */
 public class CassandraConnector {
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraConnector.class);
+    private static final Logger LOG = LogManager.getLogManager().getLogger(CassandraConnector.class.getName());
 
     private Cluster cluster;
 

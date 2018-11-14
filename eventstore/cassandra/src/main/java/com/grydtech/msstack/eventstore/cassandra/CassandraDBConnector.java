@@ -10,19 +10,19 @@ import com.grydtech.msstack.core.connectors.eventstore.EventStoreConnector;
 import com.grydtech.msstack.core.types.messaging.Event;
 import com.grydtech.msstack.eventstore.cassandra.repository.EventRepository;
 import com.grydtech.msstack.eventstore.cassandra.repository.KeyspaceRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * Created by dileka on 9/21/18.
  */
 public final class CassandraDBConnector extends EventStoreConnector<UUID, Event> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraDBConnector.class);
+    private static final Logger LOG = LogManager.getLogManager().getLogger(CassandraDBConnector.class.getName());
 
     private Cluster cluster;
     private Session session;
