@@ -4,6 +4,7 @@ public enum ConfigKey {
 
     // Service
     SERVICE_NAME("config.service.name"),
+    SERVICE_ID("config.service.id"),
 
     // Snapshot (LevelDB)
     SNAPSHOT_NAME("config.snapshot.name"),
@@ -20,7 +21,10 @@ public enum ConfigKey {
     BUS_DELAY("config.bus.delay"),
 
     // Configuration Store (kafka)
-    CONFIG_BOOTSTRAP("config.bootstrap");
+    CONFIG_BOOTSTRAP("config.bootstrap"),
+
+    // Logging
+    LOGGING_TOPIC("config.logging.topic");
 
     private String value;
 

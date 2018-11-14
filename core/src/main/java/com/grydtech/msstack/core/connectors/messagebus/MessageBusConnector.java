@@ -5,6 +5,7 @@ import com.grydtech.msstack.annotation.InjectInstance;
 import com.grydtech.msstack.core.connectors.IConnector;
 import com.grydtech.msstack.core.services.MessageConsumer;
 import com.grydtech.msstack.core.types.Entity;
+import com.grydtech.msstack.core.types.logging.LogMessage;
 import com.grydtech.msstack.core.types.messaging.Message;
 
 import java.util.Map;
@@ -33,4 +34,6 @@ public abstract class MessageBusConnector implements IConnector {
      * @param message Published Event
      */
     public abstract void push(Message message, Map metadata);
+
+    public abstract void push(LogMessage logMessage);
 }
