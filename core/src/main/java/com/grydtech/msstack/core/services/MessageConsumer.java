@@ -5,7 +5,6 @@ import com.grydtech.msstack.core.connectors.messagebus.PartitionMetaData;
 import com.grydtech.msstack.core.handler.Handler;
 import com.grydtech.msstack.core.types.messaging.Message;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 
 public interface MessageConsumer extends Consumer<ConsumerMessage> {
@@ -14,5 +13,7 @@ public interface MessageConsumer extends Consumer<ConsumerMessage> {
 
     void registerHandler(Class<? extends Handler> handler);
 
-    void setNextOffsetsToProcess(Collection<PartitionMetaData> partitionMetaDataCollection);
+    void assignPartition(PartitionMetaData partitionMetaData);
+
+    void invokePartition(PartitionMetaData partitionMetaData);
 }

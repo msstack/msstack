@@ -9,7 +9,7 @@ import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -61,23 +61,7 @@ public class KafkaConsumerService {
         kafkaConsumer.subscribe(consumers.keySet());
         LOGGER.info("Topic list: " + consumers.keySet().toString() + " subscribed");
 
-        consumers.forEach((k, v) -> {
-            ArrayList<PartitionMetaData> partitionMetaDataCollection = new ArrayList<>();
-
-            kafkaConsumer.partitionsFor(k).forEach(p -> {
-                OffsetAndMetadata offsetAndMetadata = kafkaConsumer.committed(new TopicPartition(p.topic(), p.partition()));
-
-                PartitionMetaData partitionMetaData;
-                if (offsetAndMetadata == null) {
-                    partitionMetaData = new PartitionMetaData(p.partition(), 0);
-                } else {
-                    partitionMetaData = new PartitionMetaData(p.partition(), offsetAndMetadata.offset());
-                }
-                partitionMetaDataCollection.add(partitionMetaData);
-            });
-
-            v.setNextOffsetsToProcess(partitionMetaDataCollection);
-        });
+        this.initPartitionRebalancing();
 
         kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
         kafkaConsumer.commitSync();
@@ -97,8 +81,6 @@ public class KafkaConsumerService {
                             e.printStackTrace();
                         }
                     });
-
-                    kafkaConsumer.commitSync();
                 }
             }
         });
@@ -107,5 +89,25 @@ public class KafkaConsumerService {
 
     public void stop() {
         kafkaConsumer.unsubscribe();
+    }
+
+    private void initPartitionRebalancing() {
+        kafkaConsumer.subscribe(this.consumers.keySet(), new ConsumerRebalanceListener() {
+            @Override
+            public void onPartitionsRevoked(Collection<TopicPartition> collection) {
+                collection.forEach(p -> {
+                    OffsetAndMetadata offsetAndMetadata = kafkaConsumer.committed(new TopicPartition(p.topic(), p.partition()));
+                    consumers.get(p.topic()).invokePartition(new PartitionMetaData(p.partition(), offsetAndMetadata.offset()));
+                });
+            }
+
+            @Override
+            public void onPartitionsAssigned(Collection<TopicPartition> collection) {
+                collection.forEach(p -> {
+                    OffsetAndMetadata offsetAndMetadata = kafkaConsumer.committed(new TopicPartition(p.topic(), p.partition()));
+                    consumers.get(p.topic()).assignPartition(new PartitionMetaData(p.partition(), offsetAndMetadata.offset()));
+                });
+            }
+        });
     }
 }
