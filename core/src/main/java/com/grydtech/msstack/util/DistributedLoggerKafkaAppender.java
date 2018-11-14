@@ -15,13 +15,13 @@ public class DistributedLoggerKafkaAppender extends DistributedLogger {
 
     @Override
     public void warn(String message) {
-        LogMessage logMessage = new LogMessage("INFO", message, getClassName());
+        LogMessage logMessage = new LogMessage("WARN", message, getClassName());
         sendLogMessage(logMessage);
     }
 
     @Override
     public void error(String message) {
-        LogMessage logMessage = new LogMessage("INFO", message, getClassName());
+        LogMessage logMessage = new LogMessage("ERROR", message, getClassName());
         sendLogMessage(logMessage);
     }
 }
