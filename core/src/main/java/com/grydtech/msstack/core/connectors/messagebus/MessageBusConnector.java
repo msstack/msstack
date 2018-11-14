@@ -10,7 +10,7 @@ import com.grydtech.msstack.core.types.messaging.Message;
 import java.util.Map;
 
 /**
- * Base class for plugging in Message Brokers
+ * Base class for plugging in ConsumerMessage Brokers
  * The first instance in the classpath that extends this class is injected in
  */
 @FrameworkComponent
@@ -28,7 +28,7 @@ public abstract class MessageBusConnector implements IConnector {
     public abstract void detach(Class<? extends Entity> entityClass);
 
     /**
-     * Accepts a Message and notifies the subscribers
+     * Accepts a ConsumerMessage and notifies the subscribers
      *
      * @param message Published Event
      */

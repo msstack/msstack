@@ -10,10 +10,8 @@ import com.grydtech.msstack.transport.kafka.services.KafkaProducerService;
 import com.grydtech.msstack.util.JsonConverter;
 import com.grydtech.msstack.util.MessageBusUtils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @SuppressWarnings("unused")
@@ -25,7 +23,7 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
     private final KafkaProducerService kafkaProducerService;
     private final KafkaConsumerService kafkaConsumerService;
 
-    private final Map<String, Consumer<String>> consumers = new HashMap<>();
+    private final Map<String, MessageConsumer> consumers = new HashMap<>();
 
     public KafkaMessageBusConnector() {
         this.kafkaProducerService = new KafkaProducerService();
@@ -52,7 +50,7 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() {
         LOGGER.info("Starting Kafka Connection");
         this.kafkaConsumerService.setConsumers(this.consumers);
         this.kafkaProducerService.start();
@@ -61,7 +59,7 @@ public final class KafkaMessageBusConnector extends MessageBusConnector {
     }
 
     @Override
-    public void disconnect() throws IOException {
+    public void disconnect() {
         this.kafkaProducerService.flush();
     }
 }
