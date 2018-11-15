@@ -23,4 +23,8 @@ public final class ConfigurationProperties {
     public static String get(ConfigKey key) {
         return prop.getProperty(key.toString());
     }
+
+    public static void set(ConfigKey key, String value) {
+        prop.put(key.toString(), value);
+    }
 }

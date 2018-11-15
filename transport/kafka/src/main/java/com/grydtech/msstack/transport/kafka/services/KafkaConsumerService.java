@@ -17,8 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class KafkaConsumerService {
-
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private static final Logger LOGGER = Logger.getLogger(KafkaConsumerService.class.getName());
     private static final String bootstrapServers;
@@ -47,9 +46,11 @@ public class KafkaConsumerService {
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+        properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 1000);
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
+        properties.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 10000);
         return properties;
     }
 
@@ -63,9 +64,6 @@ public class KafkaConsumerService {
         LOGGER.info("Topic list: " + consumers.keySet().toString() + " subscribed");
 
         this.initPartitionRebalancing();
-
-        kafkaConsumer.seekToBeginning(kafkaConsumer.assignment());
-        kafkaConsumer.commitSync();
 
         Executors.newSingleThreadExecutor().submit(() -> {
             while (true) {

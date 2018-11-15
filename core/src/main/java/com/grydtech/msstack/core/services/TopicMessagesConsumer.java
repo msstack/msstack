@@ -16,8 +16,8 @@ import java.util.*;
 public class TopicMessagesConsumer implements MessageConsumer {
     private final Map<String, Class<? extends Message>> messageMap = new HashMap<>();
     private final Map<String, Set<HandlerWrapper>> handlersMap = new HashMap<>();
-    private final Map<Integer, Long> nextOffsetsToProcess = new HashMap<>();
-    private final Map<Integer, Long> nextOffsetToApply = new HashMap<>();
+    private final Map<Integer, Long> processedMessages = new HashMap<>();
+    private final Map<Integer, Long> appliedMessages = new HashMap<>();
 
     private final String topic;
 
@@ -45,12 +45,12 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
     @Override
     public void assignPartition(PartitionMetaData partitionMetaData) {
-        nextOffsetsToProcess.put(partitionMetaData.getPartition(), partitionMetaData.getSavedComittedOffset());
+        processedMessages.put(partitionMetaData.getPartition(), partitionMetaData.getSavedComittedOffset());
     }
 
     @Override
     public void invokePartition(PartitionMetaData partitionMetaData) {
-        nextOffsetsToProcess.remove(partitionMetaData.getPartition());
+        processedMessages.remove(partitionMetaData.getPartition());
     }
 
     @Override
@@ -76,17 +76,18 @@ public class TopicMessagesConsumer implements MessageConsumer {
             if (entity == null) return;
 
             // Remove duplicate messages
-            if (nextOffsetToApply.get(consumerMessage.getPartition()) != null &&
-                    consumerMessage.getOffset() < nextOffsetToApply.get(consumerMessage.getPartition())) return;
+            if (appliedMessages.get(consumerMessage.getPartition()) != null &&
+                    consumerMessage.getOffset() <= appliedMessages.get(consumerMessage.getPartition())) return;
 
             if (messageType.equals("EVENT")) {
                 entity.applyEventAndIncrementVersion((Event) message);
-                nextOffsetToApply.put(consumerMessage.getPartition(), consumerMessage.getOffset() + 1);
                 SnapshotConnector.getInstance().put(entity.getEntityId().toString(), entity);
+                appliedMessages.put(consumerMessage.getPartition(), consumerMessage.getOffset());
             }
 
             // If offset previously handled by another service
-            if (consumerMessage.getOffset() < nextOffsetsToProcess.get(consumerMessage.getPartition())) return;
+            if (processedMessages.get(consumerMessage.getPartition()) != null &&
+                    consumerMessage.getOffset() < processedMessages.get(consumerMessage.getPartition())) return;
 
             if (handlerWrappers == null) return;
 
@@ -100,6 +101,8 @@ public class TopicMessagesConsumer implements MessageConsumer {
                     e.printStackTrace();
                 }
             });
+
+            processedMessages.put(consumerMessage.getPartition(), consumerMessage.getOffset());
         }
     }
 }
