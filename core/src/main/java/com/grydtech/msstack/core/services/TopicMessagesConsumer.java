@@ -87,8 +87,7 @@ public class TopicMessagesConsumer implements MessageConsumer {
 
             // If offset previously handled by another service
             if (processedMessages.get(consumerMessage.getPartition()) != null &&
-                    processedMessages.get(consumerMessage.getPartition()) > 0 &&
-                    consumerMessage.getOffset() <= processedMessages.get(consumerMessage.getPartition())) return;
+                    consumerMessage.getOffset() < processedMessages.get(consumerMessage.getPartition())) return;
 
             if (handlerWrappers == null) return;
 
