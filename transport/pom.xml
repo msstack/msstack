@@ -21,7 +21,7 @@
 
     <properties>
         <jackson.version>2.9.10.1</jackson.version>
-        <guava.version>24.1-jre</guava.version>
+        <guava.version>24.1.1-jre</guava.version>
     </properties>
 
     <dependencies>
