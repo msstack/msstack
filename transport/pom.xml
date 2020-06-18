@@ -20,7 +20,7 @@
     </modules>
 
     <properties>
-        <jackson.version>2.9.10.1</jackson.version>
+        <jackson.version>2.10.0.pr1</jackson.version>
         <guava.version>24.1-jre</guava.version>
     </properties>
 
